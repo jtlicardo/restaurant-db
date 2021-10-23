@@ -1,0 +1,7 @@
+DROP DATABASE IF EXISTS restoran;
+CREATE DATABASE restoran;
+USE restoran;
+
+CREATE TABLE ime_tablice (
+	id INTEGER PRIMARY KEY
+);
