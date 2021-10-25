@@ -24,9 +24,9 @@ CREATE TABLE stol (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     broj_stola VARCHAR(4) NOT NULL,
     rajon_stola VARCHAR(4) NOT NULL,
-    broj_gostiju INTEGER,
-    rezervacija VARCHAR(50) NOT NULL,
-    meni VARCHAR(50) NOT NULL
+    broj_gostiju INTEGER
+    
+ 
 );
     
 CREATE TABLE racun (
@@ -63,4 +63,19 @@ CREATE TABLE stavka_racun (
     
 
 
-    
+
+CREATE TABLE gost (
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+ime VARCHAR(50) NOT NULL,
+prezime VARCHAR(50) NOT NULL
+
+
+);
+CREATE TABLE rezervacija (
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+id_stol VARCHAR(50) NOT NULL,
+id_gost INTEGER NOT NULL,
+FOREIGN KEY (id_gost) REFERENCES stol(id),
+FOREIGN KEY (id_stol) REFERENCES stol (id),
+FOREIGN KEY (id_gost) REFERENCES gost (id)
+);
