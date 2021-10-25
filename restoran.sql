@@ -73,9 +73,8 @@ prezime VARCHAR(50) NOT NULL
 );
 CREATE TABLE rezervacija (
 id INTEGER PRIMARY KEY AUTO_INCREMENT,
-id_stol VARCHAR(50) NOT NULL,
+id_stol INTEGER NOT NULL,
 id_gost INTEGER NOT NULL,
-FOREIGN KEY (id_gost) REFERENCES stol(id),
 FOREIGN KEY (id_stol) REFERENCES stol (id),
 FOREIGN KEY (id_gost) REFERENCES gost (id)
 );
