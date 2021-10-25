@@ -54,7 +54,6 @@ CREATE TABLE stol(
     porcija INTEGER NOT NULL,
     REFERENCES alergeni(id)
     
-    
     );
     
    
