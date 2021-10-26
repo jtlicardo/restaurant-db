@@ -6,6 +6,7 @@ CREATE TABLE djelatnik (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     ime VARCHAR(50) NOT NULL,
     prezime VARCHAR(50) NOT NULL,
+    datum_rodenja DATE NOT NULL,
     oib CHAR(11) NOT NULL UNIQUE,
     broj_mob VARCHAR(10) NOT NULL UNIQUE,
     datum_zaposlenja DATE NOT NULL
@@ -25,8 +26,6 @@ CREATE TABLE stol (
     broj_stola VARCHAR(4) NOT NULL,
     rajon_stola VARCHAR(4) NOT NULL,
     broj_gostiju INTEGER
-    
- 
 );
     
 CREATE TABLE racun (
@@ -44,9 +43,9 @@ CREATE TABLE alergeni (
 	naziv VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE stavka (
+CREATE TABLE meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    naziv VARCHAR(50) NOT NULL,
+    naziv_jela VARCHAR(50) NOT NULL,
     cijena DECIMAL(10, 2) NOT NULL,
     id_alergen INTEGER,
     FOREIGN KEY (id_alergen) REFERENCES alergen (id)
@@ -60,21 +59,18 @@ CREATE TABLE stavka_racun (
     FOREIGN KEY (id_racun) REFERENCES racun (id),
     FOREIGN KEY (id_stavka) REFERENCES stavka (id)
 );
-    
-
-
 
 CREATE TABLE gost (
 id INTEGER PRIMARY KEY AUTO_INCREMENT,
 ime VARCHAR(50) NOT NULL,
 prezime VARCHAR(50) NOT NULL
-
-
 );
+
 CREATE TABLE rezervacija (
 id INTEGER PRIMARY KEY AUTO_INCREMENT,
 id_stol INTEGER NOT NULL,
 id_gost INTEGER NOT NULL,
+broj_gostiju INTEGER NOT NULL,
 FOREIGN KEY (id_stol) REFERENCES stol (id),
 FOREIGN KEY (id_gost) REFERENCES gost (id)
 );
