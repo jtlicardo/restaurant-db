@@ -48,6 +48,7 @@ CREATE TABLE meni (
     naziv_jela VARCHAR(50) NOT NULL,
     cijena DECIMAL(10, 2) NOT NULL,
     id_alergen INTEGER,
+    gramaza DECIMAL (10, 3),
     FOREIGN KEY (id_alergen) REFERENCES alergen (id)
 );
 
@@ -74,3 +75,55 @@ broj_gostiju INTEGER NOT NULL,
 FOREIGN KEY (id_stol) REFERENCES stol (id),
 FOREIGN KEY (id_gost) REFERENCES gost (id)
 );
+
+CREATE TABLE catering (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ponuda VARCHAR(50) NOT NULL,
+    cijena DECIMAL(10, 2) NOT NULL,
+    kolicina INTEGER,
+    FOREIGN KEY (kolicina) REFERENCES meni (id)
+    );
+    
+    CREATE TABLE skladiste (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime_robe VARCHAR(50) NOT NULL,
+    kolicina INTEGER,
+    rok_trajanja DATE NOT NULL,
+    FOREIGN KEY (ime_robe) REFERENCES dobavljac(id)
+    );
+    
+    CREATE TABLE riba(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime_ribe VARCHAR(50) NOT NULL,
+    tezina DECIMAL (10, 3),
+    FOREIGN KEY (ime_ribe) REFERENCES skladiste(id)
+    );
+    
+    CREATE TABLE meso(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime_mesa VARCHAR(50) NOT NULL,
+    tezina DECIMAL (10, 3),
+    FOREIGN KEY (ime_mesa) REFERENCES skladiste(id)
+    );
+    
+    CREATE TABLE voce(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime_voca VARCHAR(50) NOT NULL,
+    tezina DECIMAL (10, 3),
+    FOREIGN KEY (ime_voce) REFERENCES skladiste(id)
+    );
+    
+    CREATE TABLE povrce(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime_povrca VARCHAR(50) NOT NULL,
+    tezina DECIMAL (10, 3),
+    FOREIGN KEY (ime_povrca) REFERENCES skladiste (id)
+    );
+    
+    CREATE TABLE tekucine(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    vrsta VARCHAR(50) NOT NULL,
+    kolicina DECIMAL (10, 3),
+    alkohol BOOLEAN,
+    FOREIGN KEY (vrsta) REFERENCES skladiste (id)
+    );
