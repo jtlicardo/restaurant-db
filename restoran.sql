@@ -131,7 +131,18 @@ CREATE TABLE catering (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(50) NOT NULL,
     kolicina DECIMAL (10, 3),
-    FOREIGN KEY (id) REFERENCES meni(naziv_jela)
+    FOREIGN KEY (id) REFERENCES meni(id)
     );
     
+    CREATE TABLE kategorija_namirnica (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(50) NOT NULL
+    );
     
+    CREATE TABLE namirnica (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(50) NOT NULL,
+    kolicina_na_zalihi DECIMAL (10, 3),
+    id_kategorija INTEGER NOT NULL,
+    FOREIGN KEY (id_kategorija) REFERENCES kategorija_namirnica(id)
+    );
