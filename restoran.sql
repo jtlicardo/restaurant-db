@@ -48,7 +48,6 @@ CREATE TABLE meni (
     naziv_jela VARCHAR(50) NOT NULL,
     cijena DECIMAL(10, 2) NOT NULL,
     id_alergen INTEGER,
-    gramaza DECIMAL (10, 3),
     FOREIGN KEY (id_alergen) REFERENCES alergen (id)
 );
 
@@ -127,3 +126,12 @@ CREATE TABLE catering (
     alkohol BOOLEAN,
     FOREIGN KEY (vrsta) REFERENCES skladiste (id)
     );
+    
+    CREATE TABLE stavka_meni (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(50) NOT NULL,
+    kolicina DECIMAL (10, 3),
+    FOREIGN KEY (id) REFERENCES meni(naziv_jela)
+    );
+    
+    
