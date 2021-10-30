@@ -33,8 +33,8 @@ CREATE TABLE racun (
 	sifra VARCHAR(10) NOT NULL,
 	id_stol INTEGER NOT NULL,
 	id_djelatnik INTEGER NOT NULL,
-	datum_vrijeme DATETIME NOT NULL,
-	iznos DECIMAL(10, 2) DEFAULT 0.00,
+	vrijeme_izdavanja DATETIME NOT NULL,
+	iznos_hrk DECIMAL(10, 2) DEFAULT 0.00,
     FOREIGN KEY (id_stol) REFERENCES stol (id),
     FOREIGN KEY (id_djelatnik) REFERENCES djelatnik (id)
 );
@@ -44,45 +44,31 @@ CREATE TABLE alergen (
 	naziv VARCHAR(50) NOT NULL
 );
 
+INSERT INTO alergen VALUES
+	(1, "Riba"),
+    (2, "Mlijeko"),
+    (3, "Pšenica");
+
 CREATE TABLE meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv_jela VARCHAR(50) NOT NULL,
-    cijena DECIMAL(10, 2) NOT NULL,
-    id_alergen INTEGER,
-    FOREIGN KEY (id_alergen) REFERENCES alergen (id)
+    cijena_hrk DECIMAL(10, 2) NOT NULL
 );
 
-CREATE TABLE stavka_racun (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    id_racun INTEGER NOT NULL,
-    id_meni INTEGER NOT NULL,
-    kolicina INTEGER NOT NULL,
-    FOREIGN KEY (id_racun) REFERENCES racun (id),
-    FOREIGN KEY (id_meni) REFERENCES meni (id)
-);
-
-CREATE TABLE gost (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	ime VARCHAR(50) NOT NULL,
-	prezime VARCHAR(50) NOT NULL
-);
-
-CREATE TABLE rezervacija (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	id_stol INTEGER NOT NULL,
-	id_gost INTEGER NOT NULL,
-	broj_gostiju INTEGER NOT NULL,
-	FOREIGN KEY (id_stol) REFERENCES stol (id),
-	FOREIGN KEY (id_gost) REFERENCES gost (id)
-);
-
-CREATE TABLE catering (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    ponuda VARCHAR(50) NOT NULL,
-    cijena DECIMAL(10, 2) NOT NULL,
-    kolicina INTEGER NOT NULL
-);
+INSERT INTO meni VALUES
+	(1, "Jadranska orada sa žara s gratiniranim povrćem", 95),
+    (2, "Vino Teran 0.1 l", 38),
+    (3, "Vino Malvazija 0.1 l", 28);
     
+CREATE TABLE sadrzi_alergen (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_meni INTEGER NOT NULL,
+    id_alergen INTEGER NOT NULL
+);
+
+INSERT INTO sadrzi_alergen VALUES
+	(1, 1, 1);
+
 CREATE TABLE kategorija_namirnica (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(50) NOT NULL
@@ -114,10 +100,47 @@ INSERT INTO namirnica VALUES
 CREATE TABLE stavka_meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_namirnica INTEGER NOT NULL,
-    kolicina DECIMAL (10, 3),
+    kolicina DECIMAL (10, 2),
+    mjerna_jedinica VARCHAR(20) NOT NULL,
     id_meni INTEGER NOT NULL,
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
+);
+
+INSERT INTO stavka_meni VALUES
+	(1, 1, 1, "komad", 1),
+    (2, 4, 0.1, "litra", 2),
+    (3, 5, 0.1, "litra", 3);
+
+CREATE TABLE stavka_racun (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_racun INTEGER NOT NULL,
+    id_meni INTEGER NOT NULL,
+    kolicina INTEGER NOT NULL,
+    FOREIGN KEY (id_racun) REFERENCES racun (id),
+    FOREIGN KEY (id_meni) REFERENCES meni (id)
+);
+
+CREATE TABLE gost (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	ime VARCHAR(50) NOT NULL,
+	prezime VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE rezervacija (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	id_stol INTEGER NOT NULL,
+	id_gost INTEGER NOT NULL,
+	broj_gostiju INTEGER NOT NULL,
+	FOREIGN KEY (id_stol) REFERENCES stol (id),
+	FOREIGN KEY (id_gost) REFERENCES gost (id)
+);
+
+CREATE TABLE catering (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ponuda VARCHAR(50) NOT NULL,
+    cijena_hrk DECIMAL(10, 2) NOT NULL,
+    kolicina INTEGER NOT NULL
 );
     
     
