@@ -99,15 +99,17 @@ CREATE TABLE namirnica (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(50) NOT NULL,
     id_kategorija INTEGER NOT NULL,
+    kolicina_na_zalihi INTEGER NOT NULL,
+    mjerna_jedinica VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_kategorija) REFERENCES kategorija_namirnica (id)
 );
 
 INSERT INTO namirnica VALUES
-	(1, "Orada", 1),
-    (2, "Biftek", 2),
-    (3, "Jagoda", 3),
-    (4, "Vino Teran", 5),
-    (5, "Vino Malvazija", 5);
+	(1, "Orada", 1, 30, "komad"),
+    (2, "Biftek", 2, 50, "komad"),
+    (3, "Jagoda", 3, 4, "kilogram"),
+    (4, "Vino Teran", 5, 60, "litra"),
+    (5, "Vino Malvazija", 5, 60, "litra");
 
 CREATE TABLE stavka_meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -117,21 +119,6 @@ CREATE TABLE stavka_meni (
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 );
-    
-CREATE TABLE skladiste (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    id_namirnica INTEGER NOT NULL,
-    kolicina INTEGER NOT NULL,
-    mjerna_jedinica VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
-);
-
-INSERT INTO skladiste VALUES
-	(1, 1, 30, "komada"),
-    (2, 2, 50, "komada"),
-    (3, 3, 4, "kilograma"),
-    (4, 4, 60, "litara"),
-    (5, 5, 60, "litara");
     
     
     
