@@ -63,7 +63,9 @@ INSERT INTO meni VALUES
 CREATE TABLE sadrzi_alergen (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_meni INTEGER NOT NULL,
-    id_alergen INTEGER NOT NULL
+    id_alergen INTEGER NOT NULL,
+    FOREIGN KEY (id_meni) REFERENCES meni (id),
+    FOREIGN KEY (id_alergen) REFERENCES alergen (id)
 );
 
 INSERT INTO sadrzi_alergen VALUES
