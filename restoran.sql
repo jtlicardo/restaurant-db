@@ -138,49 +138,41 @@ CREATE TABLE rezervacija (
 	FOREIGN KEY (id_gost) REFERENCES gost (id)
 );
 
-CREATE TABLE catering (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    ponuda VARCHAR(50) NOT NULL,
-    cijena_hrk DECIMAL(10, 2) NOT NULL,
-    kolicina INTEGER NOT NULL
-);
-    
-    
-CREATE TABLE catering_narucitelj(
+CREATE TABLE catering_narucitelj (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     ime VARCHAR(50) NOT NULL,
     prezime VARCHAR(50) NOT NULL,
     oib CHAR(11) NOT NULL UNIQUE
 );
-    
-CREATE TABLE catering_zahtjev(
+
+CREATE TABLE catering_zahtjev (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_narucitelj INTEGER NOT NULL,
     adresa VARCHAR(50) NOT NULL,
     broj_ljudi INTEGER NOT NULL,
-    opis VARCHAR(50) NOT NULL,
+    opis TEXT,
     zeljeni_datum DATE NOT NULL,
     datum_zahtjeva DATE NOT NULL,
-    FOREIGN KEY (id_narucitelj) REFERENCES caterning_narucitelj (id)
+    FOREIGN KEY (id_narucitelj) REFERENCES catering_narucitelj (id)
 );
-    
-CREATE TABLE catering_ponuda(
+
+CREATE TABLE catering (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_zahtjev INTEGER NOT NULL,
     cijena_hkr DECIMAL(10, 2) DEFAULT 0.00,
     planirani_datum_izvrsenja DATE NOT NULL,
-    opis VARCHAR(50) NOT NULL,
-    uplaceno BOOLEAN,
-    FOREIGN KEY (id_zahtjev) REFERENCES caterning_narucitelj (id)
-   
+    opis TEXT,
+    uplaceno CHAR(1) NOT NULL,
+    FOREIGN KEY (id_zahtjev) REFERENCES catering_narucitelj (id),
+    CHECK (uplaceno IN ("D", "N"))
 );
     
 CREATE TABLE catering_stavka(
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    id_caternig INTEGER NOT NULL,
+    id_catering INTEGER NOT NULL,
     id_meni INTEGER NOT NULL,
     kolicina INTEGER NOT NULL,
-    FOREIGN KEY (id_catering) REFERENCES caterning_narucitelj (id),
+    FOREIGN KEY (id_catering) REFERENCES catering_narucitelj (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 );
     
