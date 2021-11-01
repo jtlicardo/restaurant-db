@@ -51,7 +51,7 @@ INSERT INTO alergen VALUES
 
 CREATE TABLE meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    naziv_jela VARCHAR(50) NOT NULL,
+    naziv_stavke VARCHAR(50) NOT NULL,
     cijena_hrk DECIMAL(10, 2) NOT NULL
 );
 
@@ -146,5 +146,42 @@ CREATE TABLE catering (
 );
     
     
+CREATE TABLE catering_narucitelj(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime VARCHAR(50) NOT NULL,
+    prezime VARCHAR(50) NOT NULL,
+    oib CHAR(11) NOT NULL UNIQUE
+);
+    
+CREATE TABLE catering_zahtjev(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_narucitelj INTEGER NOT NULL,
+    adresa VARCHAR(50) NOT NULL,
+    broj_ljudi INTEGER NOT NULL,
+    opis VARCHAR(50) NOT NULL,
+    zeljeni_datum DATE NOT NULL,
+    datum_zahtjeva DATE NOT NULL,
+    FOREIGN KEY (id_narucitelj) REFERENCES caterning_narucitelj (id)
+);
+    
+CREATE TABLE catering_ponuda(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_zahtjev INTEGER NOT NULL,
+    cijena_hkr DECIMAL(10, 2) DEFAULT 0.00,
+    planirani_datum_izvrsenja DATE NOT NULL,
+    opis VARCHAR(50) NOT NULL,
+    uplaceno BOOLEAN,
+    FOREIGN KEY (id_zahtjev) REFERENCES caterning_narucitelj (id)
+   
+);
+    
+CREATE TABLE catering_stavka(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_caternig INTEGER NOT NULL,
+    id_meni INTEGER NOT NULL,
+    kolicina INTEGER NOT NULL,
+    FOREIGN KEY (id_catering) REFERENCES caterning_narucitelj (id),
+    FOREIGN KEY (id_meni) REFERENCES meni (id)
+);
     
     
