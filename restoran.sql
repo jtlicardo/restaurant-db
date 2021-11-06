@@ -2,6 +2,12 @@ DROP DATABASE IF EXISTS restoran;
 CREATE DATABASE restoran;
 USE restoran;
 
+CREATE TABLE zanimanje (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(50) NOT NULL,
+    placa_hkr DECIMAL(10, 2) DEFAULT 0.00
+    
+);
 CREATE TABLE djelatnik (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     ime VARCHAR(50) NOT NULL,
@@ -9,7 +15,10 @@ CREATE TABLE djelatnik (
     datum_rodenja DATE NOT NULL,
     oib CHAR(11) NOT NULL UNIQUE,
     broj_mob VARCHAR(10) NOT NULL UNIQUE,
-    datum_zaposlenja DATE NOT NULL
+    datum_zaposlenja DATE NOT NULL,
+    id_zanimanje INTEGER NOT NULL,
+    FOREIGN KEY (id_zanimanje) REFERENCES zanimanje (id)
+    
 );
 
 CREATE TABLE dobavljac (
@@ -27,16 +36,28 @@ CREATE TABLE stol (
     rajon_stola VARCHAR(4) NOT NULL,
     broj_gostiju INTEGER
 );
+
+CREATE TABLE nacini_placanja(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR(10) NOT NULL
+);
+
+INSERT INTO nacini_placanja VALUES
+	(1, "gotovina"),
+    (2, "kartica"),
+    (3, "crypto");
     
 CREATE TABLE racun (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	sifra VARCHAR(10) NOT NULL,
+    nacin_placanja INTEGER NOT NULL,
 	id_stol INTEGER NOT NULL,
 	id_djelatnik INTEGER NOT NULL,
 	vrijeme_izdavanja DATETIME NOT NULL,
 	iznos_hrk DECIMAL(10, 2) DEFAULT 0.00,
     FOREIGN KEY (id_stol) REFERENCES stol (id),
-    FOREIGN KEY (id_djelatnik) REFERENCES djelatnik (id)
+    FOREIGN KEY (id_djelatnik) REFERENCES djelatnik (id),
+    FOREIGN KEY (nacin_placanja) REFERENCES nacini_placanja (id)
 );
 
 CREATE TABLE alergen (
@@ -133,7 +154,11 @@ CREATE TABLE rezervacija (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	id_stol INTEGER NOT NULL,
 	id_gost INTEGER NOT NULL,
+    zeljeni_datum DATE NOT NULL,
+    vrijeme_od DATE NOT NULL,
+    vrijeme_do DATE NOT NULL,
 	broj_gostiju INTEGER NOT NULL,
+    
 	FOREIGN KEY (id_stol) REFERENCES stol (id),
 	FOREIGN KEY (id_gost) REFERENCES gost (id)
 );
@@ -176,4 +201,23 @@ CREATE TABLE catering_stavka(
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 );
     
+CREATE TABLE nabava (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_dobavljac INTEGER NOT NULL,
+    opis TEXT,
+    iznos_hrk DECIMAL(10, 2) NOT NULL,
+    podmireno CHAR(1) NOT NULL,
+    FOREIGN KEY (id_dobavljac) REFERENCES dobavljac (id),
+    CHECK (podmireno IN ("D", "N"))
+);
+CREATE TABLE nabava_stavka (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_nabava INTEGER NOT NULL,
+    id_namirnica INTEGER NOT NULL,
+    kolicina INTEGER NOT NULL,
+    mjerna_jedinica VARCHAR(20) NOT NULL,
+    cijena_hrk DECIMAL(10, 2) NOT NULL,
+	FOREIGN KEY (id_nabava) REFERENCES nabava (id),
+	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
+);    
     
