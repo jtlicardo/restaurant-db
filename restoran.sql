@@ -5,7 +5,8 @@ USE restoran;
 CREATE TABLE zanimanje (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(50) NOT NULL,
-    placa_hkr DECIMAL(10, 2) DEFAULT 0.00
+    placa_hkr DECIMAL(10, 2) DEFAULT 3750.00,
+    CHECK (placa_hkr >=3750.00)
     
 );
 CREATE TABLE djelatnik (
