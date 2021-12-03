@@ -311,4 +311,26 @@ CREATE TABLE dostava_stavka(
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 ); 
 
+
+INSERT INTO zanimanje VALUES   
+	(1, "kuhar", 9054,45 ),
+	(2, "konobar", 8640,85 ),
+    (3, "pomoćni kuhar", 4654,45 ),
+    (4, "pomoćni konobar", 4654,45 ),
+    (5, "servir", 4551,23 ),
+    (6, "operater na posuđu", 6054,45 ),
+    (7, "barmen", 6054,45 ),
+    (8, "poslovođa", 16054,75 ),
+    (9, "skladištar", 7453,65 ),
+    (10, "dostavljač", 8135,24 );
     
+INSERT INTO djelatnik (ime,prezime,datum_rodenja,oib,broj_mob,datum_zaposlenja,id_zanimanje) VALUES
+		('Ana', 'Anić', 1988-11-22, 56214852651, 0975698542, 2021-05-19, 2 ),
+        ('Milena', 'Kakoli', 1978-05-13, 42685138412, 0911122334, 2018-03-15, 1 ),
+        ('Marko', 'Afrić', 1999-11-11, 87426514895, 092785425, 2021-04-17, 3 );
+        
+        
+INSERT INTO dobavljac (naziv,adresa,oib,broj_mob,vrsta_usluge) VALUES
+			('Velpro', 'Zagrebačka 4', 74125621458, 0912345678, "namirnice"),
+            ('Ljubica', 'Flanatička 7', 51254785214, 09852415, "salata");
+            
