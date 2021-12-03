@@ -201,6 +201,14 @@ CREATE TABLE catering_stavka(
     FOREIGN KEY (id_catering) REFERENCES catering_narucitelj (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 );
+
+CREATE TABLE djelatnici_catering(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_catering INTEGER NOT NULL,
+    id_djelatnik INTEGER NOT NULL,
+    FOREIGN KEY (id_catering) REFERENCES catering (id),
+    FOREIGN KEY (id_djelatnik) REFERENCES djelatnik (id)
+	);
     
 CREATE TABLE nabava (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -220,5 +228,87 @@ CREATE TABLE nabava_stavka (
     cijena_hrk DECIMAL(10, 2) NOT NULL,
 	FOREIGN KEY (id_nabava) REFERENCES nabava (id),
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
+); 
+
+CREATE TABLE otpis (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    datum DATE NOT NULL,
+    opis TEXT
 );    
+
+CREATE TABLE otpis_stavka(
+id INTEGER PRIMARY KEY AUTO_INCREMENT,
+id_otpis INTEGER NOT NULL,
+kolicina INTEGER NOT NULL,
+mjerna_jedinica VARCHAR(20) NOT NULL,
+FOREIGN KEY (id_otpis) REFERENCES otpis (id),
+FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
+);    
+
+CREATE TABLE rezije(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    iznos INTEGER,
+    datum DATE NOT NULL,
+    kategorija INTEGER,
+    placeno CHAR(1) NOT NULL,
+    
+    CHECK (placeno IN ("D", "N"))
+
+);
+
+CREATE TABLE kategorija(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id_kategorija INTEGER NOT NULL,
+    naziv VARCHAR(50) NOT NULL,
+   
+    FOREIGN KEY (id_kategorija) REFERENCES rezije (id)
+    
+    );
+    
+    
+CREATE TABLE smjena (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    naziv VARCHAR (50), 
+    pocetak_radnog_vremena TIME NOT NULL,
+    kraj_radnog_vremena TIME NOT NULL
+	);    
+    
+CREATE TABLE djelatnik_smjena(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	id_djelatnik INTEGER NOT NULL,
+	id_smjena INTEGER NOT NULL, 
+	datum DATE NOT NULL,
+    FOREIGN KEY (id_djelatnik) REFERENCES djelatnik (id),
+    FOREIGN KEY (id_smjena) REFERENCES smjena (id)
+    );    
+
+CREATE TABLE adresa(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	drzava VARCHAR (50),
+	grad VARCHAR (50),
+	ulica VARCHAR (50),
+	post_broj INTEGER
+);
+
+CREATE TABLE dostava(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	id_gost INTEGER NOT NULL,
+	id_adresa INTEGER NOT NULL, 
+	datum DATE NOT NULL, 
+	cijena_hrk DECIMAL(10, 2) NOT NULL,
+	izvrsena CHAR(1) NOT NULL,
+    FOREIGN KEY (id_gost) REFERENCES gost (id),
+    FOREIGN KEY (id_adresa) REFERENCES adresa (id),
+    CHECK (izvrseno IN ("D", "N"))
+);
+CREATE TABLE dostava_stavka(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	id_dostava INTEGER NOT NULL,
+	id_meni INTEGER NOT NULL,
+	kolicina INTEGER NOT NULL, 
+	cijena_hrk DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (id_dostava) REFERENCES dostava (id),
+    FOREIGN KEY (id_meni) REFERENCES meni (id)
+); 
+
     
