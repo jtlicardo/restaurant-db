@@ -356,7 +356,36 @@ INSERT INTO djelatnik VALUES
 
 -- id, drzava, grad, ulica, post_broj
 INSERT INTO adresa VALUES
-	(1, "Hrvatska", "Pula", "Rovinjska ulica 14", "52100");
+	(1, "Hrvatska", "Pula", "Rovinjska ulica 14", "52100"),
+    (2, "Hrvatska", "Lanišće", "Podgaće 15", "52422"),
+    (3, "Hrvatska", "Pazin", "Kršikla 85", "52000"),
+    (4, "Hrvatska", "Labin", "Marceljani 8", "52220"),
+    (5, "Hrvatska", "Pula", "Kolhiđanska 12", "52100"),
+    (6, "Hrvatska", "Bale", "Bobići 6", "52211"),
+    (7, "Hrvatska", "Vodnjan", "Antifašističkih boraca 28", "52215"),
+    (8, "Hrvatska", "Galižana", "Toro 49", "52216"),
+    (9, "Hrvatska", "Poreč", "Jasenova 145", "52440"),
+    (10, "Hrvatska", "Raša", "Istarska 88", "52223"),
+    (11, "Hrvatska", "Lupoglav", "Brajuhi 4", "52426"),
+    (12, "Hrvatska", "Umag", "Kvarnerska 1", "52470"),
+    (13, "Hrvatska", "Nova Vas", "Brčići 14", "52446"),
+    (14, "Hrvatska", "Oprtalj", "Škeri 9", "52428"),
+    (15, "Hrvatska", "Cerovlje", "Jerončići 3", "52402"),
+    (16, "Hrvatska", "Pula", "Coppova 5", "52100"),
+    (17, "Hrvatska", "Pazin", "Jukani 109", "52000"),
+    (18, "Hrvatska", "Poreč", "Pionirska 8", "52440"),
+    (19, "Hrvatska", "Umag", "Komunela 70", "52470"),
+    (20, "Hrvatska", "Vrsar", "Jadranska 9", "52450"),
+    (21, "Hrvatska", "Žminj", "Hrušteti 84", "52341"),
+    (22, "Hrvatska", "Pazin", "Sergovići 88", "52000"),
+    (23, "Hrvatska", "Motovun", "Kanal 3", "52424"),
+    (24, "Hrvatska", "Nedešćina", "Vrećari 116", "52231"),
+    (25, "Hrvatska", "Funtana", "Coki 2A", "52452"),
+    (26, "Hrvatska", "Buzet", "Paladini 98", "52420"),
+    (27, "Hrvatska", "Buzet", "Marinci 57", "52420"),
+    (28, "Hrvatska", "Labin", "Šćiri 39", "52220"),
+    (29, "Hrvatska", "Ližnjan", "Muntić 16", "52203"),
+    (30, "Hrvatska", "Krnica", "Suhača 9", "52208");
         
 -- id, naziv, id_adresa, oib, broj_mob, vrsta_usluge        
 INSERT INTO dobavljac VALUES
