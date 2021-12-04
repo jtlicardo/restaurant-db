@@ -255,7 +255,7 @@ CREATE TABLE dostava (
 	id_gost INTEGER NOT NULL,
 	id_adresa INTEGER NOT NULL, 
 	datum DATE NOT NULL, 
-	cijena_hrk DECIMAL(10, 2) NOT NULL,
+	cijena_hrk DECIMAL(10, 2) DEFAULT 0.00,
 	izvrsena CHAR(1) NOT NULL,
     FOREIGN KEY (id_gost) REFERENCES osoba (id),
     FOREIGN KEY (id_adresa) REFERENCES adresa (id),
@@ -267,7 +267,7 @@ CREATE TABLE dostava_stavka (
 	id_dostava INTEGER NOT NULL,
 	id_meni INTEGER NOT NULL,
 	kolicina INTEGER NOT NULL, 
-	cijena_hrk DECIMAL(10, 2) NOT NULL,
+	cijena_hrk DECIMAL(10, 2) DEFAULT 0.00,
     FOREIGN KEY (id_dostava) REFERENCES dostava (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 ); 
