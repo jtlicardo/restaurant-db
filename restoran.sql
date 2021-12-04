@@ -2,6 +2,14 @@ DROP DATABASE IF EXISTS restoran;
 CREATE DATABASE restoran;
 USE restoran;
 
+CREATE TABLE osoba (
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ime VARCHAR(50) NOT NULL,
+    prezime VARCHAR(50) NOT NULL,
+    broj_mob VARCHAR(10),
+    email VARCHAR(30)
+);
+
 CREATE TABLE zanimanje (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(50) NOT NULL,
@@ -11,13 +19,12 @@ CREATE TABLE zanimanje (
 
 CREATE TABLE djelatnik (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    ime VARCHAR(50) NOT NULL,
-    prezime VARCHAR(50) NOT NULL,
-    datum_rodenja DATE NOT NULL,
+    id_osoba INTEGER NOT NULL,
     oib CHAR(11) NOT NULL UNIQUE,
-    broj_mob VARCHAR(10) NOT NULL UNIQUE,
+    datum_rodenja DATE NOT NULL,
     datum_zaposlenja DATE NOT NULL,
     id_zanimanje INTEGER NOT NULL,
+    FOREIGN KEY (id_osoba) REFERENCES osoba (id),
     FOREIGN KEY (id_zanimanje) REFERENCES zanimanje (id)
 );
 
@@ -116,14 +123,6 @@ CREATE TABLE stavka_racun (
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 );
 
-CREATE TABLE gost (
-	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	ime VARCHAR(50) NOT NULL,
-	prezime VARCHAR(50) NOT NULL,
-    broj_mob VARCHAR(10),
-    email VARCHAR(30)
-);
-
 CREATE TABLE rezervacija (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	id_stol INTEGER NOT NULL,
@@ -133,14 +132,14 @@ CREATE TABLE rezervacija (
     vrijeme_do TIME NOT NULL,
 	broj_gostiju INTEGER NOT NULL,
 	FOREIGN KEY (id_stol) REFERENCES stol (id),
-	FOREIGN KEY (id_gost) REFERENCES gost (id)
+	FOREIGN KEY (id_gost) REFERENCES osoba (id)
 );
 
 CREATE TABLE catering_narucitelj (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    ime VARCHAR(50) NOT NULL,
-    prezime VARCHAR(50) NOT NULL,
-    oib CHAR(11) NOT NULL UNIQUE
+    id_osoba INTEGER NOT NULL,
+    oib CHAR(11) NOT NULL UNIQUE,
+    FOREIGN KEY (id_osoba) REFERENCES osoba (id)
 );
 
 CREATE TABLE catering_zahtjev (
@@ -258,7 +257,7 @@ CREATE TABLE dostava (
 	datum DATE NOT NULL, 
 	cijena_hrk DECIMAL(10, 2) NOT NULL,
 	izvrsena CHAR(1) NOT NULL,
-    FOREIGN KEY (id_gost) REFERENCES gost (id),
+    FOREIGN KEY (id_gost) REFERENCES osoba (id),
     FOREIGN KEY (id_adresa) REFERENCES adresa (id),
     CHECK (izvrseno IN ("D", "N"))
 );
