@@ -259,7 +259,7 @@ CREATE TABLE dostava (
 	izvrsena CHAR(1) NOT NULL,
     FOREIGN KEY (id_gost) REFERENCES osoba (id),
     FOREIGN KEY (id_adresa) REFERENCES adresa (id),
-    CHECK (izvrseno IN ("D", "N"))
+    CHECK (izvrsena IN ("D", "N"))
 );
 
 CREATE TABLE dostava_stavka (
@@ -272,63 +272,178 @@ CREATE TABLE dostava_stavka (
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 ); 
 
+-- INSERTOVI
+
+-- id, ime, prezime, broj_mob, email
+INSERT INTO osoba VALUES
+	(1, "Ana", "Anić", "0975698542", "anaanic@gmail.com"),
+    (2, "Milena", "Kakoli", "0911122334", "kakolisepreziva@mojamilena.com"),
+    (3, "Marko", "Afrić", "092785425", "mafric@gmail.com");
+
 -- id, naziv, placa_hrk
 INSERT INTO zanimanje VALUES   
-	(1, "kuhar", 9054,45 ),
-	(2, "konobar", 8640,85 ),
-    (3, "pomoćni kuhar", 4654,45 ),
-    (4, "pomoćni konobar", 4654,45 ),
-    (5, "servir", 4551,23 ),
-    (6, "operater na posuđu", 6054,45 ),
-    (7, "barmen", 6054,45 ),
-    (8, "poslovođa", 16054,75 ),
-    (9, "skladištar", 7453,65 ),
-    (10, "dostavljač", 8135,24 );
+	(1, "kuhar", 9054.45),
+	(2, "konobar", 8640.85),
+    (3, "pomoćni kuhar", 4654.45),
+    (4, "pomoćni konobar", 4654.45),
+    (5, "servir", 4551.23),
+    (6, "operater na posuđu", 6054.45),
+    (7, "barmen", 6054.45),
+    (8, "poslovođa", 16054.75),
+    (9, "skladištar", 7453.65),
+    (10, "dostavljač", 8135.24);
 
--- id, ime, prezime, datum_rodenja, oib, broj_mob, datum_zaposlenja, id_zanimanje
+-- id, id_osoba, oib, datum_rodenja, datum_zaposlenja, id_zanimanje
 INSERT INTO djelatnik VALUES
-	(1, 'Ana', 'Anić', 1988-11-22, 56214852651, 0975698542, 2021-05-19, 2 ),
-	(2, 'Milena', 'Kakoli', 1978-05-13, 42685138412, 0911122334, 2018-03-15, 1 ),
-	(3, 'Marko', 'Afrić', 1999-11-11, 87426514895, 092785425, 2021-04-17, 3 );
+	(1, 1, "56214852651", STR_TO_DATE('22.11.1988.', '%d.%m.%Y.'), STR_TO_DATE('19.05.2021.', '%d.%m.%Y.'), 2),
+	(2, 2, "42685138412", STR_TO_DATE('13.05.1978.', '%d.%m.%Y.'), STR_TO_DATE('15.03.2018.', '%d.%m.%Y.'), 1),
+	(3, 3, "87426514895", STR_TO_DATE('11.11.1999.', '%d.%m.%Y.'), STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), 3);
+
+-- id, drzava, grad, ulica, post_broj
+INSERT INTO adresa VALUES
+	(1, "Hrvatska", "Pula", "Rovinjska ulica 14", "52100");
         
--- id, naziv, adresa, oib, broj_mob, vrsta_usluge        
+-- id, naziv, id_adresa, oib, broj_mob, vrsta_usluge        
 INSERT INTO dobavljac VALUES
-	(1, 'Velpro', 'Zagrebačka 4', 74125621458, 0912345678, "namirnice"),
-	(2, 'Ljubica', 'Flanatička 7', 51254785214, 09852415, "salata");
-    
+	(1, 'Velpro', 1, "74125621458", "0912345678", "namirnice"),
+	(2, 'Ljubica', 1, "51254785214", "09852415", "salata");
+
+-- id, broj_stola, rajon_stola, broj_gostiju_kapacitet
+INSERT INTO stol VALUES
+	(1, "5", "1", 6);
+
+-- id, naziv    
 INSERT INTO nacini_placanja VALUES
 	(1, "gotovina"),
     (2, "kartica"),
     (3, "crypto");
-    
+
+-- id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja, iznos_hrk
+-- iznos_hrk svakog računa postavljati na NULL !!!
+INSERT INTO racun VALUES
+	(1, "000001", 3, 1, 1, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'), NULL);
+
+-- id, naziv    
 INSERT INTO alergen VALUES
 	(1, "Riba"),
     (2, "Mlijeko"),
     (3, "Pšenica");    
-    
+
+-- id, naziv_stavke, cijena_hrk    
 INSERT INTO meni VALUES
 	(1, "Jadranska orada sa žara s gratiniranim povrćem", 95),
     (2, "Vino Teran 0.1 l", 38),
     (3, "Vino Malvazija 0.1 l", 28);    
 
+-- id, id_meni, id_alergen
 INSERT INTO sadrzi_alergen VALUES
 	(1, 1, 1);
-    
+
+-- id, naziv    
 INSERT INTO kategorija_namirnica VALUES
 	(1, "Riba"),
     (2, "Meso"),
     (3, "Voće"),
     (4, "Povrće"),
     (5, "Piće");
-    
+
+-- id, naziv, id_kategorija, kolicina_na_zalihi, mjerna_jedinica    
 INSERT INTO namirnica VALUES
 	(1, "Orada", 1, 30, "komad"),
     (2, "Biftek", 2, 50, "komad"),
     (3, "Jagoda", 3, 4, "kilogram"),
     (4, "Vino Teran", 5, 60, "litra"),
     (5, "Vino Malvazija", 5, 60, "litra");
-    
+
+-- id, id_namirnica, kolicina, mjerna_jedinica, id_meni    
 INSERT INTO stavka_meni VALUES
 	(1, 1, 1, "komad", 1),
     (2, 4, 0.1, "litra", 2),
     (3, 5, 0.1, "litra", 3);
+
+-- id, id_racun, id_meni, kolicina    
+INSERT INTO stavka_racun VALUES
+	(1, 1, 1, 1);
+
+-- id, id_stol, id_gost, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju
+INSERT INTO rezervacija VALUES
+	(1, 1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "18:00", "23:00", 4);
+
+-- id, id_osoba, oib
+INSERT INTO catering_narucitelj VALUES
+	(1, 1, "12345678901");
+
+-- id, id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva
+INSERT INTO catering_zahtjev VALUES
+	(1, 1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.'));
+
+-- id, id_zahtjev, cijena_hrk, datum_izvrsenja, opis, uplaceno
+-- ukupnu cijenu cateringa zasad stavljati na NULL
+INSERT INTO catering VALUES
+	(1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
+
+-- id, id_catering, id_meni, kolicina
+INSERT INTO catering_stavka VALUES
+	();
+
+-- id, id_catering, id_djelatnik
+INSERT INTO djelatnici_catering VALUES
+	();
+
+-- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
+INSERT INTO nabava VALUES
+	();
+
+-- id, id_nabava, id_namirnica, kolicina, mjerna_jedinica, cijena_hrk
+INSERT INTO nabava_stavka VALUES
+	();
+
+-- id, datum, opis
+INSERT INTO otpis VALUES
+	();
+
+-- id, id_otpis, id_namirnica, kolicina, mjerna_jedinica
+INSERT INTO otpis_stavka VALUES
+	();
+
+-- id, naziv
+INSERT INTO kategorija_rezije VALUES
+	(1, "struja");
+
+-- id, iznos_hrk, datum, id_kategorija, placeno
+INSERT INTO rezije VALUES
+	(1, 5000.00, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), 1, "D");
+
+-- id, naziv, pocetak_radnog_vremena, kraj_radnog_vremena
+INSERT INTO smjena VALUES
+	(1, "kuhinja - prijepodne", "07:00", "15:00"),
+    (2, "kuhinja - poslijepodne", "15:00", "23:00");
+
+-- id, id_djelatnik, id_smjena, datum
+INSERT INTO djelatnik_smjena VALUES
+	();
+
+-- id, id_gost, id_adresa, datum, cijena_hrk, izvrsena
+INSERT INTO dostava VALUES
+	();
+
+-- id, id_dostava, id_meni, kolicina, cijena_hrk
+INSERT INTO dostava_stavka VALUES
+	();
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
