@@ -278,7 +278,35 @@ CREATE TABLE dostava_stavka (
 INSERT INTO osoba VALUES
 	(1, "Ana", "Anić", "0975698542", "anaanic@gmail.com"),
     (2, "Milena", "Kakoli", "0911122334", "kakolisepreziva@mojamilena.com"),
-    (3, "Marko", "Afrić", "092785425", "mafric@gmail.com");
+    (3, "Marko", "Afrić", "092785425", "mafric@gmail.com"),
+    (4, "Ive", "Kacavida", "099456585", "krizna_glava@gmail.com"),
+    (5, "Slavica", "Sladić", "098452457", "1s_s1@hotmail.com"),
+    (6, "Gertruda", "Bitić", "097456285", "bitic.g@yahoo.com"),
+    (7, "Jasmina", "Starvos", "09874525", "mawa_crnka@net.hr"),
+    (8, "David", "Bekam", "0913322554", "dbek47@gmail.com"),
+    (9, "Roberto", "Fagioli", "0925544125", "fagioli.r@outlook.com"),
+    (10, "Serđo", "Valić", "09236525", "rimonika885@gmail.com"),
+    (11, "Melisa", "Fabijanić", "099542618", "melyf@gmail.com"),
+    (12, "Lejla", "Ačimović", "091556512", "laci1@gmail.com"),
+    (13, "Vanesa", "Gojtanić", "09745524", "vanesag@gmail.com"),
+    (14, "Marina", "Lakošeljac", "01556442", "marina111@hotmail.com"),
+    (15, "Ana", "Belac", "0984525", "ana_baana@gmail.com"),
+    (16, "Igor", "Mijandrušić", "0994526", "igorm54@gmail.com"),
+    (17, "Žarko", "Miletić", "09145265", "zac@hotmail.com"),
+    (18, "Natanel", "Vitasović", "092665522", "vitan@net.hr"),
+    (19, "Ivan", "Bernobić", "09733526", "bero69@gmail.com"),
+    (20, "Nikola", "Krajcar", "099263255", "nix@outlook.com"),
+    (21, "Franko", "Peruško", "0994525", "frankop33@gmail.com"),
+    (22, "Šime", "Lanča", "095566221", "slanaca@gmail.com"),
+    (23, "Kate", "Matošević", "098325625", "mato_sevic@gmail.com"),
+    (24, "Marija", "Švić", "092889897", "maricka@yahoo.com"),
+    (25, "Lorena", "Kocijančić", "0915006002", "lory89@gmail.com"),
+    (26, "Dimitri", "Grgeta", "09122365444", "ultron1@gmail.com"),
+    (27, "Leon", "Maružin", "098001145", "leon.m@gmail.com"),
+    (28, "Erik", "Višković", "09755226", "eviskovic1@gmail.com"),
+    (29, "Mirko", "Mikac", "091330311", "mik_mik@gmail.com"),
+    (30, "Slavko", "Mikac", "091330312", "smik_smik@gmail.com");
+    
 
 -- id, naziv, placa_hrk
 INSERT INTO zanimanje VALUES   
@@ -327,7 +355,20 @@ INSERT INTO racun VALUES
 INSERT INTO alergen VALUES
 	(1, "Riba"),
     (2, "Mlijeko"),
-    (3, "Pšenica");    
+    (3, "Pšenica"), 
+    (4, "Jaja"), 
+    (5, "Kikiriki"), 
+    (6, "Cimet"), 
+    (7, "Rakovi"), 
+    (8, "Školjke"), 
+    (9, "Soja"), 
+    (10, "Celer"), 
+    (11, "Gorušnica"), 
+    (12, "Sezam"), 
+    (13, "Lupina");
+    
+    
+    
 
 -- id, naziv_stavke, cijena_hrk    
 INSERT INTO meni VALUES
