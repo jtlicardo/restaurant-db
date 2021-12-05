@@ -185,7 +185,7 @@ CREATE TABLE nabava (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_dobavljac INTEGER NOT NULL,
     opis TEXT,
-    iznos_hrk DECIMAL(10, 2) NOT NULL,
+    iznos_hrk DECIMAL(10, 2) DEFAULT 0.00,
     podmireno CHAR(1) NOT NULL,
     datum DATE NOT NULL,
     FOREIGN KEY (id_dobavljac) REFERENCES dobavljac (id),
@@ -197,7 +197,6 @@ CREATE TABLE nabava_stavka (
     id_nabava INTEGER NOT NULL,
     id_namirnica INTEGER NOT NULL,
     kolicina INTEGER NOT NULL,
-    mjerna_jedinica VARCHAR(20) NOT NULL,
     cijena_hrk DECIMAL(10, 2) NOT NULL,
 	FOREIGN KEY (id_nabava) REFERENCES nabava (id),
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
@@ -214,7 +213,6 @@ CREATE TABLE otpis_stavka (
 	id_otpis INTEGER NOT NULL,
     id_namirnica INTEGER NOT NULL,
 	kolicina INTEGER NOT NULL,
-	mjerna_jedinica VARCHAR(20) NOT NULL,
 	FOREIGN KEY (id_otpis) REFERENCES otpis (id),
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
 );    
@@ -267,7 +265,7 @@ CREATE TABLE dostava_stavka (
 	id_dostava INTEGER NOT NULL,
 	id_meni INTEGER NOT NULL,
 	kolicina INTEGER NOT NULL, 
-	cijena_hrk DECIMAL(10, 2) DEFAULT 0.00,
+	cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_dostava) REFERENCES dostava (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 ); 
@@ -301,11 +299,21 @@ INSERT INTO osoba VALUES
     (23, "Kate", "Matošević", "098325625", "mato_sevic@gmail.com"),
     (24, "Marija", "Švić", "092889897", "maricka@yahoo.com"),
     (25, "Lorena", "Kocijančić", "0915006002", "lory89@gmail.com"),
-    (26, "Dimitri", "Grgeta", "09122365444", "ultron1@gmail.com"),
+    (26, "Dimitri", "Grgeta", "0912236544", "ultron1@gmail.com"),
     (27, "Leon", "Maružin", "098001145", "leon.m@gmail.com"),
     (28, "Erik", "Višković", "09755226", "eviskovic1@gmail.com"),
     (29, "Mirko", "Mikac", "091330311", "mik_mik@gmail.com"),
-    (30, "Slavko", "Mikac", "091330312", "smik_smik@gmail.com");
+    (30, "Slavko", "Mikac", "091330312", "smik_smik@gmail.com"),
+    (31, "Frane", "Kosir", "0916471320", "f.kosir@gmail.com"),
+    (32, "Vesna", "Petrović", "0991233211", "vpetrovic@tvnova.hr"),
+    (33, "Igor", "Pamić", "0915554444", "boskarin@outlook.com"),
+    (34, "Rino", "Pavletić", "0951234444", "rpavletic@gmail.com"),
+    (35, "Zlatan", "Ibrahimović", "0990001111", "ibro@gmail.com"),
+    (36, "Drago", "Orlić", "0943331212", "orlic.drago@gmail.com"),
+    (37, "Dragan", "Matika", "0976661233", "matika@hotmail.com"),
+    (38, "Tone", "Štraca", "0912223333", "tonestraca@gmail.com"),
+    (39, "Daniele", "Portafoglio", "0995551111", "daniele@gmail.com"),
+    (40, "Zorica", "Rankun", "0910997777", "zoryy@gmail.com");
     
 
 -- id, naziv, placa_hrk
@@ -403,9 +411,9 @@ INSERT INTO nacini_placanja VALUES
     (3, "crypto");
 
 -- id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja, iznos_hrk
--- iznos_hrk svakog računa postavljati na NULL !!!
-INSERT INTO racun VALUES
-	(1, "000001", 3, 1, 1, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'), NULL);
+-- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu stavka_racun
+INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
+	(1, "000001", 3, 1, 1, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'));
 
 -- id, naziv    
 INSERT INTO alergen VALUES
@@ -421,11 +429,9 @@ INSERT INTO alergen VALUES
     (10, "Celer"), 
     (11, "Gorušnica"), 
     (12, "Sezam"), 
-    (13, "Lupina");
+    (13, "Lupina");  
     
     
-    
-
 -- id, naziv_stavke, cijena_hrk    
 INSERT INTO meni VALUES
 	(1, "Jadranska orada sa žara s gratiniranim povrćem", 95),
@@ -458,9 +464,32 @@ INSERT INTO stavka_meni VALUES
     (2, 4, 0.1, "litra", 2),
     (3, 5, 0.1, "litra", 3);
 
+
+-- -----------------------------    
+-- Trigger za izračun ukupnog iznosa računa
+DELIMITER //
+CREATE TRIGGER bi_stavka_racun
+    BEFORE INSERT ON stavka_racun
+    FOR EACH ROW
+BEGIN	
+	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    SELECT cijena_hrk INTO l_cijena_stavke
+		FROM meni
+        WHERE meni.id = new.id_meni;
+    
+    UPDATE racun
+		SET iznos_hrk = iznos_hrk + l_cijena_stavke * new.kolicina
+		WHERE id = new.id_racun;
+END//
+DELIMITER ;
+-- -----------------------------
+
+
 -- id, id_racun, id_meni, kolicina    
 INSERT INTO stavka_racun VALUES
-	(1, 1, 1, 1);
+	(1, 1, 1, 1),
+    (2, 1, 3, 1);
 
 -- id, id_stol, id_gost, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju
 INSERT INTO rezervacija VALUES
@@ -475,31 +504,70 @@ INSERT INTO catering_zahtjev VALUES
 	(1, 1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.'));
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, opis, uplaceno
--- ukupnu cijenu cateringa zasad stavljati na NULL
-INSERT INTO catering VALUES
-	(1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
+-- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
+INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
+	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
+
+
+-- -----------------------------    
+-- Trigger za izračun ukupnog iznosa cateringa
+DELIMITER //
+CREATE TRIGGER bi_catering_stavka
+    BEFORE INSERT ON catering_stavka
+    FOR EACH ROW
+BEGIN	
+	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    SELECT cijena_hrk INTO l_cijena_stavke
+		FROM meni
+        WHERE meni.id = new.id_meni;
+    
+    UPDATE catering
+		SET cijena_hrk = cijena_hrk + l_cijena_stavke * new.kolicina
+		WHERE id = new.id_catering;
+END//
+DELIMITER ;
+-- -----------------------------
+
 
 -- id, id_catering, id_meni, kolicina
 INSERT INTO catering_stavka VALUES
-	();
+	(1, 1, 3, 5);
 
 -- id, id_catering, id_djelatnik
 INSERT INTO djelatnici_catering VALUES
 	();
 
 -- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
-INSERT INTO nabava VALUES
-	();
+-- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu nabava_stavka
+INSERT INTO nabava (id, id_dobavljac, opis, podmireno, datum) VALUES
+	(1, 1, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'));
 
--- id, id_nabava, id_namirnica, kolicina, mjerna_jedinica, cijena_hrk
+
+-- -----------------------------    
+-- Trigger za izračun ukupnog iznosa nabave
+DELIMITER //
+CREATE TRIGGER bi_nabava_stavka
+    BEFORE INSERT ON nabava_stavka
+    FOR EACH ROW
+BEGIN	
+    UPDATE nabava
+		SET iznos_hrk = iznos_hrk + new.cijena_hrk
+		WHERE id = new.id_nabava;
+END//
+DELIMITER ;
+-- -----------------------------
+
+
+-- id, id_nabava, id_namirnica, kolicina, cijena_hrk
 INSERT INTO nabava_stavka VALUES
-	();
+	(1, 1, 1, 10, 250.00);
 
 -- id, datum, opis
 INSERT INTO otpis VALUES
 	();
 
--- id, id_otpis, id_namirnica, kolicina, mjerna_jedinica
+-- id, id_otpis, id_namirnica, kolicina
 INSERT INTO otpis_stavka VALUES
 	();
 
@@ -521,12 +589,38 @@ INSERT INTO djelatnik_smjena VALUES
 	();
 
 -- id, id_gost, id_adresa, datum, cijena_hrk, izvrsena
-INSERT INTO dostava VALUES
-	();
+-- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
+INSERT INTO dostava (id, id_gost, id_adresa, datum, izvrsena) VALUES
+	(1, 31, 22, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "D");
+
+
+-- -----------------------------    
+-- Trigger za izračun ukupnog iznosa dostave
+DELIMITER //
+CREATE TRIGGER bi_dostava_stavka
+    BEFORE INSERT ON dostava_stavka
+    FOR EACH ROW
+BEGIN	
+	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    SELECT cijena_hrk INTO l_cijena_stavke
+		FROM meni
+        WHERE meni.id = new.id_meni;
+        
+	SET new.cijena_hrk = l_cijena_stavke * new.kolicina;
+    
+    UPDATE dostava
+		SET cijena_hrk = cijena_hrk + new.cijena_hrk
+		WHERE id = new.id_dostava;
+END//
+DELIMITER ;
+-- -----------------------------
+
 
 -- id, id_dostava, id_meni, kolicina, cijena_hrk
-INSERT INTO dostava_stavka VALUES
-	();
+-- cijena_hrk ne dodajemo -> automatski se izračuna iz cijene jela koje je naručeno i količine
+INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
+	(1, 1, 1, 2); -- ovdje su 2 jadranske orade (svaka po 95.00 kn) -> cijena ove stavke je 190.00
 
 
 
