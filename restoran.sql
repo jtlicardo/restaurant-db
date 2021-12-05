@@ -108,7 +108,6 @@ CREATE TABLE stavka_meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_namirnica INTEGER NOT NULL,
     kolicina DECIMAL (10, 2),
-    mjerna_jedinica VARCHAR(20) NOT NULL,
     id_meni INTEGER NOT NULL,
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
@@ -458,11 +457,11 @@ INSERT INTO namirnica VALUES
     (4, "Vino Teran", 5, 60, "litra"),
     (5, "Vino Malvazija", 5, 60, "litra");
 
--- id, id_namirnica, kolicina, mjerna_jedinica, id_meni    
+-- id, id_namirnica, kolicina, id_meni    
 INSERT INTO stavka_meni VALUES
-	(1, 1, 1, "komad", 1),
-    (2, 4, 0.1, "litra", 2),
-    (3, 5, 0.1, "litra", 3);
+	(1, 1, 1, 1),
+    (2, 4, 0.1, 2),
+    (3, 5, 0.1, 3);
 
 
 -- -----------------------------    
