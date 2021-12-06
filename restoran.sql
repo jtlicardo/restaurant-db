@@ -170,6 +170,7 @@ CREATE TABLE catering_stavka (
     id_catering INTEGER NOT NULL,
     id_meni INTEGER NOT NULL,
     kolicina INTEGER NOT NULL,
+    cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_catering) REFERENCES catering (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 );
@@ -277,7 +278,7 @@ CREATE TABLE dostava_stavka (
 
 -- TRIGGERI
 
--- Trigger za izračun ukupnog iznosa računa
+-- Trigger za izračun iznosa stavke računa i ukupnog iznosa računa
 DELIMITER //
 CREATE TRIGGER bi_stavka_racun
     BEFORE INSERT ON stavka_racun
@@ -297,7 +298,7 @@ BEGIN
 END//
 DELIMITER ;
 
--- Trigger za izračun ukupnog iznosa cateringa
+-- Trigger za izračun iznosa stavke cateringa i ukupnog iznosa cateringa
 DELIMITER //
 CREATE TRIGGER bi_catering_stavka
     BEFORE INSERT ON catering_stavka
@@ -308,13 +309,15 @@ BEGIN
     SELECT cijena_hrk INTO l_cijena_stavke
 		FROM meni
         WHERE meni.id = new.id_meni;
+        
+	SET new.cijena_hrk = l_cijena_stavke * new.kolicina; 
     
     UPDATE catering
-		SET cijena_hrk = cijena_hrk + l_cijena_stavke * new.kolicina
+		SET cijena_hrk = cijena_hrk + new.cijena_hrk
 		WHERE id = new.id_catering;
 END//
 DELIMITER ;
-  
+
 -- Trigger za izračun ukupnog iznosa nabave
 DELIMITER //
 CREATE TRIGGER bi_nabava_stavka
@@ -327,7 +330,7 @@ BEGIN
 END//
 DELIMITER ;
   
--- Trigger za izračun ukupnog iznosa dostave
+-- Trigger za izračun iznosa stavke dostave i ukupnog iznosa dostave
 DELIMITER //
 CREATE TRIGGER bi_dostava_stavka
     BEFORE INSERT ON dostava_stavka
@@ -569,10 +572,12 @@ INSERT INTO catering_zahtjev VALUES
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
 INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
 	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
-
--- id, id_catering, id_meni, kolicina
-INSERT INTO catering_stavka VALUES
-	(1, 1, 3, 5);
+    
+-- id, id_catering, id_meni, kolicina, cijena_hrk
+-- cijena_hrk -> automatski se izračunava
+INSERT INTO catering_stavka (id, id_catering, id_meni, kolicina) VALUES
+	(1, 1, 1, 10),
+    (2, 1, 2, 10);
 
 -- id, id_catering, id_djelatnik
 INSERT INTO djelatnici_catering VALUES
@@ -618,9 +623,9 @@ INSERT INTO dostava (id, id_gost, id_adresa, datum, izvrsena) VALUES
 	(1, 31, 22, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "D");
 
 -- id, id_dostava, id_meni, kolicina, cijena_hrk
--- cijena_hrk ne dodajemo -> automatski se izračuna iz cijene jela koje je naručeno i količine
+-- cijena_hrk ne dodajemo -> automatski se izračunava
 INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
-	(1, 1, 1, 2); -- ovdje su 2 jadranske orade (svaka po 95.00 kn) -> cijena ove stavke je 190.00
+	(1, 1, 1, 2);
 
 
 
