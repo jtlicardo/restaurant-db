@@ -269,6 +269,84 @@ CREATE TABLE dostava_stavka (
     FOREIGN KEY (id_meni) REFERENCES meni (id)
 ); 
 
+
+
+
+
+-- TRIGGERI
+
+-- Trigger za izračun ukupnog iznosa računa
+DELIMITER //
+CREATE TRIGGER bi_stavka_racun
+    BEFORE INSERT ON stavka_racun
+    FOR EACH ROW
+BEGIN	
+	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    SELECT cijena_hrk INTO l_cijena_stavke
+		FROM meni
+        WHERE meni.id = new.id_meni;
+    
+    UPDATE racun
+		SET iznos_hrk = iznos_hrk + l_cijena_stavke * new.kolicina
+		WHERE id = new.id_racun;
+END//
+DELIMITER ;
+
+-- Trigger za izračun ukupnog iznosa cateringa
+DELIMITER //
+CREATE TRIGGER bi_catering_stavka
+    BEFORE INSERT ON catering_stavka
+    FOR EACH ROW
+BEGIN	
+	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    SELECT cijena_hrk INTO l_cijena_stavke
+		FROM meni
+        WHERE meni.id = new.id_meni;
+    
+    UPDATE catering
+		SET cijena_hrk = cijena_hrk + l_cijena_stavke * new.kolicina
+		WHERE id = new.id_catering;
+END//
+DELIMITER ;
+  
+-- Trigger za izračun ukupnog iznosa nabave
+DELIMITER //
+CREATE TRIGGER bi_nabava_stavka
+    BEFORE INSERT ON nabava_stavka
+    FOR EACH ROW
+BEGIN	
+    UPDATE nabava
+		SET iznos_hrk = iznos_hrk + new.cijena_hrk
+		WHERE id = new.id_nabava;
+END//
+DELIMITER ;
+  
+-- Trigger za izračun ukupnog iznosa dostave
+DELIMITER //
+CREATE TRIGGER bi_dostava_stavka
+    BEFORE INSERT ON dostava_stavka
+    FOR EACH ROW
+BEGIN	
+	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    SELECT cijena_hrk INTO l_cijena_stavke
+		FROM meni
+        WHERE meni.id = new.id_meni;
+        
+	SET new.cijena_hrk = l_cijena_stavke * new.kolicina;
+    
+    UPDATE dostava
+		SET cijena_hrk = cijena_hrk + new.cijena_hrk
+		WHERE id = new.id_dostava;
+END//
+DELIMITER ;
+
+
+
+
+
 -- INSERTOVI
 
 -- id, ime, prezime, broj_mob, email
@@ -463,28 +541,6 @@ INSERT INTO stavka_meni VALUES
     (2, 4, 0.1, 2),
     (3, 5, 0.1, 3);
 
-
--- -----------------------------    
--- Trigger za izračun ukupnog iznosa računa
-DELIMITER //
-CREATE TRIGGER bi_stavka_racun
-    BEFORE INSERT ON stavka_racun
-    FOR EACH ROW
-BEGIN	
-	DECLARE l_cijena_stavke DECIMAL (10, 2);
-    
-    SELECT cijena_hrk INTO l_cijena_stavke
-		FROM meni
-        WHERE meni.id = new.id_meni;
-    
-    UPDATE racun
-		SET iznos_hrk = iznos_hrk + l_cijena_stavke * new.kolicina
-		WHERE id = new.id_racun;
-END//
-DELIMITER ;
--- -----------------------------
-
-
 -- id, id_racun, id_meni, kolicina    
 INSERT INTO stavka_racun VALUES
 	(1, 1, 1, 1),
@@ -507,28 +563,6 @@ INSERT INTO catering_zahtjev VALUES
 INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
 	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
 
-
--- -----------------------------    
--- Trigger za izračun ukupnog iznosa cateringa
-DELIMITER //
-CREATE TRIGGER bi_catering_stavka
-    BEFORE INSERT ON catering_stavka
-    FOR EACH ROW
-BEGIN	
-	DECLARE l_cijena_stavke DECIMAL (10, 2);
-    
-    SELECT cijena_hrk INTO l_cijena_stavke
-		FROM meni
-        WHERE meni.id = new.id_meni;
-    
-    UPDATE catering
-		SET cijena_hrk = cijena_hrk + l_cijena_stavke * new.kolicina
-		WHERE id = new.id_catering;
-END//
-DELIMITER ;
--- -----------------------------
-
-
 -- id, id_catering, id_meni, kolicina
 INSERT INTO catering_stavka VALUES
 	(1, 1, 3, 5);
@@ -541,22 +575,6 @@ INSERT INTO djelatnici_catering VALUES
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu nabava_stavka
 INSERT INTO nabava (id, id_dobavljac, opis, podmireno, datum) VALUES
 	(1, 1, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'));
-
-
--- -----------------------------    
--- Trigger za izračun ukupnog iznosa nabave
-DELIMITER //
-CREATE TRIGGER bi_nabava_stavka
-    BEFORE INSERT ON nabava_stavka
-    FOR EACH ROW
-BEGIN	
-    UPDATE nabava
-		SET iznos_hrk = iznos_hrk + new.cijena_hrk
-		WHERE id = new.id_nabava;
-END//
-DELIMITER ;
--- -----------------------------
-
 
 -- id, id_nabava, id_namirnica, kolicina, cijena_hrk
 INSERT INTO nabava_stavka VALUES
@@ -591,30 +609,6 @@ INSERT INTO djelatnik_smjena VALUES
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
 INSERT INTO dostava (id, id_gost, id_adresa, datum, izvrsena) VALUES
 	(1, 31, 22, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "D");
-
-
--- -----------------------------    
--- Trigger za izračun ukupnog iznosa dostave
-DELIMITER //
-CREATE TRIGGER bi_dostava_stavka
-    BEFORE INSERT ON dostava_stavka
-    FOR EACH ROW
-BEGIN	
-	DECLARE l_cijena_stavke DECIMAL (10, 2);
-    
-    SELECT cijena_hrk INTO l_cijena_stavke
-		FROM meni
-        WHERE meni.id = new.id_meni;
-        
-	SET new.cijena_hrk = l_cijena_stavke * new.kolicina;
-    
-    UPDATE dostava
-		SET cijena_hrk = cijena_hrk + new.cijena_hrk
-		WHERE id = new.id_dostava;
-END//
-DELIMITER ;
--- -----------------------------
-
 
 -- id, id_dostava, id_meni, kolicina, cijena_hrk
 -- cijena_hrk ne dodajemo -> automatski se izračuna iz cijene jela koje je naručeno i količine
