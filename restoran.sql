@@ -411,7 +411,8 @@ INSERT INTO zanimanje VALUES
     (7, "barmen", 6054.45),
     (8, "poslovođa", 16054.75),
     (9, "skladištar", 7453.65),
-    (10, "dostavljač", 8135.24);
+    (10, "dostavljač", 8135.24),
+    (11, "blagajnik", 7500.00);
 
 -- id, id_osoba, oib, datum_rodenja, datum_zaposlenja, id_zanimanje
 INSERT INTO djelatnik VALUES
@@ -421,7 +422,7 @@ INSERT INTO djelatnik VALUES
     (4, 4, "93571964576", STR_TO_DATE('04.09.1970.', '%d.%m.%Y.'), STR_TO_DATE('04.04.2015.', '%d.%m.%Y.'), 1),
     (5, 5, "48654207991", STR_TO_DATE('11.11.1991.', '%d.%m.%Y.'), STR_TO_DATE('24.01.2017.', '%d.%m.%Y.'), 2),
     (6, 6, "24600726742", STR_TO_DATE('21.01.1986.', '%d.%m.%Y.'), STR_TO_DATE('19.08.2019.', '%d.%m.%Y.'), 2),
-    (7, 7, "39839635272", STR_TO_DATE('18.10.2003.', '%d.%m.%Y.'), STR_TO_DATE('22.06.2016.', '%d.%m.%Y.'), 2),
+    (7, 7, "39839635272", STR_TO_DATE('18.10.2003.', '%d.%m.%Y.'), STR_TO_DATE('22.06.2016.', '%d.%m.%Y.'), 11),
     (8, 8, "22911268228", STR_TO_DATE('08.04.1988.', '%d.%m.%Y.'), STR_TO_DATE('22.03.2017.', '%d.%m.%Y.'), 3),
     (9, 9, "37746108986", STR_TO_DATE('05.03.1973.', '%d.%m.%Y.'), STR_TO_DATE('22.03.2017.', '%d.%m.%Y.'), 4),
     (10, 10, "27772129672", STR_TO_DATE('16.01.1980.', '%d.%m.%Y.'), STR_TO_DATE('07.01.2016.', '%d.%m.%Y.'), 3),
@@ -430,9 +431,9 @@ INSERT INTO djelatnik VALUES
     (13, 13, "36828047884", STR_TO_DATE('18.05.1989.', '%d.%m.%Y.'), STR_TO_DATE('28.06.2020.', '%d.%m.%Y.'), 4),
     (14, 14, "91290805782", STR_TO_DATE('21.07.1982.', '%d.%m.%Y.'), STR_TO_DATE('10.03.2019.', '%d.%m.%Y.'), 5),
     (15, 15, "10740162574", STR_TO_DATE('02.12.1990.', '%d.%m.%Y.'), STR_TO_DATE('16.07.2018.', '%d.%m.%Y.'), 6),
-    (16, 16, "38596616074", STR_TO_DATE('23.04.1992.', '%d.%m.%Y.'), STR_TO_DATE('14.06.2016.', '%d.%m.%Y.'), 5),
+    (16, 16, "38596616074", STR_TO_DATE('23.04.1992.', '%d.%m.%Y.'), STR_TO_DATE('14.06.2016.', '%d.%m.%Y.'), 11),
     (17, 17, "07998924475", STR_TO_DATE('01.03.1980.', '%d.%m.%Y.'), STR_TO_DATE('28.01.2017.', '%d.%m.%Y.'), 5),
-    (18, 18, "49803937625", STR_TO_DATE('25.11.2000.', '%d.%m.%Y.'), STR_TO_DATE('22.05.2017.', '%d.%m.%Y.'), 6),
+    (18, 18, "49803937625", STR_TO_DATE('25.11.2000.', '%d.%m.%Y.'), STR_TO_DATE('22.05.2017.', '%d.%m.%Y.'), 11),
     (19, 19, "23060440711", STR_TO_DATE('18.07.2001.', '%d.%m.%Y.'), STR_TO_DATE('16.09.2020.', '%d.%m.%Y.'), 6),
     (20, 20, "26189778531", STR_TO_DATE('12.02.1992.', '%d.%m.%Y.'), STR_TO_DATE('23.12.2015.', '%d.%m.%Y.'), 6),
     (21, 21, "54869054022", STR_TO_DATE('13.05.1975.', '%d.%m.%Y.'), STR_TO_DATE('18.07.2015.', '%d.%m.%Y.'), 1),
@@ -486,7 +487,16 @@ INSERT INTO dobavljac VALUES
 
 -- id, broj_stola, rajon_stola, broj_gostiju_kapacitet
 INSERT INTO stol VALUES
-	(1, "5", "1", 6);
+	(1, "1", "1", 6),
+    (2, "2", "1", 6),
+    (3, "3", "1", 4),
+    (4, "4", "1", 4),
+    (5, "5", "1", 8),
+    (6, "6", "1", 6),
+    (7, "7", "1", 6),
+    (8, "8", "1", 6),
+    (9, "9", "1", 4),
+    (10, "10", "1", 8);
 
 -- id, naziv    
 INSERT INTO nacini_placanja VALUES
@@ -496,9 +506,18 @@ INSERT INTO nacini_placanja VALUES
 
 -- id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja, iznos_hrk
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu stavka_racun
+-- id-evi djelatnika koji su blagajnici: 18, 7, 16
 INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
-	(1, "000001", 3, 1, 1, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (2, "000002", 1, 1, 1, STR_TO_DATE('18.12.2020. 13:30:00', '%d.%m.%Y. %H:%i:%s'));
+	(1, "000001", 3, 5, 7, STR_TO_DATE('18.12.2018. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (2, "000002", 1, 3, 7, STR_TO_DATE('18.12.2018. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (3, "000003", 1, 9, 18, STR_TO_DATE('18.12.2018. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (4, "000004", 1, 1, 18, STR_TO_DATE('18.12.2018. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (5, "000005", 1, 10, 7, STR_TO_DATE('18.12.2018. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (6, "000006", 2, 3, 16, STR_TO_DATE('19.12.2018. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (7, "000007", 1, 6, 16, STR_TO_DATE('19.12.2018. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (8, "000008", 1, 5, 7, STR_TO_DATE('19.12.2018. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (9, "000009", 1, 9, 16, STR_TO_DATE('19.12.2018. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (10, "000010", 1, 2, 7, STR_TO_DATE('19.12.2018. 15:00:00', '%d.%m.%Y. %H:%i:%s'));
 
 -- id, naziv    
 INSERT INTO alergen VALUES
@@ -521,7 +540,15 @@ INSERT INTO alergen VALUES
 INSERT INTO meni VALUES
 	(1, "Jadranska orada sa žara s gratiniranim povrćem", 95),
     (2, "Vino Teran 0.1 l", 38),
-    (3, "Vino Malvazija 0.1 l", 28);    
+    (3, "Vino Malvazija 0.1 l", 28),
+    (4, "Salata od jadranske hobotnice s krumpirom i rajčicom", 95),
+    (5, "Juha od rajčice", 35),
+    (6, "Istarski fuži s jadranskim kozicama i tartufima", 98),
+    (7, "Dalmatinska pašticada s domaćim njokima", 96),
+    (8, "Spaghetti Carbonara", 43),
+    (9, "Spaghetti Bolognese", 43),
+    (10, "Pečena teletina s gratiniranim krumpirom", 125),
+    (11, "Biftek u umaku od senfa s gratiniranim krumpirom i povrćem sa žara", 185);    
 
 -- id, id_meni, id_alergen
 INSERT INTO sadrzi_alergen VALUES
