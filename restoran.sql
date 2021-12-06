@@ -118,8 +118,10 @@ CREATE TABLE stavka_racun (
     id_racun INTEGER NOT NULL,
     id_meni INTEGER NOT NULL,
     kolicina INTEGER NOT NULL,
+    cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_racun) REFERENCES racun (id),
-    FOREIGN KEY (id_meni) REFERENCES meni (id)
+    FOREIGN KEY (id_meni) REFERENCES meni (id),
+    UNIQUE (id_racun, id_meni)
 );
 
 CREATE TABLE rezervacija (
@@ -286,9 +288,11 @@ BEGIN
     SELECT cijena_hrk INTO l_cijena_stavke
 		FROM meni
         WHERE meni.id = new.id_meni;
+        
+	SET new.cijena_hrk = l_cijena_stavke * new.kolicina;
     
     UPDATE racun
-		SET iznos_hrk = iznos_hrk + l_cijena_stavke * new.kolicina
+		SET iznos_hrk = iznos_hrk + new.cijena_hrk
 		WHERE id = new.id_racun;
 END//
 DELIMITER ;
@@ -490,7 +494,8 @@ INSERT INTO nacini_placanja VALUES
 -- id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja, iznos_hrk
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu stavka_racun
 INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
-	(1, "000001", 3, 1, 1, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'));
+	(1, "000001", 3, 1, 1, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (2, "000002", 1, 1, 1, STR_TO_DATE('18.12.2020. 13:30:00', '%d.%m.%Y. %H:%i:%s'));
 
 -- id, naziv    
 INSERT INTO alergen VALUES
@@ -541,10 +546,12 @@ INSERT INTO stavka_meni VALUES
     (2, 4, 0.1, 2),
     (3, 5, 0.1, 3);
 
--- id, id_racun, id_meni, kolicina    
-INSERT INTO stavka_racun VALUES
-	(1, 1, 1, 1),
-    (2, 1, 3, 1);
+-- id, id_racun, id_meni, kolicina, cijena_hrk
+-- cijena_hrk ne dodajemo -> automatski se izračuna
+INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
+    (1, 1, 1, 1),
+    (2, 1, 3, 2),
+    (3, 2, 1, 1);
 
 -- id, id_stol, id_gost, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju
 INSERT INTO rezervacija VALUES
