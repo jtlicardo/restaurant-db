@@ -78,8 +78,10 @@ CREATE TABLE alergen (
 
 CREATE TABLE meni (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    naziv_stavke VARCHAR(50) NOT NULL,
-    cijena_hrk DECIMAL(10, 2) NOT NULL
+    naziv_stavke VARCHAR(70) NOT NULL,
+    cijena_hrk DECIMAL(10, 2) NOT NULL,
+    aktivno CHAR(1) DEFAULT "D",
+    CHECK (aktivno IN ("D", "N"))
 );
     
 CREATE TABLE sadrzi_alergen (
@@ -536,8 +538,8 @@ INSERT INTO alergen VALUES
     (13, "Lupina");  
     
     
--- id, naziv_stavke, cijena_hrk    
-INSERT INTO meni VALUES
+-- id, naziv_stavke, cijena_hrk, aktivno (po defaultu "D") 
+INSERT INTO meni (id, naziv_stavke, cijena_hrk) VALUES
 	(1, "Jadranska orada sa žara s gratiniranim povrćem", 95),
     (2, "Vino Teran 0.1 l", 38),
     (3, "Vino Malvazija 0.1 l", 28),
@@ -548,7 +550,11 @@ INSERT INTO meni VALUES
     (8, "Spaghetti Carbonara", 43),
     (9, "Spaghetti Bolognese", 43),
     (10, "Pečena teletina s gratiniranim krumpirom", 125),
-    (11, "Biftek u umaku od senfa s gratiniranim krumpirom i povrćem sa žara", 185);    
+    (11, "Biftek s gratiniranim krumpirom i povrćem sa žara", 185),
+    (12, "Pečena teletina s gratiniranim krumpirom", 125),
+    (13, "Goveđa juha", 30),
+    (14, "Soparnik", 42),
+    (15, "Njoki u umaku od sira", 50);
 
 -- id, id_meni, id_alergen
 INSERT INTO sadrzi_alergen VALUES
