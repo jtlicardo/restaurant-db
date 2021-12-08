@@ -510,16 +510,16 @@ INSERT INTO nacini_placanja VALUES
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu stavka_racun
 -- id-evi djelatnika koji su blagajnici: 18, 7, 16
 INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
-	(1, "000001", 3, 5, 7, STR_TO_DATE('18.12.2018. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (2, "000002", 1, 3, 7, STR_TO_DATE('18.12.2018. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (3, "000003", 1, 9, 18, STR_TO_DATE('18.12.2018. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (4, "000004", 1, 1, 18, STR_TO_DATE('18.12.2018. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (5, "000005", 1, 10, 7, STR_TO_DATE('18.12.2018. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (6, "000006", 2, 3, 16, STR_TO_DATE('19.12.2018. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (7, "000007", 1, 6, 16, STR_TO_DATE('19.12.2018. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (8, "000008", 1, 5, 7, STR_TO_DATE('19.12.2018. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (9, "000009", 1, 9, 16, STR_TO_DATE('19.12.2018. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (10, "000010", 1, 2, 7, STR_TO_DATE('19.12.2018. 15:00:00', '%d.%m.%Y. %H:%i:%s'));
+	(1, "000001", 3, 5, 7, STR_TO_DATE('18.12.2017. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (2, "000002", 1, 3, 7, STR_TO_DATE('18.12.2017. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (3, "000003", 1, 9, 18, STR_TO_DATE('18.12.2017. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (4, "000004", 1, 1, 18, STR_TO_DATE('18.12.2017. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (5, "000005", 1, 10, 7, STR_TO_DATE('18.12.2017. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (6, "000006", 2, 3, 16, STR_TO_DATE('19.12.2017. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (7, "000007", 1, 6, 16, STR_TO_DATE('19.12.2017. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (8, "000008", 1, 5, 7, STR_TO_DATE('19.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (9, "000009", 1, 9, 16, STR_TO_DATE('19.12.2017. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (10, "000010", 1, 2, 7, STR_TO_DATE('19.12.2017. 15:00:00', '%d.%m.%Y. %H:%i:%s'));
 
 -- id, naziv    
 INSERT INTO alergen VALUES
@@ -587,7 +587,29 @@ INSERT INTO stavka_meni VALUES
 INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
     (1, 1, 1, 1),
     (2, 1, 3, 2),
-    (3, 2, 1, 1);
+    (3, 2, 1, 1),
+    (4, 2, 15, 3),
+    (5, 2, 3, 1),
+    (6, 3, 7, 2),
+    (7, 3, 5, 1),
+    (8, 4, 15, 1),
+    (9, 4, 14, 2),
+    (10, 5, 13, 1),
+    (11, 5, 1, 1),
+    (12, 6, 10, 3),
+    (13, 7, 13, 1),
+    (14, 7, 7, 3),
+    (15, 7, 1, 3),
+    (16, 8, 10, 1),
+    (17, 8, 4, 5),
+    (18, 8, 2, 1),
+    (19, 8, 1, 1),
+    (20, 9, 2, 5),
+    (21, 9, 4, 6),
+    (22, 9, 7, 2),
+    (23, 9, 5, 3),
+    (24, 10, 8, 2),
+    (25, 10, 9, 2);
 
 -- id, id_stol, id_gost, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju
 INSERT INTO rezervacija VALUES
