@@ -608,7 +608,7 @@ INSERT INTO meni (id, naziv_stavke, cijena_hrk) VALUES
     (17, "Lignje na žaru", 47),
     (18, "Pohani oslić", 50),
     (19, "Miješana salata", 17),
-    (20, "Pileča plata za 4 osobe", 150),
+    (20, "Pileća plata za 4 osobe", 150),
     (21, "Grill plata za 4 osobe", 160),
     (22, "Pommes frites", 17),
     (23, "Jaja na oko", 15),
@@ -726,11 +726,11 @@ INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
     (79, 31, 18, 1),
     (80, 31, 14, 1),
     (81, 31, 19, 2),
-    (82, 31, 2, 2),
+    (82, 31, 5, 2),
     (83, 31, 3, 3),
-    (84, 31, 3, 3),
-    (85, 31, 3, 3),
-    (86, 31, 3, 3),
+    (84, 31, 2, 3),
+    (85, 31, 4, 3),
+    (86, 31, 7, 3),
     (87, 32, 14, 1),
     (88, 32, 18, 1),
     (89, 32, 11, 1),
@@ -770,11 +770,9 @@ INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
     (123, 39, 9, 1),
     (124, 39, 14, 1),
     (125, 39, 13, 1),
-	(125, 39, 16, 1),
-	(125, 39, 6, 1),
-	(126, 39, 20, 6);
-    
-    
+	(126, 39, 16, 1),
+	(127, 39, 6, 1),
+	(128, 39, 20, 6);
 
 -- id, id_stol, id_gost, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju
 INSERT INTO rezervacija VALUES
@@ -839,13 +837,57 @@ INSERT INTO djelatnik_smjena VALUES
 
 -- id, id_gost, id_adresa, datum, cijena_hrk, izvrsena
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
+-- id_gost REFERENCES osoba (id) -> jer ne postoji tablica gost
 INSERT INTO dostava (id, id_gost, id_adresa, datum, izvrsena) VALUES
-	(1, 31, 22, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "D");
+	(1, 31, 22, STR_TO_DATE('01.05.2017.', '%d.%m.%Y.'), "D"),
+    (2, 34, 1, STR_TO_DATE('15.06.2017.', '%d.%m.%Y.'), "D"),
+    (3, 35, 17, STR_TO_DATE('22.07.2017.', '%d.%m.%Y.'), "D"),
+    (4, 39, 25, STR_TO_DATE('01.02.2018.', '%d.%m.%Y.'), "D"),
+    (5, 40, 12, STR_TO_DATE('01.03.2018.', '%d.%m.%Y.'), "D"),
+    (6, 33, 11, STR_TO_DATE('01.04.2018.', '%d.%m.%Y.'), "D"),
+    (7, 32, 10, STR_TO_DATE('01.05.2018.', '%d.%m.%Y.'), "D"),
+    (8, 38, 11, STR_TO_DATE('01.06.2018.', '%d.%m.%Y.'), "D"),
+    (9, 35, 28, STR_TO_DATE('01.07.2018.', '%d.%m.%Y.'), "D"),
+    (10, 35, 2, STR_TO_DATE('02.07.2018.', '%d.%m.%Y.'), "D"),
+    (11, 32, 3, STR_TO_DATE('02.07.2018.', '%d.%m.%Y.'), "D"),
+    (12, 31, 4, STR_TO_DATE('01.08.2018.', '%d.%m.%Y.'), "D"),
+    (13, 39, 5, STR_TO_DATE('01.09.2018.', '%d.%m.%Y.'), "D"),
+    (14, 40, 26, STR_TO_DATE('01.10.2018.', '%d.%m.%Y.'), "D"),
+    (15, 32, 21, STR_TO_DATE('01.12.2018.', '%d.%m.%Y.'), "D");
 
 -- id, id_dostava, id_meni, kolicina, cijena_hrk
 -- cijena_hrk ne dodajemo -> automatski se izračunava
 INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
-	(1, 1, 1, 2);
+	(1, 1, 18, 1),
+    (2, 1, 21, 2),
+    (3, 2, 2, 2),
+    (4, 2, 3, 3),
+    (5, 3, 5, 2),
+    (6, 3, 7, 3),
+    (7, 3, 4, 2),
+    (8, 4, 9, 1),
+    (9, 4, 19, 2),
+    (10, 5, 20, 4),
+    (11, 6, 5, 2),
+    (12, 6, 2, 1),
+    (13, 6, 9, 2),
+    (14, 6, 11, 3),
+    (15, 7, 23, 2),
+    (16, 7, 5, 4),
+    (17, 8, 7, 2),
+    (18, 9, 12, 1),
+    (19, 10, 13, 2),
+    (20, 11, 14, 3),
+    (21, 11, 17, 1),
+    (22, 11, 11, 3),
+    (23, 12, 12, 2),
+    (24, 12, 5, 1),
+    (25, 12, 25, 2),
+    (26, 13, 24, 2),
+    (27, 13, 23, 1),
+    (28, 14, 11, 2),
+    (29, 15, 22, 1),
+    (30, 15, 12, 3);
 
 
 
