@@ -820,11 +820,49 @@ INSERT INTO otpis_stavka VALUES
 
 -- id, naziv
 INSERT INTO kategorija_rezije VALUES
-	(1, "struja");
+	(1, "struja"),
+    (2, "voda"),
+    (3, "internet i telefon"),
+    (4, "komunalna naknada"),
+    (5, "odvoz smeća"),
+    (6, "Uređenje slivne vode");
 
 -- id, iznos_hrk, datum, id_kategorija, placeno
 INSERT INTO rezije VALUES
-	(1, 5000.00, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), 1, "D");
+	(1, 5000.00, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), 1, "D"),
+    (2, 299.00, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), 3, "D"),
+	(3, 600.00, STR_TO_DATE('04.05.2021.', '%d.%m.%Y.'), 2, "D"),
+	(4, 299.00, STR_TO_DATE('01.06.2021.', '%d.%m.%Y.'), 3, "D"),
+	(5, 240.00, STR_TO_DATE('01.06.2021.', '%d.%m.%Y.'), 5, "D"),
+    (6, 4500.00, STR_TO_DATE('02.06.2021.', '%d.%m.%Y.'), 1, "D"),
+	(7, 340.00, STR_TO_DATE('04.06.2021.', '%d.%m.%Y.'), 4, "D"),
+    (8, 160.00, STR_TO_DATE('04.06.2021.', '%d.%m.%Y.'), 6, "D"),
+    (9, 400.00, STR_TO_DATE('05.06.2021.', '%d.%m.%Y.'), 2, "D"),
+    (10, 5400.00, STR_TO_DATE('01.07.2021.', '%d.%m.%Y.'), 1, "D"),
+    (11, 550.00, STR_TO_DATE('01.07.2021.', '%d.%m.%Y.'), 2, "D"),
+    (12, 299.00, STR_TO_DATE('01.07.2021.', '%d.%m.%Y.'), 3, "D"),
+    (13, 6100.00, STR_TO_DATE('03.08.2021.', '%d.%m.%Y.'), 1, "D"),
+	(14, 299.00, STR_TO_DATE('01.08.2021.', '%d.%m.%Y.'), 3, "D"),
+	(15, 240.00, STR_TO_DATE('01.08.2021.', '%d.%m.%Y.'), 5, "D"),
+    (16, 600.00, STR_TO_DATE('04.08.2021.', '%d.%m.%Y.'), 2, "D"),
+	(17, 500.00, STR_TO_DATE('01.09.2021.', '%d.%m.%Y.'), 2, "D"),
+    (18, 299.00, STR_TO_DATE('01.09.2021.', '%d.%m.%Y.'), 3, "D"),
+    (19, 5250.00, STR_TO_DATE('02.09.2021.', '%d.%m.%Y.'), 1, "D"),
+    (20, 340.00, STR_TO_DATE('03.09.2021.', '%d.%m.%Y.'), 4, "D"),
+    (21, 160.00, STR_TO_DATE('03.09.2021.', '%d.%m.%Y.'), 6, "D"),
+    (22, 4800.00, STR_TO_DATE('01.10.2021.', '%d.%m.%Y.'), 1, "D"),
+    (23, 299.00, STR_TO_DATE('01.10.2021.', '%d.%m.%Y.'), 3, "D"),
+    (24, 450.00, STR_TO_DATE('02.10.2021.', '%d.%m.%Y.'), 2, "D"),
+    (25, 240.00, STR_TO_DATE('02.10.2021.', '%d.%m.%Y.'), 5, "D"),
+	(26, 299.00, STR_TO_DATE('01.11.2021.', '%d.%m.%Y.'), 3, "D"),
+    (27, 6000.00, STR_TO_DATE('03.11.2021.', '%d.%m.%Y.'), 1, "D"),
+    (28, 650.00, STR_TO_DATE('06.11.2021.', '%d.%m.%Y.'), 2, "D"),
+	(29, 299.00, STR_TO_DATE('01.12.2021.', '%d.%m.%Y.'), 3, "D"),
+	(30, 240.00, STR_TO_DATE('01.12.2021.', '%d.%m.%Y.'), 5, "D")
+    (31, 5800.00, STR_TO_DATE('02.12.2021.', '%d.%m.%Y.'), 1, "D"),
+    (32, 500.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 2, "D"),
+	(33, 340.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 4, "D"),
+    (34, 160.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 6, "D");
 
 -- id, naziv, pocetak_radnog_vremena, kraj_radnog_vremena
 INSERT INTO smjena VALUES
