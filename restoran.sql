@@ -908,13 +908,70 @@ INSERT INTO rezije VALUES
 
 -- id, naziv, pocetak_radnog_vremena, kraj_radnog_vremena
 INSERT INTO smjena VALUES
-	(1, "kuhinja - prijepodne", "07:00", "15:00"),
-    (2, "kuhinja - poslijepodne", "15:00", "23:00");
+	(1, "kuhinja - prijepodne", "08:00", "15:00"),
+    (2, "kuhinja - poslijepodne", "17:00", "23:00"),
+    (3, "sala - dvoktratno", "10:00", "23:00"),
+    (4, "poslovođa - prijepodne", "9:00", "16:00"),
+    (5, "poslovođa - prijepodne", "16:00", "23:00"),
+    (6, "skladište", "8:00", "16:00"),
+
 
 -- id, id_djelatnik, id_smjena, datum
 INSERT INTO djelatnik_smjena VALUES
-	();
-
+	(1, 2, 1,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+    (2, 4, 2,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+    (3, 26, 1,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+    (4, 2, 2,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+	(5, 4, 2,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+    (6, 2, 1,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+    (7, 4, 2,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+	(8, 26, 2,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+    (9, 4, 1,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+    (10, 26, 2,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+	(11, 2, 2,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+    (12, 2, 1,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+    (13, 4, 2,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+    (14, 26, 2,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+    (15, 26, 1,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+    (16, 2, 2,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+    (17, 4, 1,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
+    (18, 26, 2,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
+    (19, 3, 1,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+	(19, 8, 1,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+	(19, 10, 1,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+	(19, 12, 2,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+	(19, 26, 2,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
+     (19, 12, 1,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+	(19, 26, 1,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+	(19, 31, 1,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+	(19, 3, 2,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+	(19, 8, 2,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+	(19, 3, 1,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+	(19, 8, 1,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+	(19, 10, 1,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+	(19, 12, 2,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+	(19, 31, 2,STR_TO_DATE('17.12.2021.', '%d.%m.%Y.')),
+     (19, 12, 1,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+	(19, 26, 1,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+	(19, 31, 1,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+	(19, 3, 2,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+	(19, 10, 2,STR_TO_DATE('18.12.2021.', '%d.%m.%Y.')),
+	(19, 3, 1,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+	(19, 8, 1,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+	(19, 10, 1,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+	(19, 26, 2,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+	(19, 31, 2,STR_TO_DATE('19.12.2021.', '%d.%m.%Y.')),
+    (19, 12, 1,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+	(19, 26, 1,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+	(19, 31, 1,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+	(19, 8, 2,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+	(19, 10, 2,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+    (19, 3, 1,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
+	(19, 8, 1,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
+	(19, 10, 1,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
+	(19, 12, 2,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
+	(19, 26, 2,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.'))
+    ;
 -- id, id_gost, id_adresa, datum, cijena_hrk, izvrsena
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
 -- id_gost REFERENCES osoba (id) -> jer ne postoji tablica gost
