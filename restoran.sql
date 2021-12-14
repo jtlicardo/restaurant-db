@@ -280,9 +280,15 @@ CREATE TABLE dostava_stavka (
 
 
 
--- TRIGGERI
+
+
+-- /////////////////////////////////////////
+-- ////////////      TRIGGERI       ////////////
+-- /////////////////////////////////////////
 
 -- Trigger za izračun iznosa stavke računa i ukupnog iznosa računa
+DROP TRIGGER IF EXISTS bi_stavka_racun;
+
 DELIMITER //
 CREATE TRIGGER bi_stavka_racun
     BEFORE INSERT ON stavka_racun
@@ -303,6 +309,8 @@ END//
 DELIMITER ;
 
 -- Trigger za izračun iznosa stavke cateringa i ukupnog iznosa cateringa
+DROP TRIGGER IF EXISTS bi_catering_stavka;
+
 DELIMITER //
 CREATE TRIGGER bi_catering_stavka
     BEFORE INSERT ON catering_stavka
@@ -323,6 +331,8 @@ END//
 DELIMITER ;
 
 -- Trigger za izračun ukupnog iznosa nabave
+DROP TRIGGER IF EXISTS bi_nabava_stavka;
+
 DELIMITER //
 CREATE TRIGGER bi_nabava_stavka
     BEFORE INSERT ON nabava_stavka
@@ -335,6 +345,8 @@ END//
 DELIMITER ;
   
 -- Trigger za izračun iznosa stavke dostave i ukupnog iznosa dostave
+DROP TRIGGER IF EXISTS bi_dostava_stavka;
+
 DELIMITER //
 CREATE TRIGGER bi_dostava_stavka
     BEFORE INSERT ON dostava_stavka
@@ -358,7 +370,44 @@ DELIMITER ;
 
 
 
--- INSERTOVI
+
+
+-- /////////////////////////////////////////
+-- ////////////      UPITI       ////////////
+-- /////////////////////////////////////////
+
+-- 1. Ukupna zarada po mjesecima (racun + catering + dostava)
+
+SELECT mjesec, SUM(ukupno) AS ukupna_zarada
+	FROM (
+		(SELECT CONCAT(MONTH(vrijeme_izdavanja), "/", YEAR(vrijeme_izdavanja)) AS mjesec, SUM(iznos_hrk) AS ukupno
+			FROM racun
+			GROUP BY mjesec
+			ORDER BY vrijeme_izdavanja DESC)
+		UNION ALL    
+		(SELECT CONCAT(MONTH(datum), "/", YEAR(datum)) AS mjesec, SUM(cijena_hrk) AS ukupno
+			FROM dostava
+			GROUP BY mjesec
+			ORDER BY datum DESC)
+		UNION ALL
+		(SELECT CONCAT(MONTH(datum_izvrsenja), "/", YEAR(datum_izvrsenja)) AS mjesec, SUM(cijena_hrk) AS ukupno
+			FROM catering
+			GROUP BY mjesec
+			ORDER BY datum_izvrsenja DESC)
+	) AS zarade
+    GROUP BY mjesec
+    ORDER BY STR_TO_DATE((CONCAT("01/", mjesec)),'%d/%m/%Y') DESC;
+
+
+
+
+
+
+
+
+-- /////////////////////////////////////////
+-- ////////////      INSERTOVI       ////////////
+-- /////////////////////////////////////////
 
 -- id, ime, prezime, broj_mob, email
 INSERT INTO osoba VALUES
@@ -518,7 +567,7 @@ INSERT INTO dobavljac VALUES
     (20, 'Gricko', 20, "94675840247", "0923195265", "rakovi"),
     (21, 'Fido', 21, "64505084129", "091445662", "salata"),
     (22, 'Max', 22, "82426680225", "09766552", "piće"),
-    (23, 'Aljeti Azimi', 23, "95823027745", "09214526900", "sladoled"),
+    (23, 'Aljeti Azimi', 23, "95823027745", "092145200", "sladoled"),
     (24, 'Jure', 24, "76249661604", "098215624", "vino"),
     (25, 'Blejko', 25, "38605079167", "09745625", "salata"),
     (26, 'Konzun', 26, "87274585839", "097563251", "namirnice"),
@@ -572,45 +621,45 @@ INSERT INTO nacini_placanja VALUES
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu stavka_racun
 -- id-evi djelatnika koji su blagajnici: 18, 7, 16
 INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
-	(1, "000001", 3, 5, 7, STR_TO_DATE('18.12.2017. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (2, "000002", 1, 13, 7, STR_TO_DATE('18.12.2017. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (3, "000003", 1, 19, 18, STR_TO_DATE('18.12.2017. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (4, "000004", 1, 26, 18, STR_TO_DATE('18.12.2017. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (5, "000005", 1, 1, 7, STR_TO_DATE('18.12.2017. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (6, "000006", 2, 4, 16, STR_TO_DATE('19.12.2017. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (7, "000007", 1, 6, 16, STR_TO_DATE('19.12.2017. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (8, "000008", 1, 15, 7, STR_TO_DATE('19.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (9, "000009", 1, 21, 16, STR_TO_DATE('19.12.2017. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (10, "000010", 1, 28, 7, STR_TO_DATE('20.12.2017. 10:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (11, "000011", 1, 12, 18, STR_TO_DATE('20.12.2017. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (12, "000012", 1, 22, 7, STR_TO_DATE('20.12.2017. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (13, "000013", 2, 24, 18, STR_TO_DATE('20.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (14, "000014", 1, 10, 18, STR_TO_DATE('20.12.2017. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (15, "000015", 2, 9, 16, STR_TO_DATE('21.12.2017. 10:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (16, "000016", 1, 16, 16, STR_TO_DATE('21.12.2017. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (17, "000017", 1, 21, 16, STR_TO_DATE('21.12.2017. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (18, "000018", 1, 29, 7, STR_TO_DATE('21.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (19, "000019", 1, 23, 18, STR_TO_DATE('21.12.2017. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (20, "000020", 1, 7, 7, STR_TO_DATE('21.12.2017. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (21, "000021", 2, 27, 18, STR_TO_DATE('21.12.2017. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (22, "000022", 2, 30, 16, STR_TO_DATE('21.12.2017. 16:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (23, "000023", 1, 25, 7, STR_TO_DATE('21.12.2017. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (24, "000024", 2, 7, 16, STR_TO_DATE('22.12.2017. 10:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (25, "000025", 3, 18, 7, STR_TO_DATE('22.12.2017. 10:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (26, "000026", 1, 24, 18, STR_TO_DATE('22.12.2017. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (27, "000027", 2, 7, 16, STR_TO_DATE('22.12.2017. 11:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (28, "000028", 1, 3, 7, STR_TO_DATE('22.12.2017. 12:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (29, "000029", 1, 17, 16, STR_TO_DATE('22.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (30, "000030", 2, 9, 16, STR_TO_DATE('22.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (31, "000031", 2, 8, 7, STR_TO_DATE('22.12.2017. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (32, "000032", 1, 28, 16, STR_TO_DATE('22.12.2017. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (33, "000033", 1, 30, 16, STR_TO_DATE('22.12.2017. 14:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (34, "000034", 1, 11, 18, STR_TO_DATE('23.12.2017. 11:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (35, "000035", 2, 10, 16, STR_TO_DATE('23.12.2017. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
-    (36, "000036", 1, 2, 18, STR_TO_DATE('23.12.2017. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (37, "000037", 2, 19, 16, STR_TO_DATE('23.12.2017. 14:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (38, "000038", 1, 20, 7, STR_TO_DATE('23.12.2017. 15:30:00', '%d.%m.%Y. %H:%i:%s')),
-    (39, "000039", 1, 11, 7, STR_TO_DATE('23.12.2017. 17:00:00', '%d.%m.%Y. %H:%i:%s'));
+	(1, "000001", 3, 5, 7, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (2, "000002", 1, 13, 7, STR_TO_DATE('18.12.2020. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (3, "000003", 1, 19, 18, STR_TO_DATE('18.12.2020. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (4, "000004", 1, 26, 18, STR_TO_DATE('18.12.2020. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (5, "000005", 1, 1, 7, STR_TO_DATE('18.12.2020. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (6, "000006", 2, 4, 16, STR_TO_DATE('19.12.2020. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (7, "000007", 1, 6, 16, STR_TO_DATE('19.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (8, "000008", 1, 15, 7, STR_TO_DATE('19.12.2020. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (9, "000009", 1, 21, 16, STR_TO_DATE('19.12.2020. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (10, "000010", 1, 28, 7, STR_TO_DATE('20.01.2021. 10:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (11, "000011", 1, 12, 18, STR_TO_DATE('20.01.2021. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (12, "000012", 1, 22, 7, STR_TO_DATE('20.01.2021. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (13, "000013", 2, 24, 18, STR_TO_DATE('20.01.2021. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (14, "000014", 1, 10, 18, STR_TO_DATE('20.01.2021. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (15, "000015", 2, 9, 16, STR_TO_DATE('21.02.2021. 10:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (16, "000016", 1, 16, 16, STR_TO_DATE('21.02.2021. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (17, "000017", 1, 21, 16, STR_TO_DATE('21.02.2021. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (18, "000018", 1, 29, 7, STR_TO_DATE('21.02.2021. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (19, "000019", 1, 23, 18, STR_TO_DATE('21.02.2021. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (20, "000020", 1, 7, 7, STR_TO_DATE('21.02.2021. 15:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (21, "000021", 2, 27, 18, STR_TO_DATE('21.02.2021. 16:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (22, "000022", 2, 30, 16, STR_TO_DATE('21.02.2021. 16:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (23, "000023", 1, 25, 7, STR_TO_DATE('21.02.2021. 17:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (24, "000024", 2, 7, 16, STR_TO_DATE('22.03.2021. 10:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (25, "000025", 3, 18, 7, STR_TO_DATE('22.03.2021. 10:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (26, "000026", 1, 24, 18, STR_TO_DATE('22.03.2021. 11:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (27, "000027", 2, 7, 16, STR_TO_DATE('22.03.2021. 11:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (28, "000028", 1, 3, 7, STR_TO_DATE('22.04.2021. 12:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (29, "000029", 1, 17, 16, STR_TO_DATE('22.04.2021. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (30, "000030", 2, 9, 16, STR_TO_DATE('22.04.2021. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (31, "000031", 2, 8, 7, STR_TO_DATE('22.04.2021. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (32, "000032", 1, 28, 16, STR_TO_DATE('22.04.2021. 14:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (33, "000033", 1, 30, 16, STR_TO_DATE('22.04.2021. 14:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (34, "000034", 1, 11, 18, STR_TO_DATE('23.04.2021. 11:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (35, "000035", 2, 10, 16, STR_TO_DATE('23.05.2021. 13:00:00', '%d.%m.%Y. %H:%i:%s')),
+    (36, "000036", 1, 2, 18, STR_TO_DATE('23.05.2021. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (37, "000037", 2, 19, 16, STR_TO_DATE('23.05.2021. 14:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (38, "000038", 1, 20, 7, STR_TO_DATE('23.05.2021. 15:30:00', '%d.%m.%Y. %H:%i:%s')),
+    (39, "000039", 1, 11, 7, STR_TO_DATE('23.06.2021. 17:00:00', '%d.%m.%Y. %H:%i:%s'));
 
 -- id, naziv    
 INSERT INTO alergen VALUES
@@ -722,6 +771,7 @@ INSERT INTO sadrzi_alergen VALUES
 	(34, 34, 4),
 	(35, 35, 13),
 	(36, 35, 9);
+    
 -- id, naziv    
 INSERT INTO kategorija_namirnica VALUES
 	(1, "Riba"),
@@ -773,7 +823,7 @@ INSERT INTO namirnica VALUES
 	(34, "Coca Cola", 5, 3000, "litra"),
 	(35, "Fanta", 5, 200, "litra"),
 	(36, "Sprite", 5, 200, "litra"),
-	(37, "Ledeni čaj", 350, 60, "litra"),
+	(37, "Ledeni čaj", 5, 60, "litra"),
 	(38, "Pago", 5, 689, "litra"),
 	(39, "Medica", 5, 59, "litra"),
 	(40, "Amaro", 5, 18, "litra"),
@@ -1021,11 +1071,11 @@ INSERT INTO smjena VALUES
     (3, "sala - dvoktratno", "10:00", "23:00"),
     (4, "poslovođa - prijepodne", "9:00", "16:00"),
     (5, "poslovođa - prijepodne", "16:00", "23:00"),
-    (6, "skladište", "8:00", "16:00"),
+    (6, "skladište", "8:00", "16:00");
 
 
 -- id, id_djelatnik, id_smjena, datum
-INSERT INTO djelatnik_smjena VALUES
+INSERT INTO djelatnik_smjena (id_djelatnik, id_smjena, datum) VALUES
 	(2, 1,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
     (4, 2,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
     (4, 1,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
@@ -1118,27 +1168,29 @@ INSERT INTO djelatnik_smjena VALUES
     (29, 4,STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
     (39, 3,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
     (29, 3,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
-    (28, 4,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.'))
-    ;
+    (28, 4,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.'));
+    
 -- id, id_gost, id_adresa, datum, cijena_hrk, izvrsena
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
 -- id_gost REFERENCES osoba (id) -> jer ne postoji tablica gost
 INSERT INTO dostava (id, id_gost, id_adresa, datum, izvrsena) VALUES
-	(1, 31, 22, STR_TO_DATE('01.05.2017.', '%d.%m.%Y.'), "D"),
-    (2, 34, 1, STR_TO_DATE('15.06.2017.', '%d.%m.%Y.'), "D"),
-    (3, 35, 17, STR_TO_DATE('22.07.2017.', '%d.%m.%Y.'), "D"),
-    (4, 39, 25, STR_TO_DATE('01.02.2018.', '%d.%m.%Y.'), "D"),
-    (5, 40, 12, STR_TO_DATE('01.03.2018.', '%d.%m.%Y.'), "D"),
-    (6, 33, 11, STR_TO_DATE('01.04.2018.', '%d.%m.%Y.'), "D"),
-    (7, 32, 10, STR_TO_DATE('01.05.2018.', '%d.%m.%Y.'), "D"),
-    (8, 38, 11, STR_TO_DATE('01.06.2018.', '%d.%m.%Y.'), "D"),
-    (9, 35, 28, STR_TO_DATE('01.07.2018.', '%d.%m.%Y.'), "D"),
-    (10, 35, 2, STR_TO_DATE('02.07.2018.', '%d.%m.%Y.'), "D"),
-    (11, 32, 3, STR_TO_DATE('02.07.2018.', '%d.%m.%Y.'), "D"),
-    (12, 31, 4, STR_TO_DATE('01.08.2018.', '%d.%m.%Y.'), "D"),
-    (13, 39, 5, STR_TO_DATE('01.09.2018.', '%d.%m.%Y.'), "D"),
-    (14, 40, 26, STR_TO_DATE('01.10.2018.', '%d.%m.%Y.'), "D"),
-    (15, 32, 21, STR_TO_DATE('01.12.2018.', '%d.%m.%Y.'), "D");
+	(1, 31, 22, STR_TO_DATE('01.11.2020.', '%d.%m.%Y.'), "D"),
+    (2, 34, 1, STR_TO_DATE('15.11.2020.', '%d.%m.%Y.'), "D"),
+    (3, 35, 17, STR_TO_DATE('22.12.2020.', '%d.%m.%Y.'), "D"),
+    (4, 39, 25, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D"),
+    (5, 40, 12, STR_TO_DATE('03.01.2021.', '%d.%m.%Y.'), "D"),
+    (6, 33, 11, STR_TO_DATE('06.01.2021.', '%d.%m.%Y.'), "D"),
+    (7, 32, 10, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), "D"),
+    (8, 38, 11, STR_TO_DATE('01.03.2021.', '%d.%m.%Y.'), "D"),
+    (9, 35, 28, STR_TO_DATE('01.04.2021.', '%d.%m.%Y.'), "D"),
+    (10, 35, 2, STR_TO_DATE('02.05.2021.', '%d.%m.%Y.'), "D"),
+    (11, 32, 3, STR_TO_DATE('02.06.2021.', '%d.%m.%Y.'), "D"),
+    (12, 31, 4, STR_TO_DATE('01.07.2021.', '%d.%m.%Y.'), "D"),
+    (13, 39, 5, STR_TO_DATE('01.08.2021.', '%d.%m.%Y.'), "D"),
+    (14, 40, 26, STR_TO_DATE('01.09.2021.', '%d.%m.%Y.'), "D"),
+    (15, 32, 21, STR_TO_DATE('01.10.2021.', '%d.%m.%Y.'), "D"),
+    (16, 32, 12, STR_TO_DATE('01.11.2021.', '%d.%m.%Y.'), "D"),
+    (17, 35, 15, STR_TO_DATE('01.12.2021.', '%d.%m.%Y.'), "D");
 
 -- id, id_dostava, id_meni, kolicina, cijena_hrk
 -- cijena_hrk ne dodajemo -> automatski se izračunava
@@ -1172,7 +1224,9 @@ INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
     (27, 13, 23, 1),
     (28, 14, 11, 2),
     (29, 15, 22, 1),
-    (30, 15, 12, 3);
+    (30, 15, 12, 3),
+    (31, 16, 23, 5),
+    (32, 17, 10, 5);
 
 
 
