@@ -66,7 +66,7 @@ CREATE TABLE racun (
     id_nacin_placanja INTEGER NOT NULL,
 	id_stol INTEGER NOT NULL,
 	id_djelatnik INTEGER NOT NULL,
-	vrijeme_izdavanja DATETIME NOT NULL,
+	vrijeme_izdavanja DATETIME NOT NULL DEFAULT NOW(),
 	iznos_hrk DECIMAL(10, 2) DEFAULT 0.00,
     FOREIGN KEY (id_nacin_placanja) REFERENCES nacini_placanja (id),
     FOREIGN KEY (id_stol) REFERENCES stol (id),
@@ -397,6 +397,54 @@ SELECT mjesec, SUM(ukupno) AS ukupna_zarada
 	) AS zarade
     GROUP BY mjesec
     ORDER BY STR_TO_DATE((CONCAT("01/", mjesec)),'%d/%m/%Y') DESC;
+
+
+
+
+-- /////////////////////////////////////////
+-- ////////////      FUNKCIJE       ////////////
+-- /////////////////////////////////////////
+
+-- 1. Funkcija koja uzima stavku menija i vraća "DA" ako je izdana na svim računima u ukupnoj količini većoj od x
+
+DROP FUNCTION IF EXISTS br_prodanih_veci_od;
+
+DELIMITER //
+CREATE FUNCTION br_prodanih_veci_od (p_id_meni INTEGER, p_kolicina INTEGER) RETURNS CHAR(2)
+DETERMINISTIC
+BEGIN
+	IF p_kolicina < (SELECT SUM(kolicina)
+						FROM stavka_racun
+						WHERE id_meni = p_id_meni)
+	THEN
+		RETURN "DA";
+	ELSE
+		RETURN "NE";
+	END IF;
+END //
+DELIMITER ;
+
+SELECT *        -- vraća sve stavke u meniju izdane u ukupnoj količini većoj od 30
+	FROM meni
+    HAVING br_prodanih_veci_od(id, 30) = "DA";
+
+
+-- 2. Funkcija koja vraća broj izdanih računa između 2 datuma
+
+DROP FUNCTION IF EXISTS br_racuna_izmedu;
+
+DELIMITER //
+CREATE FUNCTION br_racuna_izmedu (p_datum_od DATETIME, p_datum_do DATETIME) RETURNS INTEGER
+DETERMINISTIC
+BEGIN
+	RETURN (SELECT COUNT(*)
+				FROM racun
+				WHERE vrijeme_izdavanja
+				BETWEEN p_datum_od AND p_datum_do);
+END //
+DELIMITER ;
+
+SELECT br_racuna_izmedu(STR_TO_DATE('01.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'));
 
 
 
@@ -999,7 +1047,8 @@ INSERT INTO catering_stavka (id, id_catering, id_meni, kolicina) VALUES
 
 -- id, id_catering, id_djelatnik
 INSERT INTO djelatnici_catering VALUES
-	();
+	(1, 1, 28),
+    (2, 1, 21);
 
 -- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu nabava_stavka
@@ -1012,11 +1061,12 @@ INSERT INTO nabava_stavka VALUES
 
 -- id, datum, opis
 INSERT INTO otpis VALUES
-	();
+	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL);
 
 -- id, id_otpis, id_namirnica, kolicina
 INSERT INTO otpis_stavka VALUES
-	();
+	(1, 1, 3, 1),
+    (2, 1, 19, 5);
 
 -- id, naziv
 INSERT INTO kategorija_rezije VALUES
