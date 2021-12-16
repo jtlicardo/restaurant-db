@@ -101,7 +101,7 @@ CREATE TABLE kategorija_namirnica (
     
 CREATE TABLE namirnica (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    naziv VARCHAR(50) NOT NULL,
+    naziv VARCHAR(50) NOT NULL UNIQUE,
     id_kategorija INTEGER NOT NULL,
     kolicina_na_zalihi INTEGER NOT NULL,
     mjerna_jedinica VARCHAR(20) NOT NULL,
@@ -283,7 +283,7 @@ CREATE TABLE dostava_stavka (
 
 
 -- /////////////////////////////////////////
--- ////////////      TRIGGERI       ////////////
+-- //////////      TRIGGERI       //////////
 -- /////////////////////////////////////////
 
 -- Trigger za izračun iznosa stavke računa i ukupnog iznosa računa
@@ -373,27 +373,24 @@ DELIMITER ;
 
 
 -- /////////////////////////////////////////
--- ////////////      UPITI       ////////////
+-- ///////////      UPITI       ////////////
 -- /////////////////////////////////////////
 
--- 1. Ukupna zarada po mjesecima (racun + catering + dostava)
+-- 1. Upit koji prikazuje ukupnu zaradu po mjesecima (racun + dostava + catering)
 
 SELECT mjesec, SUM(ukupno) AS ukupna_zarada
 	FROM (
 		(SELECT CONCAT(MONTH(vrijeme_izdavanja), "/", YEAR(vrijeme_izdavanja)) AS mjesec, SUM(iznos_hrk) AS ukupno
 			FROM racun
-			GROUP BY mjesec
-			ORDER BY vrijeme_izdavanja DESC)
+			GROUP BY mjesec)
 		UNION ALL    
 		(SELECT CONCAT(MONTH(datum), "/", YEAR(datum)) AS mjesec, SUM(cijena_hrk) AS ukupno
 			FROM dostava
-			GROUP BY mjesec
-			ORDER BY datum DESC)
+			GROUP BY mjesec)
 		UNION ALL
 		(SELECT CONCAT(MONTH(datum_izvrsenja), "/", YEAR(datum_izvrsenja)) AS mjesec, SUM(cijena_hrk) AS ukupno
 			FROM catering
-			GROUP BY mjesec
-			ORDER BY datum_izvrsenja DESC)
+			GROUP BY mjesec)
 	) AS zarade
     GROUP BY mjesec
     ORDER BY STR_TO_DATE((CONCAT("01/", mjesec)),'%d/%m/%Y') DESC;
@@ -401,8 +398,10 @@ SELECT mjesec, SUM(ukupno) AS ukupna_zarada
 
 
 
+
+
 -- /////////////////////////////////////////
--- ////////////      FUNKCIJE       ////////////
+-- //////////      FUNKCIJE       //////////
 -- /////////////////////////////////////////
 
 -- 1. Funkcija koja uzima stavku menija i vraća "DA" ako je izdana na svim računima u ukupnoj količini većoj od x
@@ -450,6 +449,52 @@ SELECT br_racuna_izmedu(STR_TO_DATE('01.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01
 
 
 
+
+
+
+-- /////////////////////////////////////////
+-- /////////      PROCEDURE       //////////
+-- /////////////////////////////////////////
+
+-- 1. Procedura koja za određeno jelo prikazuje koje namirnice se koriste i u kolikoj količini za to jelo
+
+DROP PROCEDURE IF EXISTS sastojci;
+
+DELIMITER //
+CREATE PROCEDURE sastojci (IN p_id_meni INTEGER, OUT status_jela VARCHAR(100))
+BEGIN
+	DROP TABLE IF EXISTS sastojci_jela;
+    CREATE TEMPORARY TABLE sastojci_jela (
+		naziv_jela VARCHAR(70),
+        naziv_namirnice VARCHAR(50),
+        kolicina DECIMAL (10, 2),
+        mjerna_jedinica VARCHAR(20),
+        kolicina_na_zalihi INTEGER,
+        status_jela VARCHAR(100)
+    );
+    
+    SET status_jela = "Jelo se nalazi na trenutnom meniju.";
+    
+    IF (SELECT COUNT(*)
+			FROM meni
+			WHERE id = p_id_meni AND aktivno = "N") > 0
+	THEN
+		SET status_jela = "Jelo se ne nalazi u trenutnom meniju!";
+	END IF;
+    
+ INSERT INTO sastojci_jela   
+    SELECT meni.naziv_stavke, namirnica.naziv, stavka_meni.kolicina, mjerna_jedinica, kolicina_na_zalihi, status_jela
+		FROM meni
+		INNER JOIN stavka_meni
+		ON meni.id = stavka_meni.id_meni
+		INNER JOIN namirnica
+		ON stavka_meni.id_namirnica = namirnica.id
+		WHERE meni.id = p_id_meni;
+END //
+DELIMITER ;
+
+CALL sastojci(2, @status_jela);
+SELECT * FROM sastojci_jela;
 
 
 
@@ -841,7 +886,7 @@ INSERT INTO namirnica VALUES
     (4, "Vino Teran", 5, 60, "litra"),
     (5, "Vino Malvazija", 5, 60, "litra"),
 	(6, "Hobotnica", 1, 60, "komad"),
-	(7, "Kumpir", 4, 500, "kilogram"),
+	(7, "Krumpir", 4, 500, "kilogram"),
 	(8, "Rajčica", 4, 300, "kilogram"),
 	(9, "Fuži", 5, 60, "kilogram"),
 	(10, "Kozice", 1, 60, "kilogram"),
@@ -882,13 +927,17 @@ INSERT INTO namirnica VALUES
 	(45, "Začini", 4, 888, "kilogram"),
 	(46, "Kruh", 10, 159, "komada"),
 	(47, "Jaja", 8, 145, "komada"),
-	(48, "Grašak", 4, 69, "kilogram");
+	(48, "Grašak", 4, 69, "kilogram"),
+    (49, "Brokula", 4, 15, "kilogram"),
+    (50, "Mrkva", 3, 20, "kilogram");
 
 -- id, id_namirnica, kolicina, id_meni    
-INSERT INTO stavka_meni VALUES
-	(1, 1, 1, 1),
-    (2, 4, 0.1, 2),
-    (3, 5, 0.1, 3);
+INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
+	(1, 1, 1),
+    (49, 0.1, 1),
+    (50, 0.1, 1),
+    (4, 0.1, 2),
+    (5, 0.1, 3);
 
 -- id, id_racun, id_meni, kolicina, cijena_hrk
 -- cijena_hrk ne dodajemo -> automatski se izračuna
