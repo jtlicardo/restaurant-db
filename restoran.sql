@@ -930,8 +930,9 @@ INSERT INTO namirnica VALUES
 	(48, "Grašak", 4, 69, "kilogram"),
     (49, "Brokula", 4, 15, "kilogram"),
     (50, "Mrkva", 3, 20, "kilogram"),
-    (51, "Luk", 4, 300, "kilogram"),
-	(52, "Suhe šljive", 4, 30, "kilogram");
+	(51, "Luk", 4, 300, "kilogram"),
+	(52, "Suhe šljive", 4, 30, "kilogram"),
+	(53, "Blitva", 4, 5, "kilogram");
 
 -- id, id_namirnica, kolicina, id_meni    
 INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
@@ -985,6 +986,19 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (15, 0.3, 13),
     (51, 0.3, 13),
     (45, 0.1, 13),
+    (53, 0.1, 14),
+    (51, 0.1, 14),
+    (45, 0.1, 14),
+    (12, 0.6, 15),
+    (19, 0.4, 15),
+    (15, 0.4, 16),
+    (7, 0.3, 16),
+    (20, 0.2, 16),
+    (15, 0.1, 16),
+    (21, 0.4, 17),
+    (7, 0.3, 17),
+    (22, 0.3, 18),
+    (47, 0.1, 18);
     
     
 
