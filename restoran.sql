@@ -103,7 +103,7 @@ CREATE TABLE namirnica (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     naziv VARCHAR(50) NOT NULL UNIQUE,
     id_kategorija INTEGER NOT NULL,
-    kolicina_na_zalihi INTEGER NOT NULL,
+    kolicina_na_zalihi DECIMAL (10, 2) NOT NULL,
     mjerna_jedinica VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_kategorija) REFERENCES kategorija_namirnica (id)
 );
@@ -281,12 +281,12 @@ CREATE TABLE dostava_stavka (
 
 
 
-
 -- /////////////////////////////////////////
 -- //////////      TRIGGERI       //////////
 -- /////////////////////////////////////////
 
--- Trigger za izračun iznosa stavke računa i ukupnog iznosa računa
+-- Izračunava iznos stavke računa i ukupni iznos računa
+-- Smanjuje količinu namirnica na zalihi pomoću procedure
 DROP TRIGGER IF EXISTS bi_stavka_racun;
 
 DELIMITER //
@@ -305,10 +305,13 @@ BEGIN
     UPDATE racun
 		SET iznos_hrk = iznos_hrk + new.cijena_hrk
 		WHERE id = new.id_racun;
+        
+	CALL smanji_kolicinu_na_zalihi(new.id_meni);
 END//
 DELIMITER ;
 
--- Trigger za izračun iznosa stavke cateringa i ukupnog iznosa cateringa
+-- Izračunava iznos stavke cateringa i ukupni iznos cateringa
+-- Smanjuje količinu namirnica na zalihi pomoću procedure
 DROP TRIGGER IF EXISTS bi_catering_stavka;
 
 DELIMITER //
@@ -327,10 +330,12 @@ BEGIN
     UPDATE catering
 		SET cijena_hrk = cijena_hrk + new.cijena_hrk
 		WHERE id = new.id_catering;
+	
+    CALL smanji_kolicinu_na_zalihi(new.id_meni);
 END//
 DELIMITER ;
 
--- Trigger za izračun ukupnog iznosa nabave
+-- Izračunava ukupni iznos nabave
 DROP TRIGGER IF EXISTS bi_nabava_stavka;
 
 DELIMITER //
@@ -344,7 +349,8 @@ BEGIN
 END//
 DELIMITER ;
   
--- Trigger za izračun iznosa stavke dostave i ukupnog iznosa dostave
+-- Izračunava iznos stavke dostave i ukupni iznos dostave
+-- Smanjuje količinu namirnica na zalihi pomoću procedure
 DROP TRIGGER IF EXISTS bi_dostava_stavka;
 
 DELIMITER //
@@ -363,6 +369,8 @@ BEGIN
     UPDATE dostava
 		SET cijena_hrk = cijena_hrk + new.cijena_hrk
 		WHERE id = new.id_dostava;
+        
+	CALL smanji_kolicinu_na_zalihi(new.id_meni);
 END//
 DELIMITER ;
 
@@ -469,7 +477,7 @@ BEGIN
         naziv_namirnice VARCHAR(50),
         kolicina DECIMAL (10, 2),
         mjerna_jedinica VARCHAR(20),
-        kolicina_na_zalihi INTEGER,
+        kolicina_na_zalihi DECIMAL (10, 2),
         status_jela VARCHAR(100)
     );
     
@@ -493,8 +501,54 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL sastojci(2, @status_jela);
+/*
+CALL sastojci(13, @status_jela);
 SELECT * FROM sastojci_jela;
+*/
+
+-- 2. Procedura koja smanjuje količinu namirnica na zalihi za određeni meni
+
+DROP PROCEDURE IF EXISTS smanji_kolicinu_na_zalihi;
+
+DELIMITER //
+CREATE PROCEDURE smanji_kolicinu_na_zalihi (IN p_id_meni INTEGER)
+BEGIN
+
+DECLARE l_id_namirnica INTEGER;
+DECLARE l_kolicina DECIMAL (10, 2);
+
+DECLARE cur CURSOR FOR
+	SELECT id_namirnica, kolicina
+		FROM stavka_meni
+		WHERE id_meni = p_id_meni;
+
+DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;
+
+OPEN cur;
+
+petlja: LOOP
+	FETCH cur INTO l_id_namirnica, l_kolicina;
+    UPDATE namirnica
+		SET kolicina_na_zalihi = kolicina_na_zalihi - l_kolicina
+        WHERE namirnica.id = l_id_namirnica;
+	END LOOP petlja;
+    
+CLOSE cur;
+
+END //
+DELIMITER ;
+
+/*
+provjera
+CALL sastojci(1, @status_jela);
+SELECT * FROM sastojci_jela;
+
+CALL smanji_kolicinu_na_zalihi (1);
+*/
+
+CALL sastojci(7, @status_jela);
+SELECT * FROM sastojci_jela;
+
 
 
 
@@ -893,7 +947,7 @@ INSERT INTO namirnica VALUES
 	(11, "Tartufi", 7, 2, "kilogram"),
 	(12, "Njoki", 6, 50, "kilogram"),
 	(13, "Spaghetti", 6, 30, "kilogram"),
-	(14, "Meljeveno meso", 2, 80, "kilogram"),
+	(14, "Mljeveno meso", 2, 80, "kilogram"),
 	(15, "Teletina", 2, 60, "kilogram"),
 	(16, "Paprika", 4, 100, "kilogram"),
 	(17, "Tikvice", 4, 70, "kilogram"),
@@ -999,6 +1053,7 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (7, 0.3, 17),
     (22, 0.3, 18),
     (47, 0.1, 18);
+    (45, 0.1, 13);
     
     
 
