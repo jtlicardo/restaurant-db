@@ -286,8 +286,9 @@ CREATE TABLE dostava_stavka (
 -- //////////      TRIGGERI       //////////
 -- /////////////////////////////////////////
 
+-- Provjerava da li je količina namirnica na zalihi dostatna
 -- Izračunava iznos stavke računa i ukupni iznos računa
--- Smanjuje količinu namirnica na zalihi pomoću procedure
+-- Smanjuje količinu namirnica na zalihi
 DROP TRIGGER IF EXISTS bi_stavka_racun;
 
 DELIMITER //
@@ -295,7 +296,9 @@ CREATE TRIGGER bi_stavka_racun
     BEFORE INSERT ON stavka_racun
     FOR EACH ROW
 BEGIN	
-	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    CALL provjeri_kolicinu_na_zalihi(new.id_meni, new.kolicina);
     
     SELECT cijena_hrk INTO l_cijena_stavke
 		FROM meni
@@ -307,12 +310,13 @@ BEGIN
 		SET iznos_hrk = iznos_hrk + new.cijena_hrk
 		WHERE id = new.id_racun;
         
-	CALL smanji_kolicinu_na_zalihi(new.id_meni);
+	CALL smanji_kolicinu_na_zalihi(new.id_meni, new.kolicina);
 END//
 DELIMITER ;
 
+-- Provjerava da li je količina namirnica na zalihi dostatna
 -- Izračunava iznos stavke cateringa i ukupni iznos cateringa
--- Smanjuje količinu namirnica na zalihi pomoću procedure
+-- Smanjuje količinu namirnica na zalihi
 DROP TRIGGER IF EXISTS bi_catering_stavka;
 
 DELIMITER //
@@ -321,6 +325,8 @@ CREATE TRIGGER bi_catering_stavka
     FOR EACH ROW
 BEGIN	
 	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    CALL provjeri_kolicinu_na_zalihi(new.id_meni, new.kolicina);
     
     SELECT cijena_hrk INTO l_cijena_stavke
 		FROM meni
@@ -332,7 +338,7 @@ BEGIN
 		SET cijena_hrk = cijena_hrk + new.cijena_hrk
 		WHERE id = new.id_catering;
 	
-    CALL smanji_kolicinu_na_zalihi(new.id_meni);
+    CALL smanji_kolicinu_na_zalihi(new.id_meni, new.kolicina);
 END//
 DELIMITER ;
 
@@ -350,8 +356,9 @@ BEGIN
 END//
 DELIMITER ;
   
+-- Provjerava da li je količina namirnica na zalihi dostatna
 -- Izračunava iznos stavke dostave i ukupni iznos dostave
--- Smanjuje količinu namirnica na zalihi pomoću procedure
+-- Smanjuje količinu namirnica na zalihi
 DROP TRIGGER IF EXISTS bi_dostava_stavka;
 
 DELIMITER //
@@ -360,6 +367,8 @@ CREATE TRIGGER bi_dostava_stavka
     FOR EACH ROW
 BEGIN	
 	DECLARE l_cijena_stavke DECIMAL (10, 2);
+    
+    CALL provjeri_kolicinu_na_zalihi(new.id_meni, new.kolicina);
     
     SELECT cijena_hrk INTO l_cijena_stavke
 		FROM meni
@@ -371,7 +380,7 @@ BEGIN
 		SET cijena_hrk = cijena_hrk + new.cijena_hrk
 		WHERE id = new.id_dostava;
         
-	CALL smanji_kolicinu_na_zalihi(new.id_meni);
+	CALL smanji_kolicinu_na_zalihi(new.id_meni, new.kolicina);
 END//
 DELIMITER ;
 
@@ -403,6 +412,23 @@ SELECT mjesec, SUM(ukupno) AS ukupna_zarada
 	) AS zarade
     GROUP BY mjesec
     ORDER BY STR_TO_DATE((CONCAT("01/", mjesec)),'%d/%m/%Y') DESC;
+
+
+-- 2. Upit koji prikazuje koje namirnice se najviše koriste u jelima na trenutno aktivnom meniju (uzimajući u obzir količinu
+-- u kojoj se namirnice koriste)
+
+SELECT namirnica.*
+	FROM stavka_meni
+    INNER JOIN namirnica
+    ON namirnica.id = stavka_meni.id_namirnica
+    INNER JOIN meni
+    ON meni.id = stavka_meni.id_meni
+    WHERE meni.aktivno = "D"
+	GROUP BY id_namirnica
+    ORDER BY SUM(kolicina) DESC
+    LIMIT 3;
+
+
 
 
 
@@ -460,7 +486,6 @@ SELECT br_racuna_izmedu(STR_TO_DATE('01.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01
 
 
 
-
 -- /////////////////////////////////////////
 -- /////////      PROCEDURE       //////////
 -- /////////////////////////////////////////
@@ -468,7 +493,6 @@ SELECT br_racuna_izmedu(STR_TO_DATE('01.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01
 -- 1. Procedura koja za određeno jelo prikazuje koje namirnice se koriste i u kolikoj količini za to jelo
 
 DROP PROCEDURE IF EXISTS sastojci;
-
 DELIMITER //
 CREATE PROCEDURE sastojci (IN p_id_meni INTEGER, OUT status_jela VARCHAR(100))
 BEGIN
@@ -503,16 +527,17 @@ END //
 DELIMITER ;
 
 /*
+primjer
 CALL sastojci(13, @status_jela);
 SELECT * FROM sastojci_jela;
 */
 
+
 -- 2. Procedura koja smanjuje količinu namirnica na zalihi za određeni meni
 
 DROP PROCEDURE IF EXISTS smanji_kolicinu_na_zalihi;
-
 DELIMITER //
-CREATE PROCEDURE smanji_kolicinu_na_zalihi (IN p_id_meni INTEGER)
+CREATE PROCEDURE smanji_kolicinu_na_zalihi (IN p_id_meni INTEGER, IN p_kolicina_jela INTEGER)
 BEGIN
 
 DECLARE l_id_namirnica INTEGER;
@@ -527,12 +552,12 @@ DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;
 
 OPEN cur;
 
-petlja: LOOP
+smanji_kolicinu: LOOP
 	FETCH cur INTO l_id_namirnica, l_kolicina;
     UPDATE namirnica
-		SET kolicina_na_zalihi = kolicina_na_zalihi - l_kolicina
+		SET kolicina_na_zalihi = kolicina_na_zalihi - l_kolicina * p_kolicina_jela
         WHERE namirnica.id = l_id_namirnica;
-	END LOOP petlja;
+	END LOOP smanji_kolicinu;
     
 CLOSE cur;
 
@@ -546,6 +571,50 @@ SELECT * FROM sastojci_jela;
 
 CALL smanji_kolicinu_na_zalihi (1);
 */
+
+
+-- 3. Procedura koja provjerava da li za određeno jelo postoji dovoljna količina namirnica na zalihi 
+
+DROP PROCEDURE IF EXISTS provjeri_kolicinu_na_zalihi;
+DELIMITER //
+CREATE PROCEDURE provjeri_kolicinu_na_zalihi (IN p_id_meni INTEGER, IN p_kolicina_jela INTEGER)
+BEGIN
+
+DECLARE l_kolicina_na_zalihi DECIMAL (10, 2);
+DECLARE l_id_namirnica INTEGER;
+DECLARE l_naziv_namirnice VARCHAR (50);
+DECLARE l_kolicina DECIMAL (10, 2);
+DECLARE error_kolicina VARCHAR(100) DEFAULT "Količina na zalihi preniska za namirnicu: ";
+
+DECLARE cur CURSOR FOR
+	SELECT id_namirnica, kolicina
+		FROM stavka_meni
+		WHERE id_meni = p_id_meni;
+        
+DECLARE EXIT HANDLER FOR NOT FOUND BEGIN END;
+
+OPEN cur;
+
+provjeri_kolicinu: LOOP
+	FETCH cur INTO l_id_namirnica, l_kolicina;
+    SELECT kolicina_na_zalihi INTO l_kolicina_na_zalihi
+		FROM namirnica
+        WHERE id = l_id_namirnica;
+    IF (l_kolicina_na_zalihi - l_kolicina * p_kolicina_jela) < 0 THEN
+		SELECT naziv INTO l_naziv_namirnice
+			FROM namirnica
+			WHERE id = l_id_namirnica;
+        SET error_kolicina = CONCAT(error_kolicina, l_naziv_namirnice);
+        SIGNAL SQLSTATE "45000"
+        SET MESSAGE_TEXT = error_kolicina;
+    END IF;
+END LOOP provjeri_kolicinu;
+
+CLOSE cur;
+    
+END //
+DELIMITER ;
+
 
 
 -- /////////////////////////////////////////
@@ -1151,10 +1220,11 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (41, 0.1, 49),
     (55, 0.1, 50),
     (41, 0.1, 50),
-    (56, 0.2, 51);
+    (56, 0.2, 51),
+    (42, 0.2, 26),
+    (48, 0.1, 26);
     
     
-
 
 -- id, id_racun, id_meni, kolicina, cijena_hrk
 -- cijena_hrk ne dodajemo -> automatski se izračuna
@@ -1543,9 +1613,6 @@ INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
     (30, 15, 12, 3),
     (31, 16, 23, 5),
     (32, 17, 10, 5);
-
-
-
 
 
 
