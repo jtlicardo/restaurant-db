@@ -114,7 +114,8 @@ CREATE TABLE stavka_meni (
     kolicina DECIMAL (10, 2),
     id_meni INTEGER NOT NULL,
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
-    FOREIGN KEY (id_meni) REFERENCES meni (id)
+    FOREIGN KEY (id_meni) REFERENCES meni (id),
+    UNIQUE (id_namirnica, id_meni)
 );
 
 CREATE TABLE stavka_racun (
@@ -546,11 +547,6 @@ SELECT * FROM sastojci_jela;
 CALL smanji_kolicinu_na_zalihi (1);
 */
 
-CALL sastojci(7, @status_jela);
-SELECT * FROM sastojci_jela;
-
-
-
 
 -- /////////////////////////////////////////
 -- ////////////      INSERTOVI       ////////////
@@ -865,15 +861,15 @@ INSERT INTO meni (id, naziv_stavke, cijena_hrk) VALUES
     (36, "Leskovačka ruža", 60),
     (37, "Pljeskavica Djevojački san", 70),
     (38, "Leskovački ćevapi", 48),
-    (39, "Točeno pivo", 18),
-    (40, "Pivo u boci", 20),
-    (41, "Coca cola 0,5", 26),
-    (42, "Gazirani sokovi 0.25", 18),
+    (39, "Pivo Favorit 0.5 l", 18),
+    (40, "Istarsko pivo 0.5 l", 20),
+    (41, "Coca Cola 0.5 l", 26),
+    (42, "Fanta 0.25 l", 18),
     (43, "Ledeni čaj", 16),
     (44, "Negazirani sok", 15),
     (45, "Cedevita", 10),
-    (46, "Jägermeister 0,03", 5),
-    (47, "Amaro 0,03", 5),
+    (46, "Jägermeister 0.03 l", 5),
+    (47, "Amaro 0.03 l", 5),
     (48, "Medica", 5),
     (49, "Kava", 9),
     (50, "Cappuccino", 9),
@@ -956,7 +952,7 @@ INSERT INTO namirnica VALUES
 	(20, "Šparoge", 4, 6, "kilogram"),
 	(21, "Lignje", 1, 86, "kilogram"),
 	(22, "Oslić", 1, 25, "kilogram"),
-	(23, "Salata", 4, 98, "komad"),
+	(23, "Salata", 4, 98, "kilogram"),
 	(24, "Svinjetina", 2, 135, "kilogram"),
 	(25, "Piletina", 2, 96, "kilogram"),
 	(26, "Gljive", 7, 44, "kilogram"),
@@ -1051,21 +1047,6 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (15, 0.4, 16),
     (7, 0.3, 16),
     (20, 0.2, 16),
-    (15, 0.1, 16),
-    (21, 0.4, 17),
-    (7, 0.3, 17),
-    (22, 0.3, 18),
-    (47, 0.1, 18),
-    (45, 0.1, 13),
-    (53, 0.1, 14),
-    (51, 0.1, 14),
-    (45, 0.1, 14),
-    (12, 0.6, 15),
-    (19, 0.4, 15),
-    (15, 0.4, 16),
-    (7, 0.3, 16),
-    (20, 0.2, 16),
-    (15, 0.1, 16),
     (21, 0.4, 17),
     (7, 0.3, 17),
     (22, 0.3, 18),
@@ -1088,7 +1069,6 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (7, 0.5, 24),
     (15, 0.2, 24),
     (24, 0.2, 24),
-    (25, 0.2, 24),
     (45, 0.1, 24),
     (47, 1, 25),
     (27, 0.2, 25),
@@ -1160,9 +1140,7 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (32, 0.5, 39),
     (33, 0.5, 40),
     (34, 0.5, 41),
-    (34, 0.25, 42),
     (35, 0.25, 42),
-    (36, 0.25, 42),
     (37, 0.25, 43),
     (38, 0.25, 44),
     (43, 0.25, 45),
@@ -1176,24 +1154,7 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (56, 0.2, 51);
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
-    
 
 -- id, id_racun, id_meni, kolicina, cijena_hrk
 -- cijena_hrk ne dodajemo -> automatski se izračuna
