@@ -132,13 +132,13 @@ CREATE TABLE stavka_racun (
 CREATE TABLE rezervacija (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	id_stol INTEGER NOT NULL,
-	id_gost INTEGER NOT NULL,
+	id_osoba INTEGER NOT NULL,
     zeljeni_datum DATE NOT NULL,
     vrijeme_od TIME NOT NULL,
     vrijeme_do TIME NOT NULL,
 	broj_gostiju INTEGER NOT NULL,
 	FOREIGN KEY (id_stol) REFERENCES stol (id),
-	FOREIGN KEY (id_gost) REFERENCES osoba (id)
+	FOREIGN KEY (id_osoba) REFERENCES osoba (id)
 );
 
 CREATE TABLE catering_narucitelj (
@@ -184,6 +184,7 @@ CREATE TABLE djelatnici_catering (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_catering INTEGER NOT NULL,
     id_djelatnik INTEGER NOT NULL,
+    UNIQUE(id_catering, id_djelatnik),
     FOREIGN KEY (id_catering) REFERENCES catering (id),
     FOREIGN KEY (id_djelatnik) REFERENCES djelatnik (id)
 );
@@ -219,7 +220,7 @@ CREATE TABLE otpis_stavka (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	id_otpis INTEGER NOT NULL,
     id_namirnica INTEGER NOT NULL,
-	kolicina INTEGER NOT NULL,
+	kolicina DECIMAL(10, 2) NOT NULL,
 	FOREIGN KEY (id_otpis) REFERENCES otpis (id),
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
 );    
@@ -257,12 +258,12 @@ CREATE TABLE djelatnik_smjena (
 
 CREATE TABLE dostava (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
-	id_gost INTEGER NOT NULL,
+	id_osoba INTEGER NOT NULL,
 	id_adresa INTEGER NOT NULL, 
 	datum DATE NOT NULL, 
 	cijena_hrk DECIMAL(10, 2) DEFAULT 0.00,
 	izvrsena CHAR(1) NOT NULL,
-    FOREIGN KEY (id_gost) REFERENCES osoba (id),
+    FOREIGN KEY (id_osoba) REFERENCES osoba (id),
     FOREIGN KEY (id_adresa) REFERENCES adresa (id),
     CHECK (izvrsena IN ("D", "N"))
 );
@@ -519,6 +520,38 @@ SELECT CONCAT(kvartali.kvartal, ". kvartal") AS kvartal, COALESCE(tmp.ukupno, 0)
 						WHERE YEAR(datum) = 2021
 						GROUP BY QUARTER(datum)) AS tmp
 			ON kvartali.kvartal = tmp.kvartal;
+
+
+-- 8. Upit koji prikazuje sve namirnice sa dodatnim stupcem u kojem je navedeno da li je ta namirnica barem jednom otpisana,
+-- te ako je, u kolikoj ukupnoj količini
+
+SELECT namirnica.naziv, 
+		(CASE WHEN otpis_stavka.id IS NOT NULL
+			THEN "Postoji otpis za namirnicu"
+			ELSE "Nema otpisa" END) AS otpis,
+		COALESCE(SUM(otpis_stavka.kolicina), 0) AS otpisana_kolicina
+	FROM namirnica
+    LEFT JOIN otpis_stavka
+    ON namirnica.id = otpis_stavka.id_namirnica
+    GROUP BY namirnica.id
+    ORDER BY otpis DESC;
+
+
+-- 9. Upit koji prikazuje sve djelatnike koji su barem jednom bili gosti restorana (tj. ako su barem jednom napravili rezervaciju,
+-- naručili catering ili dostavu)
+
+SELECT osoba.*
+	FROM djelatnik
+    INNER JOIN osoba
+    ON djelatnik.id_osoba = osoba.id
+    WHERE osoba.id IN (SELECT DISTINCT id_osoba
+							FROM rezervacija
+						UNION    
+						SELECT DISTINCT id_osoba
+							FROM catering_narucitelj
+						UNION    
+						SELECT DISTINCT id_osoba
+							FROM dostava);
 
 
 
@@ -1399,33 +1432,32 @@ INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
 	(127, 39, 6, 1),
 	(128, 39, 20, 6);
 
--- id, id_stol, id_gost, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju
-INSERT INTO rezervacija VALUES
-	(1, 1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "18:00", "23:00", 4);
 
--- id, id_osoba, oib
-INSERT INTO catering_narucitelj VALUES
-	(1, 1, "12345678901");
+INSERT INTO rezervacija (id_stol, id_osoba, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju) VALUES
+	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "18:00", "23:00", 4);
 
--- id, id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva
-INSERT INTO catering_zahtjev VALUES
-	(1, 1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.'));
+
+INSERT INTO catering_narucitelj (id_osoba, oib) VALUES
+	(1, "12345678901");
+
+INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva) VALUES
+	(1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.'));
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, opis, uplaceno
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
-INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
-	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
+INSERT INTO catering (id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
+	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
     
 -- id, id_catering, id_meni, kolicina, cijena_hrk
 -- cijena_hrk -> automatski se izračunava
-INSERT INTO catering_stavka (id, id_catering, id_meni, kolicina) VALUES
-	(1, 1, 1, 10),
-    (2, 1, 2, 10);
+INSERT INTO catering_stavka (id_catering, id_meni, kolicina) VALUES
+	(1, 1, 10),
+    (1, 2, 10);
 
 -- id, id_catering, id_djelatnik
-INSERT INTO djelatnici_catering VALUES
-	(1, 1, 28),
-    (2, 1, 21);
+INSERT INTO djelatnici_catering (id_catering, id_djelatnik) VALUES
+	(1, 28),
+    (1, 21);
 
 -- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu nabava_stavka
@@ -1438,12 +1470,15 @@ INSERT INTO nabava_stavka VALUES
 
 -- id, datum, opis
 INSERT INTO otpis VALUES
-	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL);
+	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL),
+    (2, STR_TO_DATE('15.02.2021.', '%d.%m.%Y.'), NULL);
 
 -- id, id_otpis, id_namirnica, kolicina
 INSERT INTO otpis_stavka VALUES
 	(1, 1, 3, 1),
-    (2, 1, 19, 5);
+    (2, 1, 19, 5),
+    (3, 2, 5, 10),
+    (4, 2, 19, 2);
 
 -- id, naziv
 INSERT INTO kategorija_rezije VALUES
@@ -1597,10 +1632,9 @@ INSERT INTO djelatnik_smjena (id_djelatnik, id_smjena, datum) VALUES
     (29, 3,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.')),
     (28, 4,STR_TO_DATE('21.12.2021.', '%d.%m.%Y.'));
     
--- id, id_gost, id_adresa, datum, cijena_hrk, izvrsena
+-- id, id_osoba, id_adresa, datum, cijena_hrk, izvrsena
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
--- id_gost REFERENCES osoba (id) -> jer ne postoji tablica gost
-INSERT INTO dostava (id, id_gost, id_adresa, datum, izvrsena) VALUES
+INSERT INTO dostava (id, id_osoba, id_adresa, datum, izvrsena) VALUES
 	(1, 31, 22, STR_TO_DATE('01.11.2020.', '%d.%m.%Y.'), "D"),
     (2, 34, 1, STR_TO_DATE('15.11.2020.', '%d.%m.%Y.'), "D"),
     (3, 35, 17, STR_TO_DATE('22.12.2020.', '%d.%m.%Y.'), "D"),
