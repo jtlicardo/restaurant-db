@@ -429,17 +429,29 @@ SELECT namirnica.*
     LIMIT 3;
 
 
+-- 3. Upit koji prikazuje sva jela i alergene koje sadrže (uz pomoć funkcije)
+
+DROP FUNCTION IF EXISTS sadrzi_alergene;
+
+DELIMITER //
+CREATE FUNCTION sadrzi_alergene (p_id_meni INTEGER) RETURNS VARCHAR(100)
+DETERMINISTIC
+BEGIN
+	RETURN (SELECT GROUP_CONCAT(" ", a.naziv)
+				FROM meni m
+				LEFT JOIN sadrzi_alergen sa
+				ON m.id = sa.id_meni
+				LEFT JOIN alergen a
+				ON a.id = sa.id_alergen
+				WHERE m.id = p_id_meni);
+END //
+DELIMITER ;
+
+SELECT naziv_stavke AS jelo, sadrzi_alergene(id) AS alergeni_u_jelu
+	FROM meni;
 
 
-
-
-
-
--- /////////////////////////////////////////
--- //////////      FUNKCIJE       //////////
--- /////////////////////////////////////////
-
--- 1. Funkcija koja uzima stavku menija i vraća "DA" ako je izdana na svim računima u ukupnoj količini većoj od x
+-- 4. Upit koji prikazuje sve stavke u meniju izdane na računima u ukupnoj količini većoj od 30
 
 DROP FUNCTION IF EXISTS br_prodanih_veci_od;
 
@@ -458,12 +470,12 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT *        -- vraća sve stavke u meniju izdane u ukupnoj količini većoj od 30
+SELECT *
 	FROM meni
     HAVING br_prodanih_veci_od(id, 30) = "DA";
 
 
--- 2. Funkcija koja vraća broj izdanih računa između 2 datuma
+-- 5. Upit (funkcija) koji prikazuje broj izdanih računa između dva datuma
 
 DROP FUNCTION IF EXISTS br_racuna_izmedu;
 
@@ -478,7 +490,36 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT br_racuna_izmedu(STR_TO_DATE('01.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'));
+SELECT br_racuna_izmedu(STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'));
+
+
+-- 6. Upit koji prikazuje ime i prezime svakog zaposlenika, njihov email, posao koji obavljaju u restoranu i broj odrađenih sati
+-- u prosincu 2021. godine
+
+SELECT d.id, ime, prezime, email, z.naziv, COALESCE(SUM(HOUR(SUBTIME(kraj_radnog_vremena, pocetak_radnog_vremena))), 0) AS broj_odradenih_sati
+	FROM djelatnik d
+    LEFT JOIN osoba o
+    ON d.id_osoba = o.id
+    LEFT JOIN zanimanje z
+    ON d.id_zanimanje = z.id
+    LEFT JOIN djelatnik_smjena ds
+    ON ds.id_djelatnik = d.id
+    LEFT JOIN smjena s
+    ON ds.id_smjena = s.id
+    WHERE (YEAR(ds.datum) = 2021 AND MONTH(ds.datum) = 12) OR (ds.datum) IS NULL
+    GROUP BY (d.id);
+    
+    
+-- 7. Upit koji prikazuje iznos režija po kvartalu tijekom 2021. godine
+
+SELECT CONCAT(kvartali.kvartal, ". kvartal") AS kvartal, COALESCE(tmp.ukupno, 0) AS ukupan_iznos
+	FROM (SELECT 1 AS kvartal UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) AS kvartali
+			LEFT JOIN (SELECT QUARTER(datum) AS kvartal, SUM(iznos_hrk) AS ukupno
+						FROM rezije
+						WHERE YEAR(datum) = 2021
+						GROUP BY QUARTER(datum)) AS tmp
+			ON kvartali.kvartal = tmp.kvartal;
+
 
 
 
@@ -1083,7 +1124,7 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (45, 0.1, 7),
     (13, 0.4, 8),
     (19, 0.5, 8),
-    (47, 0.1, 8),
+    (47, 1, 8),
     (45, 0.1, 8),
     (45, 0.1, 9),
     (13, 0.4, 9),
@@ -1119,7 +1160,7 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     (21, 0.4, 17),
     (7, 0.3, 17),
     (22, 0.3, 18),
-    (47, 0.1, 18),
+    (47, 1, 18),
     (45, 0.1, 18),
     (45, 0.3, 19),
     (30, 0.4, 19),
