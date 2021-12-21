@@ -939,7 +939,28 @@ INSERT INTO adresa VALUES
     (27, "Hrvatska", "Buzet", "Marinci 57", "52420"),
     (28, "Hrvatska", "Labin", "Šćiri 39", "52220"),
     (29, "Hrvatska", "Ližnjan", "Muntić 16", "52203"),
-    (30, "Hrvatska", "Krnica", "Suhača 9", "52208");
+    (30, "Hrvatska", "Krnica", "Suhača 9", "52208"),
+    (31, "Hrvatska", "Fažana", "Braće Ilić 54", "52212"),
+    (32, "Hrvatska", "Pazin", "Heki 18", "52000"),
+    (33, "Hrvatska", "Karojba", "Margaroti 78", "52423"),
+    (34, "Hrvatska", "Buje", "Bibali 88", "52460"),
+    (35, "Hrvatska", "Pazin", "Baničići 114", "52000"),
+    (36, "Hrvatska", "Žminj", "Krničari 68", "52341"),
+    (37, "Hrvatska", "Sv. Petar u Šumi", "Glavica 3", "52404"),
+    (38, "Hrvatska", "Gračišće", "Škljonki 55", "52208"),
+    (39, "Hrvatska", "Kršan", "Čambarelići 74", "52208"),
+    (40, "Hrvatska", "Pula", "Rovinjska 9", "52100"),
+    (41, "Hrvatska", "Pula", "Radićeva 16", "52100"),
+    (42, "Hrvatska", "Pula", "Bečka 28", "52100"),
+    (43, "Hrvatska", "Pula", "Fižela 69", "52100"),
+    (44, "Hrvatska", "Pula", "Valovine 8", "52100"),
+    (45, "Hrvatska", "Pula", "Uskočka 14", "52100"),
+    (46, "Hrvatska", "Pula", "Supilova 9", "52100"),
+    (47, "Hrvatska", "Pula", "Varaždinska 17", "52100"),
+    (48, "Hrvatska", "Pula", "Bože Gumpca 40", "52100"),
+    (49, "Hrvatska", "Pula", "Kastavska 17", "52100"),
+    (50, "Hrvatska", "Pula", "Braće Levak 149", "52100");
+    
         
 -- id, naziv, id_adresa, oib, broj_mob, vrsta_usluge        
 INSERT INTO dobavljac VALUES
@@ -1546,19 +1567,110 @@ INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
 
 
 INSERT INTO rezervacija (id_stol, id_osoba, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju) VALUES
-	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "18:00", "23:00", 4);
+	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "18:00", "23:00", 4),
+    (2, 40, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "19:00", "23:00", 6),
+    (3, 41, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "16:00", "18:00", 2),
+    (5, 43, STR_TO_DATE('10.01.2021.', '%d.%m.%Y.'), "19:00", "23:00", 7),
+    (6, 44, STR_TO_DATE('12.01.2021.', '%d.%m.%Y.'), "17:00", "22:00", 6),
+    (9, 50, STR_TO_DATE('20.01.2021.', '%d.%m.%Y.'), "18:00", "21:00", 2),
+    (20, 46, STR_TO_DATE('14.02.2021.', '%d.%m.%Y.'), "15:00", "17:00", 5),
+    (14, 49, STR_TO_DATE('14.02.2021.', '%d.%m.%Y.'), "19:00", "22:00", 4),
+    (15, 47, STR_TO_DATE('14.02.2021.', '%d.%m.%Y.'), "18:00", "21:00", 8),
+    (29, 48, STR_TO_DATE('16.02.2021.', '%d.%m.%Y.'), "16:30", "19:00", 3),
+    (27, 40, STR_TO_DATE('04.03.2021.', '%d.%m.%Y.'), "18:30", "22:00", 6),
+    (9, 50, STR_TO_DATE('06.04.2021.', '%d.%m.%Y.'), "19:30", "21:30", 4),
+    (8, 49, STR_TO_DATE('08.04.2021.', '%d.%m.%Y.'), "14:00", "19:00", 6),
+    (22, 40, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "12:00", "23:00", 10),
+    (27, 43, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "15:00", "19:30", 5),
+    (3, 42, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "16:00", "17:30", 3),
+    (1, 44, STR_TO_DATE('10.05.2021.', '%d.%m.%Y.'), "19:00", "22:00", 5),
+    (18, 46, STR_TO_DATE('15.05.2021.', '%d.%m.%Y.'), "15:00", "19:00", 6),
+    (26, 48, STR_TO_DATE('14.06.2021.', '%d.%m.%Y.'), "14:00", "18:00", 4),
+    (22, 46, STR_TO_DATE('17.06.2021.', '%d.%m.%Y.'), "17:00", "19:00", 9),
+    (6, 47, STR_TO_DATE('24.06.2021.', '%d.%m.%Y.'), "12:00", "23:00", 6),
+    (5, 45, STR_TO_DATE('01.07.2021.', '%d.%m.%Y.'), "17:30", "23:00", 8),
+    (18, 46, STR_TO_DATE('28.07.2021.', '%d.%m.%Y.'), "16:00", "22:00", 6),
+    (30, 44, STR_TO_DATE('06.08.2021.', '%d.%m.%Y.'), "14:00", "20:30", 4),
+    (24, 40, STR_TO_DATE('08.08.2021.', '%d.%m.%Y.'), "11:00", "13:00", 2),
+    (14, 49, STR_TO_DATE('20.08.2021.', '%d.%m.%Y.'), "12:00", "23:00", 7),
+    (8, 50, STR_TO_DATE('28.09.2021.', '%d.%m.%Y.'), "17:00", "20:00", 6),
+    (6, 41, STR_TO_DATE('24.12.2021.', '%d.%m.%Y.'), "18:30", "22:00", 5),
+    (2, 50, STR_TO_DATE('24.12.2021.', '%d.%m.%Y.'), "18:30", "21:00", 5),
+    (14, 48, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "12:00", "18:00", 8),
+    (5, 46, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "13:00", "22:00", 8),
+    (14, 40, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "19:00", "23:00", 8),
+    (30, 45, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "15:00", "17:30", 3);
+    
 
 
 INSERT INTO catering_narucitelj (id_osoba, oib) VALUES
-	(1, "12345678901");
+	(40, "48407121484"),
+    (41, "26583611258"),
+    (44, "65993227367"),
+    (42, "21077357447"),
+    (43, "88713678515"),
+    (48, "13935956833"),
+    (47, "63447645433"),
+    (50, "02442784430"),
+    (47, "63447645433"),
+    (46, "17266697748"),
+    (43, "88713678515"),
+    (42, "21077357447"),
+    (40, "48407121484"),
+    (41, "26583611258"),
+    (49, "75019388217"),
+    (47, "63447645433"),
+    (48, "13935956833"),
+    (50, "02442784430"),
+    (43, "88713678515"),
+    (40, "48407121484");
+    
 
 INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva) VALUES
-	(1, 1, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.'));
+	(40, 40, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.')),
+    (42, 42, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2020.', '%d.%m.%Y.')),
+    (44, 44, NULL, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.01.2021.', '%d.%m.%Y.')),
+    (50, 50, NULL, STR_TO_DATE('10.03.2021.', '%d.%m.%Y.'), STR_TO_DATE('13.02.2021.', '%d.%m.%Y.')),
+    (46, 46, NULL, STR_TO_DATE('15.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.03.2021.', '%d.%m.%Y.')),
+    (48, 48, NULL, STR_TO_DATE('16.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.04.2021.', '%d.%m.%Y.')),
+    (49, 39, NULL, STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('02.04.2021.', '%d.%m.%Y.')),
+    (40, 37, "pasulj ako ga ima", STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), STR_TO_DATE('25.04.2021.', '%d.%m.%Y.')),
+    (41, 41, NULL, STR_TO_DATE('23.06.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.05.2021.', '%d.%m.%Y.')),
+    (43, 43, NULL, STR_TO_DATE('28.06.2021.', '%d.%m.%Y.'), STR_TO_DATE('25.5.2021.', '%d.%m.%Y.')),
+    (44, 41, NULL, STR_TO_DATE('14.08.2021.', '%d.%m.%Y.'), STR_TO_DATE('17.07.2021.', '%d.%m.%Y.')),
+    (50, 50, NULL, STR_TO_DATE('17.10.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.09.2021.', '%d.%m.%Y.')),
+    (47, 50, NULL, STR_TO_DATE('22.11.2021.', '%d.%m.%Y.'), STR_TO_DATE('27.10.2021.', '%d.%m.%Y.')),
+    (48, 48, NULL, STR_TO_DATE('23.12.2021.', '%d.%m.%Y.'), STR_TO_DATE('30.11.2021.', '%d.%m.%Y.')),
+    (42, 38, "sretna nova godina", STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.12.2021.', '%d.%m.%Y.')),
+    (43, 38, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('10.12.2021.', '%d.%m.%Y.')),
+    (49, 40, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('11.12.2021.', '%d.%m.%Y.')),
+    (40, 40, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('12.12.2021.', '%d.%m.%Y.')),
+    (44, 44, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+    (48, 48, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('20.12.2021.', '%d.%m.%Y.'));
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, opis, uplaceno
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
 INSERT INTO catering (id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
-	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
+	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (3, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), NULL, "N"),
+    (4, STR_TO_DATE('10.03.2021', '%d.%m.%Y.'), NULL, "D"),
+    (5, STR_TO_DATE('15.04.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (6, STR_TO_DATE('16.04.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (7, STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (8, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (9, STR_TO_DATE('23.06.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (10, STR_TO_DATE('28.06.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (11, STR_TO_DATE('14.08.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (12, STR_TO_DATE('17.10.2021.', '%d.%m.%Y.'), NULL, "N"),
+    (13, STR_TO_DATE('22.11.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (14, STR_TO_DATE('23.12.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (15, STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'), NULL, "D"),
+    (16, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "D"),
+    (17, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "D"),
+    (18, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "N"),
+    (19, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "N"),
+    (20, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "D");
     
 -- id, id_catering, id_meni, kolicina, cijena_hrk
 -- cijena_hrk -> automatski se izračunava
