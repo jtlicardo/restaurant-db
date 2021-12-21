@@ -794,7 +794,17 @@ INSERT INTO osoba VALUES
     (37, "Dragan", "Matika", "0976661233", "matika@hotmail.com"),
     (38, "Tone", "Štraca", "0912223333", "tonestraca@gmail.com"),
     (39, "Daniele", "Portafoglio", "0995551111", "daniele@gmail.com"),
-    (40, "Zorica", "Rankun", "0910997777", "zoryy@gmail.com");
+    (40, "Zorica", "Rankun", "0910997777", "zoryy@gmail.com"),
+    (41, "Matko", "Batko", "092452451", "batak@gmail.com"),
+    (42, "Toto", "Wolf", "09144559952", "no_michael@gmail.com"),
+    (43, "Lidija", "Bačić", "0994179793", "lile69@gmail.com"),
+    (44, "Verbatim", "Traxdata", "097004300", "dvd_rw@gmail.com"),
+    (45, "Alen", "Vitasović", "099236525", "bevanda033@yahoo.com"),
+    (46, "Philosophia", "Uremović", "0914455268", "phil@gmail.com"),
+    (47, "Đorđe", "Čika", "0996200352", "djcika@gmail.com"),
+    (48, "Verica", "Kramar", "092458522", "krama98@gmail.com"),
+    (49, "Magdalena", "Efrem", "098452564", "megi774@gmail.com"),
+    (50, "Maja", "Šipak", "098125256", "cajic@hotmail.com");
     
 
 -- id, naziv, placa_hrk
