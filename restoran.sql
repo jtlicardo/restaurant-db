@@ -391,6 +391,16 @@ END//
 DELIMITER ;
 
 
+DELIMITER //
+CREATE TRIGGER otpis_robe
+	BEFORE INSERT ON otpis_stavka
+    FOR EACH ROW
+BEGIN
+    UPDATE narmirnica
+		SET namirnica.kolicina = namirnica.kolicina -new.kolicina
+			WHERE new.id_namirnica = id.namirnica;
+END//
+DELIMITER ;
 
 
 
