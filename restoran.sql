@@ -344,6 +344,7 @@ END//
 DELIMITER ;
 
 -- Izračunava ukupni iznos nabave
+-- Povećava količinu namirnica na zalihi
 DROP TRIGGER IF EXISTS bi_nabava_stavka;
 
 DELIMITER //
@@ -354,6 +355,10 @@ BEGIN
     UPDATE nabava
 		SET iznos_hrk = iznos_hrk + new.cijena_hrk
 		WHERE id = new.id_nabava;
+	
+    UPDATE namirnica
+		SET kolicina_na_zalihi = kolicina_na_zalihi + new.kolicina
+        WHERE namirnica.id = new.id_namirnica;
 END//
 DELIMITER ;
   
