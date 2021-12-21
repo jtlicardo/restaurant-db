@@ -563,6 +563,24 @@ SELECT osoba.*
 
 
 
+-- /////////////////////////////////////////
+-- //////////      POGLEDI       ///////////
+-- /////////////////////////////////////////
+
+-- 1. Pogled koji prikazuje trenutni meni
+
+CREATE VIEW aktivni_meni AS
+SELECT *
+	FROM meni
+    WHERE aktivno = "D";
+
+-- SELECT * FROM aktivni_meni;
+-- CALL obrisi_jelo(3);
+
+
+
+
+
 
 
 -- /////////////////////////////////////////
@@ -693,6 +711,41 @@ CLOSE cur;
     
 END //
 DELIMITER ;
+
+-- 4. Procedura koja "briše" jelo s menija -> postavlja atribut 'aktivno' na "N"
+
+DROP PROCEDURE IF EXISTS obrisi_jelo;
+
+DELIMITER //
+CREATE PROCEDURE obrisi_jelo (p_id_jela INTEGER)
+BEGIN
+	IF (SELECT COUNT(*)
+			FROM meni
+            WHERE id = p_id_jela) = 0
+	THEN
+		SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Jelo sa tim id-em ne postoji u tablici meni!';
+    END IF;
+    
+    IF (SELECT COUNT(*)
+			FROM meni
+            WHERE id = p_id_jela
+				AND aktivno = "N") = 1
+	THEN
+		SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Jelo je već neaktivno!';
+    END IF;
+
+    UPDATE meni
+		SET aktivno = "N"
+        WHERE id = p_id_jela;
+END //
+DELIMITER ;
+
+/*
+SELECT * FROM meni;
+CALL obrisi_jelo(1);
+*/
 
 
 
