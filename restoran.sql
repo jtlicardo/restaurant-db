@@ -712,6 +712,7 @@ CLOSE cur;
 END //
 DELIMITER ;
 
+
 -- 4. Procedura koja "briše" jelo s menija -> postavlja atribut 'aktivno' na "N"
 
 DROP PROCEDURE IF EXISTS obrisi_jelo;
@@ -724,7 +725,7 @@ BEGIN
             WHERE id = p_id_jela) = 0
 	THEN
 		SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Jelo sa tim id-em ne postoji u tablici meni!';
+        SET MESSAGE_TEXT = 'Jelo sa tim id-em ne postoji u tablici meni!';
     END IF;
     
     IF (SELECT COUNT(*)
@@ -746,6 +747,49 @@ DELIMITER ;
 SELECT * FROM meni;
 CALL obrisi_jelo(1);
 */
+
+
+-- 5. Procedura koja dodaje jelo na meni
+
+DROP PROCEDURE IF EXISTS dodaj_jelo;
+
+DELIMITER //
+CREATE PROCEDURE dodaj_jelo (p_naziv_stavke VARCHAR(70), p_cijena_hrk DECIMAL(10, 2))
+BEGIN
+	-- aktivno jelo s tim nazivom već postoji -> javlja grešku:
+	IF (SELECT COUNT(*)
+			FROM meni
+			WHERE naziv_stavke = p_naziv_stavke
+            AND aktivno = "D") > 0
+	THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Jelo već postoji!';
+	-- neaktivno jelo s tim nazivom već postoji -> aktivira ga:
+	ELSEIF (SELECT COUNT(*)
+			FROM meni
+			WHERE naziv_stavke = p_naziv_stavke
+				AND aktivno = "N") > 0
+	THEN
+		UPDATE meni
+			SET aktivno = "D"
+            WHERE naziv_stavke = p_naziv_stavke;
+	-- inače, dodaje jelo:
+    ELSE
+		INSERT INTO meni (naziv_stavke, cijena_hrk) VALUES (p_naziv_stavke, p_cijena_hrk);
+    END IF;
+END //
+DELIMITER ;
+
+/*
+SELECT * FROM meni;
+CALL obrisi_jelo(1);
+CALL dodaj_jelo("Jadranska orada sa žara s gratiniranim povrćem", 95.00);
+CALL dodaj_jelo("Novo jelo", 125.99);
+*/
+
+
+
+
 
 
 
