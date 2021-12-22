@@ -850,7 +850,7 @@ INSERT INTO osoba VALUES
     (39, "Daniele", "Portafoglio", "0995551111", "daniele@gmail.com"),
     (40, "Zorica", "Rankun", "0910997777", "zoryy@gmail.com"),
     (41, "Matko", "Batko", "092452451", "batak@gmail.com"),
-    (42, "Toto", "Wolf", "09144559952", "no_michael@gmail.com"),
+    (42, "Toto", "Wolf", "0914559952", "no_michael@gmail.com"),
     (43, "Lidija", "Bačić", "0994179793", "lile69@gmail.com"),
     (44, "Verbatim", "Traxdata", "097004300", "dvd_rw@gmail.com"),
     (45, "Alen", "Vitasović", "099236525", "bevanda033@yahoo.com"),
@@ -1611,9 +1611,8 @@ INSERT INTO rezervacija (id_stol, id_osoba, zeljeni_datum, vrijeme_od, vrijeme_d
     (14, 40, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "19:00", "23:00", 8),
     (30, 45, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "15:00", "17:30", 3);
     
-
-
-INSERT INTO catering_narucitelj (id_osoba, oib) VALUES
+-- id, id_osoba, oib
+INSERT INTO catering_narucitelj VALUES
 	(40, "48407121484"),
     (41, "26583611258"),
     (44, "65993227367"),
@@ -1635,8 +1634,8 @@ INSERT INTO catering_narucitelj (id_osoba, oib) VALUES
     (43, "88713678515"),
     (40, "48407121484");
     
-
-INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva) VALUES
+-- id, id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva
+INSERT INTO catering_zahtjev VALUES
 	(40, 40, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.')),
     (42, 42, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2020.', '%d.%m.%Y.')),
     (44, 44, NULL, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.01.2021.', '%d.%m.%Y.')),
@@ -1660,7 +1659,7 @@ INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum, dat
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, opis, uplaceno
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
-INSERT INTO catering (id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
+INSERT INTO catering VALUES
 	(1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D"),
     (2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D"),
     (3, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), NULL, "N"),
@@ -1684,7 +1683,7 @@ INSERT INTO catering (id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
     
 -- id, id_catering, id_meni, kolicina, cijena_hrk
 -- cijena_hrk -> automatski se izračunava
-INSERT INTO catering_stavka (id_catering, id_meni, kolicina) VALUES
+INSERT INTO catering_stavka VALUES
 	(1, 1, 10),
     (1, 2, 10),
     (1, 6, 8),
@@ -1755,7 +1754,7 @@ INSERT INTO catering_stavka (id_catering, id_meni, kolicina) VALUES
     (20, 21, 4);
 
 -- id, id_catering, id_djelatnik
-INSERT INTO djelatnici_catering (id_catering, id_djelatnik) VALUES
+INSERT INTO djelatnici_catering VALUES
 	(1, 28),
     (1, 9),
     (1, 11),
@@ -1896,7 +1895,7 @@ INSERT INTO smjena VALUES
 
 
 -- id, id_djelatnik, id_smjena, datum
-INSERT INTO djelatnik_smjena (id_djelatnik, id_smjena, datum) VALUES
+INSERT INTO djelatnik_smjena VALUES
 	(2, 1,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
     (4, 2,STR_TO_DATE('15.12.2021.', '%d.%m.%Y.')),
     (4, 1,STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
