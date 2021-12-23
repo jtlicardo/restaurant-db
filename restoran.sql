@@ -579,8 +579,19 @@ SELECT id_stol, zarada_stola, iznos_hrk, ROUND(zarada_stola/broj_racuna/broj_gos
 		WHERE (YEAR(vrijeme_izdavanja) = 2021)
 		GROUP BY (id_stol)) as tmp
 		ORDER BY (zarada_stola) DESC;
-        
-
+  
+  -- 11. upit koji prikazuje datum kada je zadnje prodana svaka stavka menija
+  
+  SELECT naziv_stavke, MAX(temp.vrijeme_izdavanja) as zadnji_datum_prodaje
+	FROM(SELECT vrijeme_izdavanja, naziv_stavke
+			FROM racun
+			LEFT JOIN stavka_racun
+            ON racun.id= stavka_racun.id_racun
+			LEFT JOIN meni
+            ON stavka_racun.id_meni=meni.id) as temp
+	group by temp.naziv_stavke
+	order by zadnji_datum_prodaje DESC;
+ 
 
 -- /////////////////////////////////////////
 -- //////////      POGLEDI       ///////////
