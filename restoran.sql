@@ -568,9 +568,18 @@ SELECT osoba.*
 						SELECT DISTINCT id_osoba
 							FROM dostava);
 
+-- 10. upit koji prikazuje zaradu po stolu u 2021. godine, te broj računa i broj srednja zarada po kapacitetu i računu (ako je taj broj nizak, to bi mogla biti indikacija da pozicija zbog nekog
+-- razloga privlaći manje grupe)
 
 
-
+SELECT id_stol, zarada_stola, iznos_hrk, ROUND(zarada_stola/broj_racuna/broj_gostiju_kapacitet,2) as zarada_po_kapacitetu_i_računu
+	FROM (SELECT id_stol, iznos_hrk, broj_gostiju_kapacitet, SUM(iznos_hrk) as zarada_stola, count(iznos_hrk) as broj_racuna
+		FROM racun
+		LEFT JOIN stol on racun.id_stol=stol.id
+		WHERE (YEAR(vrijeme_izdavanja) = 2021)
+		GROUP BY (id_stol)) as tmp
+		ORDER BY (zarada_stola) DESC;
+        
 
 
 -- /////////////////////////////////////////
