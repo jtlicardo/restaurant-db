@@ -719,6 +719,14 @@ FROM
     GROUP BY mjesec;
     ;
 
+-- 16. upit koji računa srednju zaradu preko računa po danu podijeljena po satima
+SELECT ROUND(SUM(tot)/(SELECT COUNT(DISTINCT DATE(vrijeme_izdavanja)) FROM racun), 2), sat
+FROM
+(SELECT SUM(iznos_hrk) as tot, HOUR(vrijeme_izdavanja) AS sat, COUNT(DATE(vrijeme_izdavanja)) AS datum
+FROM racun
+GROUP BY sat, vrijeme_izdavanja) AS temp
+GROUP BY sat
+ORDER BY sat;
 
 -- /////////////////////////////////////////
 -- //////////      POGLEDI       ///////////
