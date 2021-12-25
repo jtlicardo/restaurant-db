@@ -106,7 +106,7 @@ CREATE TABLE namirnica (
     kolicina_na_zalihi DECIMAL (10, 2) NOT NULL,
     mjerna_jedinica VARCHAR(20) NOT NULL,
     FOREIGN KEY (id_kategorija) REFERENCES kategorija_namirnica (id),
-    CHECK (kolicina_na_zalihi > 0)
+    CHECK (kolicina_na_zalihi >= 0)
 );
 
 CREATE TABLE stavka_meni (
@@ -216,7 +216,7 @@ CREATE TABLE nabava_stavka (
 
 CREATE TABLE otpis (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    datum DATE NOT NULL,
+    datum TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     opis TEXT
 );    
 
@@ -396,17 +396,32 @@ BEGIN
 END//
 DELIMITER ;
 
-
+-- Provjerava da li je količina namirnica na zalihi dostatna
+-- Smanjuje količinu na zalihi
 DELIMITER //
-CREATE TRIGGER otpis_robe
+CREATE TRIGGER bi_otpis_stavka
 	BEFORE INSERT ON otpis_stavka
     FOR EACH ROW
 BEGIN
-    UPDATE narmirnica
-		SET namirnica.kolicina = namirnica.kolicina -new.kolicina
-			WHERE new.id_namirnica = id.namirnica;
+
+DECLARE l_kolicina_na_zalihi DECIMAL(10, 2);
+
+SELECT kolicina_na_zalihi INTO l_kolicina_na_zalihi
+	FROM namirnica
+    WHERE id = new.id_namirnica;
+
+	IF l_kolicina_na_zalihi - new.kolicina < 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "Količina na zalihi preniska!";
+	ELSE
+		UPDATE namirnica
+		SET kolicina_na_zalihi = kolicina_na_zalihi - new.kolicina
+			WHERE new.id_namirnica = namirnica.id;
+    END IF;
+		
 END//
 DELIMITER ;
+
 
 
 
@@ -770,7 +785,6 @@ DELIMITER ;
 -- 4. Procedura koja "briše" jelo s menija -> postavlja atribut 'aktivno' na "N"
 
 DROP PROCEDURE IF EXISTS obrisi_jelo;
-
 DELIMITER //
 CREATE PROCEDURE obrisi_jelo (p_id_jela INTEGER)
 BEGIN
@@ -804,7 +818,6 @@ CALL obrisi_jelo(1);
 -- 5. Procedura koja dodaje jelo na meni
 
 DROP PROCEDURE IF EXISTS dodaj_jelo;
-
 DELIMITER //
 CREATE PROCEDURE dodaj_jelo (p_naziv_stavke VARCHAR(70), p_cijena_hrk DECIMAL(10, 2))
 BEGIN
@@ -843,7 +856,6 @@ CALL dodaj_jelo("Novo jelo", 125.99);
 -- 6. Procedura koja stvara novi zahtjev za catering
 
 DROP PROCEDURE IF EXISTS stvori_catering_zahtjev;
-
 DELIMITER //
 CREATE PROCEDURE stvori_catering_zahtjev
 (IN p_id_narucitelj INTEGER,
@@ -853,28 +865,28 @@ IN p_zeljeni_datum DATE,
 OUT status_zahtjeva VARCHAR(100))
 BEGIN
 
-DECLARE l_id_narucitelj INTEGER DEFAULT NULL;
-DECLARE l_id_adresa INTEGER DEFAULT NULL;
+	DECLARE l_id_narucitelj INTEGER DEFAULT NULL;
+	DECLARE l_id_adresa INTEGER DEFAULT NULL;
 
-SELECT id INTO l_id_narucitelj
-	FROM catering_narucitelj
-    WHERE id = p_id_narucitelj;
-    
-SELECT id INTO l_id_adresa
-	FROM adresa
-	WHERE id = p_id_adresa;
+	SELECT id INTO l_id_narucitelj
+		FROM catering_narucitelj
+		WHERE id = p_id_narucitelj;
+		
+	SELECT id INTO l_id_adresa
+		FROM adresa
+		WHERE id = p_id_adresa;
 
-IF (p_zeljeni_datum) < CURRENT_TIMESTAMP THEN
-	SET status_zahtjeva = "Zahtjev odbijen; željeni datum ne može biti u prošlosti!";
-ELSEIF l_id_narucitelj IS NULL THEN
-	SET status_zahtjeva = "Zahtjev odbijen; naručitelj ne postoji u evidenciji!";
-ELSEIF l_id_adresa IS NULL THEN
-	SET status_zahtjeva = "Zahtjev odbijen; adresa ne postoji u evidenciji!";
-ELSE
-	INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum) VALUES
-		(l_id_narucitelj, l_id_adresa, p_opis, p_zeljeni_datum);
-	SET status_zahtjeva = "Catering zahtjev stvoren.";
-END IF;
+	IF (p_zeljeni_datum) < CURRENT_TIMESTAMP THEN
+		SET status_zahtjeva = "Zahtjev odbijen; željeni datum ne može biti u prošlosti!";
+	ELSEIF l_id_narucitelj IS NULL THEN
+		SET status_zahtjeva = "Zahtjev odbijen; naručitelj ne postoji u evidenciji!";
+	ELSEIF l_id_adresa IS NULL THEN
+		SET status_zahtjeva = "Zahtjev odbijen; adresa ne postoji u evidenciji!";
+	ELSE
+		INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum) VALUES
+			(l_id_narucitelj, l_id_adresa, p_opis, p_zeljeni_datum);
+		SET status_zahtjeva = "Catering zahtjev stvoren.";
+	END IF;
 
 END //
 DELIMITER ;
@@ -887,6 +899,93 @@ SELECT * FROM catering_narucitelj;
 SELECT * FROM adresa;
 */
 
+
+-- 7. / 8. Procedure koja stvaraju novi otpis
+
+-- privremena tablica u koju se spremaju namirnice za otpis
+DROP TABLE IF EXISTS tmp_otpis_stavka;
+CREATE TEMPORARY TABLE tmp_otpis_stavka (
+	id_namirnica INTEGER NOT NULL,
+	kolicina DECIMAL(10, 2)
+);
+
+DROP PROCEDURE IF EXISTS dodaj_stavku_za_otpis;
+DELIMITER //
+CREATE PROCEDURE dodaj_stavku_za_otpis (p_naziv_namirnice VARCHAR(50), p_kolicina DECIMAL(10, 2))
+BEGIN
+
+	DECLARE l_id_namirnica INTEGER DEFAULT NULL;
+
+	SELECT id INTO l_id_namirnica
+		FROM namirnica
+		WHERE naziv = p_naziv_namirnice;
+
+	IF l_id_namirnica IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Namirnica sa tog naziva ne postoji!';
+	ELSEIF p_kolicina <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Količina mora biti pozitivan broj!';
+	ELSE
+		INSERT INTO tmp_otpis_stavka VALUES (l_id_namirnica, p_kolicina);
+	END IF;
+
+END //
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS stvori_otpis;
+DELIMITER //
+CREATE PROCEDURE stvori_otpis ()
+BEGIN
+
+	DECLARE l_id_otpis INTEGER;
+    DECLARE l_id_namirnica INTEGER;
+    DECLARE l_kolicina DECIMAL(10, 2);
+    
+	DECLARE cur CURSOR FOR
+		SELECT id_namirnica, kolicina
+			FROM tmp_otpis_stavka;
+            
+	DECLARE EXIT HANDLER FOR NOT FOUND
+	BEGIN
+		DELETE FROM tmp_otpis_stavka;
+	END;
+
+	-- stvara novi otpis
+	INSERT INTO otpis VALUES ();
+    
+    -- dohvaća id zadnje unesenog otpisa
+    SELECT id INTO l_id_otpis
+		FROM otpis
+		ORDER BY id DESC
+		LIMIT 1;
+    
+    OPEN cur;
+    
+    unesi_stavke: LOOP
+		FETCH cur INTO l_id_namirnica, l_kolicina;
+		INSERT INTO otpis_stavka (id_otpis, id_namirnica, kolicina)
+			VALUES (l_id_otpis, l_id_namirnica, l_kolicina);
+	END LOOP unesi_stavke;
+    
+	CLOSE cur;
+
+END //
+DELIMITER ;
+
+/*
+Primjer izvođenja:
+
+CALL dodaj_stavke_za_otpis("Orada", 5.00);
+CALL dodaj_stavke_za_otpis("Krumpir", 6.90);
+CALL dodaj_stavke_za_otpis("Rajčica", 9.50);
+SELECT * FROM tmp_otpis_stavka;
+SELECT * FROM namirnica;
+CALL stvori_otpis();
+SELECT * FROM otpis;
+SELECT * FROM otpis_stavka;
+*/
 
 
 
