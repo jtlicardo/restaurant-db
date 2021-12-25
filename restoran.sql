@@ -623,8 +623,39 @@ SELECT namirnica.naziv,
     ON namirnica.id = nabava_stavka.id_namirnica
     GROUP BY namirnica.id;
 
+-- 13 djelomićan, nisam još skužio kako da prikažem datum kao broj kvartala
 
-
+SELECT naziv as kategorija_namirnica, MAX(suma) as ukupna_potrosnja
+FROM
+(SELECT naziv, vrijeme_izdavanja, TOT, SUM(TOT) as suma
+FROM
+(SELECT * 
+FROM (SELECT stavka_meni.kolicina*stavka_racun.kolicina AS TOT, mjerna_jedinica, kategorija_namirnica.naziv, vrijeme_izdavanja 
+	FROM stavka_meni
+		JOIN stavka_racun
+        ON stavka_meni.id_meni=stavka_racun.id_meni
+		JOIN racun 
+        ON stavka_racun.id_racun=racun.id
+		JOIN namirnica 
+        ON namirnica.id= stavka_meni.id_namirnica
+		JOIN kategorija_namirnica 
+        ON kategorija_namirnica.id= namirnica.id_kategorija) as temp
+        WHERE mjerna_jedinica NOT IN ("komad")
+UNION
+SELECT *
+FROM (SELECT stavka_meni.kolicina*stavka_racun.kolicina*.5 AS TOT, mjerna_jedinica, kategorija_namirnica.naziv, vrijeme_izdavanja 
+	FROM stavka_meni
+		JOIN stavka_racun
+        ON stavka_meni.id_meni=stavka_racun.id_meni
+		JOIN racun 
+        ON stavka_racun.id_racun=racun.id
+		JOIN namirnica 
+        ON namirnica.id= stavka_meni.id_namirnica
+		JOIN kategorija_namirnica 
+        ON kategorija_namirnica.id= namirnica.id_kategorija) as temp
+        WHERE mjerna_jedinica IN ("komad")) as temp
+GROUP BY QUARTER (vrijeme_izdavanja), naziv) as temp
+GROUP BY QUARTER (vrijeme_izdavanja);
 
 
 
