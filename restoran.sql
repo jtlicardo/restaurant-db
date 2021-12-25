@@ -657,8 +657,24 @@ FROM (SELECT stavka_meni.kolicina*stavka_racun.kolicina*.5 AS TOT, mjerna_jedini
 GROUP BY QUARTER (vrijeme_izdavanja), naziv) as temp
 GROUP BY QUARTER (vrijeme_izdavanja);
 
+-- 14. upit koji prikazuje cijenu sastojka svakog jela da su svi nabavljeni na najgoru cijenu dosad, te raćuna marginu za taj najgori slućaj.
+-- Sastojci za koju nemamo upisanu nabavu su izabaćeni, a jelo ako nemamo upisanu nabavu za nijedan sastojak
 
-
+SELECT naziv_stavke, cijena_hrk, SUM(najveca_cijena*kolicina) AS najveca_cijena_sastojka, (cijena_hrk - najveca_cijena*kolicina) AS najmanja_margina
+FROM meni
+JOIN stavka_meni
+ON stavka_meni.id_meni=meni.id
+LEFT JOIN 
+(SELECT id_namirnica,
+		MAX(cijena_hrk/kolicina) AS najveca_cijena
+	FROM nabava_stavka
+    INNER JOIN namirnica
+    ON namirnica.id = nabava_stavka.id_namirnica
+    GROUP BY namirnica.id) as temp
+ON temp.id_namirnica=stavka_meni.id_namirnica
+WHERE najveca_cijena IS NOT NULL
+GROUP BY naziv_stavke
+;
 
 
 
