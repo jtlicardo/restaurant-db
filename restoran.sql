@@ -163,8 +163,7 @@ CREATE TABLE catering (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_zahtjev INTEGER NOT NULL,
     cijena_hrk DECIMAL(10, 2) DEFAULT 0.00,
-    datum_izvrsenja DATE,
-    opis TEXT,
+    datum_izvrsenja TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     uplaceno CHAR(1) NOT NULL,
     FOREIGN KEY (id_zahtjev) REFERENCES catering_zahtjev (id),
     CHECK (uplaceno IN ("D", "N"))
@@ -889,7 +888,7 @@ SELECT * FROM adresa;
 
 
 -- /////////////////////////////////////////
--- ////////////      INSERTOVI       ////////////
+-- //////////      INSERTOVI       /////////
 -- /////////////////////////////////////////
 
 -- id, ime, prezime, broj_mob, email
@@ -1745,11 +1744,11 @@ INSERT INTO catering_zahtjev VALUES
     (48, 48, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('20.12.2021.', '%d.%m.%Y.'));
   */
 
--- id, id_zahtjev, cijena_hrk, datum_izvrsenja, opis, uplaceno
+-- id, id_zahtjev, cijena_hrk, datum_izvrsenja, uplaceno
 -- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
-INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, opis, uplaceno) VALUES
-	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (2, 2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), NULL, "D");
+INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, uplaceno) VALUES
+	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D"),
+    (2, 2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D");
     /*
     (3, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), NULL, "N"),
     (4, STR_TO_DATE('10.03.2021', '%d.%m.%Y.'), NULL, "D"),
