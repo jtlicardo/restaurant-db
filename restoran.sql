@@ -569,7 +569,7 @@ SELECT osoba.*
 							FROM dostava);
 
 -- 10. upit koji prikazuje zaradu po stolu u 2021. godine, te broj računa i broj srednja zarada po kapacitetu i računu (ako je taj broj nizak, to bi mogla biti indikacija da pozicija zbog nekog
--- razloga privlaći manje grupe)
+-- razloga privlači manje grupe)
 
 
 SELECT id_stol, zarada_stola, iznos_hrk, ROUND(zarada_stola/broj_racuna/broj_gostiju_kapacitet,2) as zarada_po_kapacitetu_i_računu
@@ -592,6 +592,24 @@ SELECT id_stol, zarada_stola, iznos_hrk, ROUND(zarada_stola/broj_racuna/broj_gos
 	group by temp.naziv_stavke
 	order by zadnji_datum_prodaje DESC;
  
+ 
+-- 12. Upit koji prikazuje prosječnu nabavnu cijenu za namirnice koje su se barem jednom nabavile
+
+SELECT namirnica.naziv,
+		CONCAT(ROUND((SUM(cijena_hrk) / SUM(kolicina)), 2), " kn / ", mjerna_jedinica) AS prosjecna_nabavna_cijena
+	FROM nabava_stavka
+    INNER JOIN namirnica
+    ON namirnica.id = nabava_stavka.id_namirnica
+    GROUP BY namirnica.id;
+
+
+
+
+
+
+
+
+
 
 -- /////////////////////////////////////////
 -- //////////      POGLEDI       ///////////
@@ -1851,11 +1869,14 @@ INSERT INTO djelatnici_catering VALUES
 -- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
 -- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu nabava_stavka
 INSERT INTO nabava (id, id_dobavljac, opis, podmireno, datum) VALUES
-	(1, 1, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'));
+	(1, 13, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.')),
+    (2, 13, NULL, "D", STR_TO_DATE('15.02.2021.', '%d.%m.%Y.'));
 
 -- id, id_nabava, id_namirnica, kolicina, cijena_hrk
 INSERT INTO nabava_stavka VALUES
-	(1, 1, 1, 10, 250.00);
+	(1, 1, 1, 10, 250.00),
+    (2, 2, 1, 15, 350.00),
+    (3, 2, 21, 10, 950.00);
 
 -- id, datum, opis
 INSERT INTO otpis VALUES
