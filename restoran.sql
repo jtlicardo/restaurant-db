@@ -105,7 +105,8 @@ CREATE TABLE namirnica (
     id_kategorija INTEGER NOT NULL,
     kolicina_na_zalihi DECIMAL (10, 2) NOT NULL,
     mjerna_jedinica VARCHAR(20) NOT NULL,
-    FOREIGN KEY (id_kategorija) REFERENCES kategorija_namirnica (id)
+    FOREIGN KEY (id_kategorija) REFERENCES kategorija_namirnica (id),
+    CHECK (kolicina_na_zalihi > 0)
 );
 
 CREATE TABLE stavka_meni (
@@ -115,7 +116,8 @@ CREATE TABLE stavka_meni (
     id_meni INTEGER NOT NULL,
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id),
-    UNIQUE (id_namirnica, id_meni)
+    UNIQUE (id_namirnica, id_meni),
+    CHECK (kolicina > 0)
 );
 
 CREATE TABLE stavka_racun (
@@ -126,7 +128,8 @@ CREATE TABLE stavka_racun (
     cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_racun) REFERENCES racun (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id),
-    UNIQUE (id_racun, id_meni)
+    UNIQUE (id_racun, id_meni),
+    CHECK (kolicina > 0)
 );
 
 CREATE TABLE rezervacija (
@@ -176,7 +179,8 @@ CREATE TABLE catering_stavka (
     kolicina INTEGER NOT NULL,
     cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_catering) REFERENCES catering (id),
-    FOREIGN KEY (id_meni) REFERENCES meni (id)
+    FOREIGN KEY (id_meni) REFERENCES meni (id),
+    CHECK (kolicina > 0)
 );
 
 CREATE TABLE djelatnici_catering (
@@ -206,7 +210,8 @@ CREATE TABLE nabava_stavka (
     kolicina INTEGER NOT NULL,
     cijena_hrk DECIMAL(10, 2) NOT NULL,
 	FOREIGN KEY (id_nabava) REFERENCES nabava (id),
-	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
+	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
+    CHECK (kolicina > 0)
 ); 
 
 CREATE TABLE otpis (
@@ -221,7 +226,8 @@ CREATE TABLE otpis_stavka (
     id_namirnica INTEGER NOT NULL,
 	kolicina DECIMAL(10, 2) NOT NULL,
 	FOREIGN KEY (id_otpis) REFERENCES otpis (id),
-	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id)
+	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
+    CHECK (kolicina > 0)
 );    
 
 CREATE TABLE kategorija_rezije (
@@ -274,7 +280,8 @@ CREATE TABLE dostava_stavka (
 	kolicina INTEGER NOT NULL, 
 	cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_dostava) REFERENCES dostava (id),
-    FOREIGN KEY (id_meni) REFERENCES meni (id)
+    FOREIGN KEY (id_meni) REFERENCES meni (id),
+    CHECK (kolicina > 0)
 ); 
 
 
