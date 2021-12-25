@@ -780,20 +780,18 @@ BEGIN
 	THEN
 		SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Jelo sa tim id-em ne postoji u tablici meni!';
-    END IF;
-    
-    IF (SELECT COUNT(*)
+	ELSEIF (SELECT COUNT(*)
 			FROM meni
             WHERE id = p_id_jela
 				AND aktivno = "N") = 1
 	THEN
 		SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Jelo je već neaktivno!';
-    END IF;
-
-    UPDATE meni
+        SET MESSAGE_TEXT = 'Jelo je već neaktivno!';
+	ELSE
+		UPDATE meni
 		SET aktivno = "N"
         WHERE id = p_id_jela;
+    END IF;
 END //
 DELIMITER ;
 
@@ -1138,8 +1136,7 @@ INSERT INTO nacini_placanja VALUES
     (3, "crypto");
 
 -- id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja, iznos_hrk
--- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu stavka_racun
--- id-evi djelatnika koji su blagajnici: 18, 7, 16
+-- id-evi djelatnika koji su blagajnici: 18, 7, 16, 38, 40
 INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
 	(1, "000001", 3, 5, 7, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s')),
     (2, "000002", 1, 13, 7, STR_TO_DATE('18.12.2020. 13:30:00', '%d.%m.%Y. %H:%i:%s')),
@@ -1535,7 +1532,6 @@ INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
     
 
 -- id, id_racun, id_meni, kolicina, cijena_hrk
--- cijena_hrk ne dodajemo -> automatski se izračuna
 INSERT INTO stavka_racun (id, id_racun, id_meni, kolicina) VALUES
     (1, 1, 1, 1),
     (2, 1, 3, 2),
@@ -1752,7 +1748,6 @@ INSERT INTO catering_zahtjev VALUES
   */
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, uplaceno
--- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu catering_stavka
 INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, uplaceno) VALUES
 	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D"),
     (2, 2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D");
@@ -1778,7 +1773,6 @@ INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, uplaceno) VALUES
     */
     
 -- id, id_catering, id_meni, kolicina, cijena_hrk
--- cijena_hrk -> automatski se izračunava
 INSERT INTO catering_stavka (id, id_catering, id_meni, kolicina) VALUES
 	(1, 1, 1, 10),
     (2, 1, 2, 10),
@@ -1920,7 +1914,6 @@ INSERT INTO djelatnici_catering VALUES
     
 
 -- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
--- iznos_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu nabava_stavka
 INSERT INTO nabava (id, id_dobavljac, opis, podmireno, datum) VALUES
 	(1, 13, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.')),
     (2, 13, NULL, "D", STR_TO_DATE('15.02.2021.', '%d.%m.%Y.'));
@@ -2099,7 +2092,6 @@ INSERT INTO djelatnik_smjena VALUES
     */
     
 -- id, id_osoba, id_adresa, datum, cijena_hrk, izvrsena
--- cijena_hrk ne dodajemo -> po defaultu ide na 0.00 kn, kasnije se automatski izračuna prilikom inserta u tablicu dostava_stavka
 INSERT INTO dostava (id, id_osoba, id_adresa, datum, izvrsena) VALUES
 	(1, 31, 22, STR_TO_DATE('01.11.2020.', '%d.%m.%Y.'), "D"),
     (2, 34, 1, STR_TO_DATE('15.11.2020.', '%d.%m.%Y.'), "D"),
@@ -2120,7 +2112,6 @@ INSERT INTO dostava (id, id_osoba, id_adresa, datum, izvrsena) VALUES
     (17, 35, 15, STR_TO_DATE('01.12.2021.', '%d.%m.%Y.'), "D");
 
 -- id, id_dostava, id_meni, kolicina, cijena_hrk
--- cijena_hrk ne dodajemo -> automatski se izračunava
 INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
 	(1, 1, 18, 1),
     (2, 1, 21, 2),
