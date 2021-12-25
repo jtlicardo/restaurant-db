@@ -696,6 +696,28 @@ ORDER BY najmanja_margina
 ;
 
 
+-- 15. upit koji prikazuje ukupne rashode po mjesecu (plaće+rezije+nabava)
+
+SELECT mjesec, ukup+SUM(placa_hrk) as Ukupni_rashodi
+FROM
+(SELECT mjesec, SUM(ukupno) as ukup
+	FROM (
+		(SELECT CONCAT(MONTH(datum), "/", YEAR(datum)) AS mjesec, SUM(iznos_hrk) AS ukupno
+			FROM rezije 
+			GROUP BY mjesec)
+		UNION ALL    
+		(SELECT CONCAT(MONTH(datum), "/", YEAR(datum)) AS mjesec, SUM(iznos_hrk) AS ukupno
+			FROM nabava
+			GROUP BY mjesec)
+	) AS zarade
+    GROUP BY mjesec
+    ORDER BY STR_TO_DATE((CONCAT("01/", mjesec)),'%d/%m/%Y') DESC) as temp
+    JOIN djelatnik
+    JOIN zanimanje
+    ON zanimanje.id=djelatnik.id_zanimanje
+    WHERE zaposlen="D"
+    GROUP BY mjesec;
+    ;
 
 
 -- /////////////////////////////////////////
