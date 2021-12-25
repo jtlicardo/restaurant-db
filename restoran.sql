@@ -660,7 +660,10 @@ GROUP BY QUARTER (vrijeme_izdavanja);
 -- 14. upit koji prikazuje cijenu sastojka svakog jela da su svi nabavljeni na najgoru cijenu dosad, te raćuna marginu za taj najgori slućaj.
 -- Sastojci za koju nemamo upisanu nabavu su izabaćeni, a jelo ako nemamo upisanu nabavu za nijedan sastojak
 
-SELECT naziv_stavke, cijena_hrk, SUM(najveca_cijena*kolicina) AS najveca_cijena_sastojka, (cijena_hrk - najveca_cijena*kolicina) AS najmanja_margina
+SELECT naziv_stavke, cijena_hrk, SUM(najveca_cijena*kolicina) AS najveca_cijena_sastojka, (cijena_hrk - najveca_cijena*kolicina) AS najmanja_margina,
+(CASE WHEN (cijena_hrk - najveca_cijena*kolicina) >= 0
+    THEN " "
+    ELSE "Mogući gubitak!" END) AS napomena
 FROM meni
 JOIN stavka_meni
 ON stavka_meni.id_meni=meni.id
@@ -674,6 +677,7 @@ LEFT JOIN
 ON temp.id_namirnica=stavka_meni.id_namirnica
 WHERE najveca_cijena IS NOT NULL
 GROUP BY naziv_stavke
+ORDER BY najmanja_margina
 ;
 
 
