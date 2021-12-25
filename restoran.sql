@@ -154,7 +154,7 @@ CREATE TABLE catering_zahtjev (
     id_adresa INTEGER NOT NULL,
     opis TEXT,
     zeljeni_datum DATE NOT NULL,
-    datum_zahtjeva DATE NOT NULL,
+    datum_zahtjeva TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_narucitelj) REFERENCES catering_narucitelj (id),
     FOREIGN KEY (id_adresa) REFERENCES adresa (id)
 );
@@ -835,6 +835,53 @@ CALL dodaj_jelo("Jadranska orada sa žara s gratiniranim povrćem", 95.00);
 CALL dodaj_jelo("Novo jelo", 125.99);
 */
 
+
+-- 6. Procedura koja stvara novi zahtjev za catering
+
+DROP PROCEDURE IF EXISTS stvori_catering_zahtjev;
+
+DELIMITER //
+CREATE PROCEDURE stvori_catering_zahtjev
+(IN p_id_narucitelj INTEGER,
+IN p_id_adresa INTEGER,
+IN p_opis TEXT,
+IN p_zeljeni_datum DATE,
+OUT status_zahtjeva VARCHAR(100))
+BEGIN
+
+DECLARE l_id_narucitelj INTEGER DEFAULT NULL;
+DECLARE l_id_adresa INTEGER DEFAULT NULL;
+
+SELECT id INTO l_id_narucitelj
+	FROM catering_narucitelj
+    WHERE id = p_id_narucitelj;
+    
+SELECT id INTO l_id_adresa
+	FROM adresa
+	WHERE id = p_id_adresa;
+
+IF (p_zeljeni_datum) < CURRENT_TIMESTAMP THEN
+	SET status_zahtjeva = "Zahtjev odbijen; željeni datum ne može biti u prošlosti!";
+ELSEIF l_id_narucitelj IS NULL THEN
+	SET status_zahtjeva = "Zahtjev odbijen; naručitelj ne postoji u evidenciji!";
+ELSEIF l_id_adresa IS NULL THEN
+	SET status_zahtjeva = "Zahtjev odbijen; adresa ne postoji u evidenciji!";
+ELSE
+	INSERT INTO catering_zahtjev (id_narucitelj, id_adresa, opis, zeljeni_datum) VALUES
+		(l_id_narucitelj, l_id_adresa, p_opis, p_zeljeni_datum);
+	SET status_zahtjeva = "Catering zahtjev stvoren.";
+END IF;
+
+END //
+DELIMITER ;
+
+/*
+CALL stvori_catering_zahtjev(1, 1, NULL, STR_TO_DATE('15.02.2022.', '%d.%m.%Y.'), @status_zahtjeva);
+SELECT @status_zahtjeva FROM DUAL;
+SELECT * FROM catering_zahtjev;
+SELECT * FROM catering_narucitelj;
+SELECT * FROM adresa;
+*/
 
 
 
