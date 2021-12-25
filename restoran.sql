@@ -626,6 +626,21 @@ SELECT namirnica.naziv,
 -- 13 djelomićan, nisam još skužio kako da prikažem datum kao broj kvartala
 
 SELECT naziv as kategorija_namirnica, MAX(suma) as ukupna_potrosnja
+-- 13 upit koji prikazuje kategorija namirnica s najvećom potrošnjom po kvartalu
+
+SELECT naziv as kategorija_namirnica, MAX(suma) as ukupna_potrosnja, 
+CONCAT(
+(CASE
+ WHEN MONTH(vrijeme_izdavanja) IN (1,2,3)
+ THEN "Kvartal 1. "
+ WHEN MONTH(vrijeme_izdavanja) IN (4,5,6)
+ THEN "Kvartal 2. "
+  WHEN MONTH(vrijeme_izdavanja) IN (7,8,9)
+ THEN "Kvartal 3. "
+  WHEN MONTH(vrijeme_izdavanja) IN (10,11,12)
+ THEN "Kvartal 4. "
+ END),
+ YEAR(vrijeme_izdavanja)) AS Kvartal
 FROM
 (SELECT naziv, vrijeme_izdavanja, TOT, SUM(TOT) as suma
 FROM
@@ -1039,6 +1054,7 @@ SELECT * FROM otpis_stavka;
 */
 
 -- procedura 9 koja za upisani vrijeme i datum prikazuje djelatnike koji su trenutno radili 
+-- procedura 9 koja za upisani vrijeme i datum prikazuje djelatnike koji su bili na poslu
 
 DROP PROCEDURE IF EXISTS prisustvo_radnika;
 DELIMITER //
