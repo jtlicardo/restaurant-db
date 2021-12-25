@@ -1038,6 +1038,37 @@ SELECT * FROM otpis;
 SELECT * FROM otpis_stavka;
 */
 
+-- procedura 9 koja za upisani vrijeme i datum prikazuje djelatnike koji su trenutno radili 
+
+DROP PROCEDURE IF EXISTS prisustvo_radnika;
+DELIMITER //
+CREATE PROCEDURE prisustvo_radnika(IN p_datum DATE, p_sat TIME)
+BEGIN
+	DROP TABLE IF EXISTS prisutni_radnici;
+    CREATE TEMPORARY TABLE prisutni_radnici(id_radnika INTEGER, ime VARCHAR(20), prezime VARCHAR(20), zanimanje VARCHAR(30));
+	INSERT INTO prisutni_radnici
+	SELECT djelatnik.id, osoba.ime, osoba.prezime, zanimanje.naziv
+		FROM djelatnik
+		JOIN osoba 
+		ON djelatnik.id_osoba=osoba.id
+		JOIN zanimanje
+		ON djelatnik.id_zanimanje=zanimanje.id
+		JOIN djelatnik_smjena
+		ON djelatnik_smjena.id_djelatnik = djelatnik.id_osoba
+        JOIN smjena
+        ON djelatnik_smjena.id_smjena = smjena.id
+        WHERE p_sat >= smjena.pocetak_radnog_vremena AND
+        p_sat <= smjena.kraj_radnog_vremena AND
+        djelatnik_smjena.datum = p_datum;
+END //
+DELIMITER ;
+
+/*
+Primjer izvođenja:
+CALL prisustvo_radnika (STR_TO_DATE('15.12.2021.', '%d.%m.%Y.'), "10:00");
+SELECT * FROM prisutni_radnici;
+*/
+
 
 
 
