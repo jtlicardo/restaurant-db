@@ -128,7 +128,7 @@ CREATE TABLE stavka_racun (
     cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_racun) REFERENCES racun (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id),
-    CHECK (kolicina > 0)
+    CHECK (kolicina > 0),
     UNIQUE (id_racun, id_meni)
 );
 
@@ -1269,10 +1269,8 @@ END REPEAT;
 END //
 DELIMITER ;
 
-<<<<<<< HEAD
+
 CALL storno_racuna(13, 1);
-=======
-CALL storno_racuna(, 7);
 
 
 -- 11. Procedura koja za određeni catering u privremenu tablicu sprema sve zaposlenike koji su zaduženi za taj catering
@@ -1355,7 +1353,12 @@ SELECT @p_status FROM DUAL;
 */
 
 
->>>>>>> b661058c465904740c629841821746cac555a0c5
+
+
+
+
+
+
 
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
