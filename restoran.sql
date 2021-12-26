@@ -128,8 +128,8 @@ CREATE TABLE stavka_racun (
     cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_racun) REFERENCES racun (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id),
-    UNIQUE (id_racun, id_meni),
     CHECK (kolicina > 0)
+    UNIQUE (id_racun, id_meni)
 );
 
 CREATE TABLE rezervacija (
@@ -1212,56 +1212,42 @@ CREATE PROCEDURE storno_racuna(IN p_id INTEGER, p_djelatnik INTEGER)
 BEGIN
 DECLARE l_id INTEGER;
 DECLARE l_datum DATETIME;
-DECLARE l_sifra CHAR(6);
 DECLARE l_stol INTEGER;
 DECLARE l_plac INTEGER;
 DECLARE l_id2 INTEGER;
 DECLARE size INTEGER;
 DECLARE begginning INTEGER;
 DECLARE meni INTEGER;
-DECLARE kolicina INTEGER;
-DECLARE cijena_hrk NUMERIC(8,2);
+DECLARE l_kolicina INTEGER;
+
+
 
 SET l_id= (SELECT MAX(id)+1 FROM racun);
 SET l_datum = (SELECT vrijeme_izdavanja FROM racun WHERE id=p_id);
 SET l_stol = (SELECT id_stol FROM racun WHERE id=p_id);
-SET l_plac =(SELECT id_nacin_placanja FROM racun WHERE id=p_id);
+SET l_plac = (SELECT id_nacin_placanja FROM racun WHERE id=p_id);
 SET l_id2= (SELECT MAX(id)+1 FROM stavka_racun);
 
-IF l_id < 10 THEN
- SET l_sifra = CONCAT("00000", l_id);
-ELSEIF l_id < 100 AND l_id>9 
-	THEN SET l_sifra = CONCAT("0000", l_id);
-ELSE
-	SET l_sifra = CONCAT("000", l_id);
-END IF;
-INSERT INTO racun VALUES(l_id, l_sifra, l_plac, l_stol, p_djelatnik, l_datum, 0);
+
+INSERT INTO racun VALUES(l_id, kreiraj_sifru_racuna_autoincrement(), l_plac, l_stol, p_djelatnik, l_datum, 0);
 SELECT COUNT(id_meni) FROM stavka_racun WHERE id_racun=p_id INTO size;
 SELECT MIN(id) FROM stavka_racun WHERE id_racun=p_id INTO begginning;
 
 REPEAT
-SELECT id_meni FROM stavka_racun WHERE begginning=id INTO meni;
-SELECT -kolicina FROM stavka_racun WHERE begginning=id INTO kolicina;
-SELECT -cijena_hrk FROM stavka_racun WHERE begginning=id INTO cijena_hrk;
-INSERT INTO stavka_racun VALUES(l_id2,l_id, meni, kolicina, cijena_hrk);
-SET l_id2=l_id2+1M;
+SELECT id_meni FROM (SELECT MIN(id), id_meni FROM stavka_racun WHERE id_racun=p_id)AS temp INTO meni;
+SELECT kolicina FROM stavka_racun WHERE begginning=id INTO l_kolicina;
+INSERT INTO stavka_racun VALUES(l_id2,l_id, meni, -l_kolicina, 0); -- INSERT INTO stavka_racun VALUES(l_id2,l_id, meni, kolicina, 0);
+SET l_id2=l_id2+1;
 SET begginning=begginning+1;
 SET size=size-1;
-UNTIL size=0
+UNTIL size<=0
 END REPEAT;
 
 
 END //
 DELIMITER ;
 
-CALL storno_racuna(, 7);
-
-
-
-
-
-
-
+CALL storno_racuna(13, 1);
 
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
