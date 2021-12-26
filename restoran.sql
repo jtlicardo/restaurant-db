@@ -850,7 +850,7 @@ SELECT c.id catering_id,
     WHERE datum_izvrsenja IS NULL
     GROUP BY c.id;
 
-SELECT * FROM nadolazeci_caterinzi;
+-- SELECT * FROM nadolazeci_caterinzi;
 
 
 
@@ -1279,9 +1279,83 @@ DELIMITER ;
 CALL storno_racuna(, 7);
 
 
+-- 11. Procedura koja za određeni catering u privremenu tablicu sprema sve zaposlenike koji su zaduženi za taj catering
+
+DROP PROCEDURE IF EXISTS prikazi_djelatnike_catering;
+
+DELIMITER //
+CREATE PROCEDURE prikazi_djelatnike_catering (p_id_catering INTEGER)
+BEGIN
+
+DROP TABLE IF EXISTS tmp_djelatnici_catering;
+CREATE TEMPORARY TABLE tmp_djelatnici_catering (
+	ime VARCHAR(50),
+    prezime VARCHAR(50),
+    broj_mob VARCHAR(10),
+    email VARCHAR(30),
+    oib CHAR(11),
+    datum_zaposlenja DATE
+);
+
+INSERT INTO tmp_djelatnici_catering
+	SELECT osoba.ime, osoba.prezime, osoba.broj_mob, osoba.email, djelatnik.oib, djelatnik.datum_zaposlenja
+		FROM djelatnici_catering
+		INNER JOIN djelatnik ON djelatnik.id = id_djelatnik
+		INNER JOIN osoba ON osoba.id = id_osoba
+		WHERE id_catering = p_id_catering;
+
+END //
+DELIMITER ;
+
+/*
+CALL prikazi_djelatnike_catering(1);
+SELECT * FROM tmp_djelatnici_catering;
+*/
 
 
+-- 12. Procedura koja postavlja datum_izvrsenja za određeni catering na trenutni datum (ili na neki definirani datum)
 
+DROP PROCEDURE IF EXISTS postavi_datum_izvrsenja_catering;
+
+DELIMITER //
+CREATE PROCEDURE postavi_datum_izvrsenja_catering (p_id_catering INTEGER, p_datum_izvrsenja DATE, OUT p_status VARCHAR(100))
+BEGIN
+
+	DECLARE l_id_catering INTEGER DEFAULT NULL;
+    DECLARE l_datum_izvrsenja DATE DEFAULT NULL;
+
+	SELECT id, datum_izvrsenja INTO l_id_catering, l_datum_izvrsenja
+		FROM catering
+        WHERE id = p_id_catering;
+        
+	IF l_id_catering IS NULL THEN
+		SET p_status = "Catering sa tim id-em ne postoji!";
+	ELSEIF l_datum_izvrsenja IS NOT NULL THEN
+		SET p_status = "Catering već ima datum izvršenja!";
+	ELSEIF p_datum_izvrsenja IS NULL THEN
+		UPDATE catering
+			SET datum_izvrsenja = CURRENT_TIMESTAMP
+            WHERE id = l_id_catering;
+		SET p_status = CONCAT("Postavljen datum izvršenja na današnji datum za catering s id-em: ", l_id_catering);
+    ELSEIF p_datum_izvrsenja > CURRENT_TIMESTAMP THEN
+		SET p_status = "Datum izvršenja ne može biti u budućnosti!";
+	ELSE
+		UPDATE catering
+			SET datum_izvrsenja = p_datum_izvrsenja
+            WHERE id = l_id_catering;
+		SET p_status = CONCAT("Postavljen datum izvršenja na ", p_datum_izvrsenja,  " za catering s id-em: ", l_id_catering);
+    END IF;
+    
+END //
+DELIMITER ;
+
+/*
+SELECT * FROM catering;
+CALL postavi_datum_izvrsenja_catering(3, NULL, @p_status);
+SELECT @p_status FROM DUAL;
+CALL postavi_datum_izvrsenja_catering(4, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), @p_status);
+SELECT @p_status FROM DUAL;
+*/
 
 
 
