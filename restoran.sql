@@ -475,7 +475,7 @@ CREATE FUNCTION kreiraj_sifru_racuna_autoincrement () RETURNS CHAR(6)
 DETERMINISTIC
 BEGIN
 
-	DECLARE novi_id INTEGER;
+	DECLARE novi_id INTEGER DEFAULT NULL;
     
     SELECT (id + 1) INTO novi_id
 		FROM racun
