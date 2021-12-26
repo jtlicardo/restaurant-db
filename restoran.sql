@@ -589,9 +589,9 @@ SELECT osoba.*
 						SELECT DISTINCT id_osoba
 							FROM dostava);
 
+
 -- 10. upit koji prikazuje zaradu po stolu u 2021. godine, te broj računa i broj srednja zarada po kapacitetu i računu (ako je taj broj nizak, to bi mogla biti indikacija da pozicija zbog nekog
 -- razloga privlači manje grupe)
-
 
 SELECT id_stol, zarada_stola, iznos_hrk, ROUND(zarada_stola/broj_racuna/broj_gostiju_kapacitet,2) as zarada_po_kapacitetu_i_računu
 	FROM (SELECT id_stol, iznos_hrk, broj_gostiju_kapacitet, SUM(iznos_hrk) as zarada_stola, count(iznos_hrk) as broj_racuna
@@ -600,6 +600,7 @@ SELECT id_stol, zarada_stola, iznos_hrk, ROUND(zarada_stola/broj_racuna/broj_gos
 		WHERE (YEAR(vrijeme_izdavanja) = 2021)
 		GROUP BY (id_stol)) as tmp
 		ORDER BY (zarada_stola) DESC;
+  
   
   -- 11. upit koji prikazuje datum kada je zadnje prodana svaka stavka menija
   
@@ -622,10 +623,8 @@ SELECT namirnica.naziv,
     INNER JOIN namirnica
     ON namirnica.id = nabava_stavka.id_namirnica
     GROUP BY namirnica.id;
+    
 
--- 13 djelomićan, nisam još skužio kako da prikažem datum kao broj kvartala
-
-SELECT naziv as kategorija_namirnica, MAX(suma) as ukupna_potrosnja
 -- 13 upit koji prikazuje kategorija namirnica s najvećom potrošnjom po kvartalu
 
 SELECT naziv as kategorija_namirnica, MAX(suma) as ukupna_potrosnja, 
@@ -672,8 +671,9 @@ FROM (SELECT stavka_meni.kolicina*stavka_racun.kolicina*.5 AS TOT, mjerna_jedini
 GROUP BY QUARTER (vrijeme_izdavanja), naziv) as temp
 GROUP BY QUARTER (vrijeme_izdavanja);
 
--- 14. upit koji prikazuje cijenu sastojka svakog jela da su svi nabavljeni na najgoru cijenu dosad, te raćuna marginu za taj najgori slućaj.
--- Sastojci za koju nemamo upisanu nabavu su izabaćeni, a jelo ako nemamo upisanu nabavu za nijedan sastojak
+
+-- 14. upit koji prikazuje cijenu sastojka svakog jela da su svi nabavljeni na najgoru cijenu dosad, te računa marginu za taj najgori slučaj.
+-- Sastojci za koju nemamo upisanu nabavu su izabačeni, a jelo ako nemamo upisanu nabavu za nijedan sastojak
 
 SELECT naziv_stavke, cijena_hrk, SUM(najveca_cijena*kolicina) AS najveca_cijena_sastojka, (cijena_hrk - najveca_cijena*kolicina) AS najmanja_margina,
 (CASE WHEN (cijena_hrk - najveca_cijena*kolicina) >= 0
@@ -719,7 +719,9 @@ FROM
     GROUP BY mjesec;
     ;
 
+
 -- 16. upit koji računa srednju zaradu preko računa po danu podijeljena po satima
+
 SELECT ROUND(SUM(tot)/(SELECT COUNT(DISTINCT DATE(vrijeme_izdavanja)) FROM racun), 2), sat
 FROM
 (SELECT SUM(iznos_hrk) as tot, HOUR(vrijeme_izdavanja) AS sat, COUNT(DATE(vrijeme_izdavanja)) AS datum
@@ -727,6 +729,10 @@ FROM racun
 GROUP BY sat, vrijeme_izdavanja) AS temp
 GROUP BY sat
 ORDER BY sat;
+
+
+
+
 
 -- /////////////////////////////////////////
 -- //////////      POGLEDI       ///////////
@@ -1083,7 +1089,7 @@ SELECT * FROM otpis;
 SELECT * FROM otpis_stavka;
 */
 
--- procedura 9 koja za upisani vrijeme i datum prikazuje djelatnike koji su trenutno radili 
+
 -- procedura 9 koja za upisani vrijeme i datum prikazuje djelatnike koji su bili na poslu
 
 DROP PROCEDURE IF EXISTS prisustvo_radnika;
@@ -1114,6 +1120,7 @@ Primjer izvođenja:
 CALL prisustvo_radnika (STR_TO_DATE('15.12.2021.', '%d.%m.%Y.'), "10:00");
 SELECT * FROM prisutni_radnici;
 */
+
 
 -- procedura 10
 
