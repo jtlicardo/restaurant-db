@@ -427,6 +427,8 @@ DELIMITER ;
 -- /////////      FUNKCIJE       ///////////
 -- /////////////////////////////////////////
 
+-- 1. Funkcija koja kreira šifru računa
+
 DROP FUNCTION IF EXISTS kreiraj_sifru_racuna;
 
 DELIMITER //
@@ -459,6 +461,40 @@ SELECT * FROM racun;
 INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
 	(100001, kreiraj_sifru_racuna(id), 3, 5, 7, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'));
 */
+
+
+-- 2. Funkcija koja kreira šifru računa u slučaju da koristimo autoincrement (ne prima id kao parametar)
+
+DROP FUNCTION IF EXISTS kreiraj_sifru_racuna_autoincrement;
+
+DELIMITER //
+CREATE FUNCTION kreiraj_sifru_racuna_autoincrement () RETURNS CHAR(6)
+DETERMINISTIC
+BEGIN
+
+	DECLARE novi_id INTEGER;
+    
+    SELECT (id + 1) INTO novi_id
+		FROM racun
+		ORDER BY id DESC
+		LIMIT 1;
+        
+	RETURN kreiraj_sifru_racuna(novi_id);
+
+END //
+DELIMITER ;
+
+/*
+Primjer
+
+SELECT kreiraj_sifru_racuna_autoincrement();
+SELECT * FROM racun;
+INSERT INTO racun (sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
+	(kreiraj_sifru_racuna_autoincrement(), 3, 5, 7, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'));
+*/
+
+
+
 
 
 
