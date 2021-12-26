@@ -1313,7 +1313,8 @@ SELECT * FROM tmp_djelatnici_catering;
 */
 
 
--- 12. Procedura koja postavlja datum_izvrsenja za određeni catering na trenutni datum (ili na neki definirani datum)
+-- 12. Procedura koja postavlja datum_izvrsenja za određeni catering na trenutni datum (ako kao parametar p_datum_izvrsenja primi NULL),
+-- a inače postavlja datum_izvrsenja na vrijednost tog parametra
 
 DROP PROCEDURE IF EXISTS postavi_datum_izvrsenja_catering;
 
