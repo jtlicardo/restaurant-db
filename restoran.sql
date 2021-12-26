@@ -423,6 +423,45 @@ END//
 DELIMITER ;
 
 
+-- /////////////////////////////////////////
+-- /////////      FUNKCIJE       ///////////
+-- /////////////////////////////////////////
+
+DROP FUNCTION IF EXISTS kreiraj_sifru_racuna;
+
+DELIMITER //
+CREATE FUNCTION kreiraj_sifru_racuna (id_racuna INTEGER) RETURNS CHAR(6)
+DETERMINISTIC
+BEGIN
+
+	IF (id_racuna BETWEEN 1 AND 9) THEN
+		RETURN CONCAT("00000", id_racuna);
+	ELSEIF (id_racuna BETWEEN 10 AND 99) THEN
+		RETURN CONCAT("0000", id_racuna);
+	ELSEIF (id_racuna BETWEEN 100 AND 999) THEN
+		RETURN CONCAT("000", id_racuna);
+	ELSEIF (id_racuna BETWEEN 1000 AND 9999) THEN
+		RETURN CONCAT("00", id_racuna);
+	ELSEIF (id_racuna BETWEEN 10000 AND 99999) THEN
+		RETURN CONCAT("0", id_racuna);
+	ELSEIF (id_racuna BETWEEN 100000 AND 999999) THEN
+		RETURN CONVERT(id_racuna, CHAR);
+    END IF;
+
+END //
+DELIMITER ;
+
+/*
+Primjer
+
+SELECT kreiraj_sifru_racuna(53);
+SELECT * FROM racun;
+INSERT INTO racun (id, sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izdavanja) VALUES
+	(100001, kreiraj_sifru_racuna(id), 3, 5, 7, STR_TO_DATE('18.12.2020. 12:00:00', '%d.%m.%Y. %H:%i:%s'));
+*/
+
+
+
 
 
 
@@ -1173,6 +1212,13 @@ END //
 DELIMITER ;
 
 CALL storno_racuna(, 7);
+
+
+
+
+
+
+
 
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
