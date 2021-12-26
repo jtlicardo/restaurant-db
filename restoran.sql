@@ -2377,26 +2377,28 @@ INSERT INTO catering_narucitelj VALUES
 -- id, id_narucitelj, id_adresa, opis, zeljeni_datum, datum_zahtjeva
 INSERT INTO catering_zahtjev VALUES
 	(1, 1, 40, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.12.2020.', '%d.%m.%Y.')),
-    (2, 2, 42, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2020.', '%d.%m.%Y.'));
-    /*
-    (50, 50, NULL, STR_TO_DATE('10.03.2021.', '%d.%m.%Y.'), STR_TO_DATE('13.02.2021.', '%d.%m.%Y.')),
-    (46, 46, NULL, STR_TO_DATE('15.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.03.2021.', '%d.%m.%Y.')),
-    (48, 48, NULL, STR_TO_DATE('16.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.04.2021.', '%d.%m.%Y.')),
-    (49, 39, NULL, STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('02.04.2021.', '%d.%m.%Y.')),
-    (40, 37, "pasulj ako ga ima", STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), STR_TO_DATE('25.04.2021.', '%d.%m.%Y.')),
-    (41, 41, NULL, STR_TO_DATE('23.06.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.05.2021.', '%d.%m.%Y.')),
-    (43, 43, NULL, STR_TO_DATE('28.06.2021.', '%d.%m.%Y.'), STR_TO_DATE('25.5.2021.', '%d.%m.%Y.')),
-    (44, 41, NULL, STR_TO_DATE('14.08.2021.', '%d.%m.%Y.'), STR_TO_DATE('17.07.2021.', '%d.%m.%Y.')),
-    (50, 50, NULL, STR_TO_DATE('17.10.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.09.2021.', '%d.%m.%Y.')),
-    (47, 50, NULL, STR_TO_DATE('22.11.2021.', '%d.%m.%Y.'), STR_TO_DATE('27.10.2021.', '%d.%m.%Y.')),
-    (48, 48, NULL, STR_TO_DATE('23.12.2021.', '%d.%m.%Y.'), STR_TO_DATE('30.11.2021.', '%d.%m.%Y.')),
-    (42, 38, "sretna nova godina", STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.12.2021.', '%d.%m.%Y.')),
-    (43, 38, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('10.12.2021.', '%d.%m.%Y.')),
-    (49, 40, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('11.12.2021.', '%d.%m.%Y.')),
-    (40, 40, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('12.12.2021.', '%d.%m.%Y.')),
-    (44, 44, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
-    (48, 48, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('20.12.2021.', '%d.%m.%Y.'));
-  */
+    (2, 2, 42, NULL, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2020.', '%d.%m.%Y.')),
+    (3, 3, 50, NULL, STR_TO_DATE('10.03.2021.', '%d.%m.%Y.'), STR_TO_DATE('13.02.2021.', '%d.%m.%Y.')),
+    (4, 4, 46, NULL, STR_TO_DATE('15.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.03.2021.', '%d.%m.%Y.')),
+    (5, 5, 48, NULL, STR_TO_DATE('16.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.04.2021.', '%d.%m.%Y.')),
+    (6, 6, 39, NULL, STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), STR_TO_DATE('02.04.2021.', '%d.%m.%Y.')),
+    (7, 7, 37, "pasulj ako ga ima", STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), STR_TO_DATE('25.04.2021.', '%d.%m.%Y.')),
+    (8, 8, 41, NULL, STR_TO_DATE('23.06.2021.', '%d.%m.%Y.'), STR_TO_DATE('15.05.2021.', '%d.%m.%Y.')),
+    (9, 9, 43, NULL, STR_TO_DATE('28.06.2021.', '%d.%m.%Y.'), STR_TO_DATE('25.5.2021.', '%d.%m.%Y.')),
+    (10, 10, 41, NULL, STR_TO_DATE('14.08.2021.', '%d.%m.%Y.'), STR_TO_DATE('17.07.2021.', '%d.%m.%Y.')),
+    (11, 11, 50, NULL, STR_TO_DATE('17.10.2021.', '%d.%m.%Y.'), STR_TO_DATE('16.09.2021.', '%d.%m.%Y.')),
+    (12, 12, 50, NULL, STR_TO_DATE('22.11.2021.', '%d.%m.%Y.'), STR_TO_DATE('27.10.2021.', '%d.%m.%Y.')),
+    (13, 13, 48, NULL, STR_TO_DATE('23.12.2021.', '%d.%m.%Y.'), STR_TO_DATE('30.11.2021.', '%d.%m.%Y.')),
+    (14, 14, 38, "sretna nova godina", STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'), STR_TO_DATE('01.12.2021.', '%d.%m.%Y.')),
+    (15, 15, 38, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('10.12.2021.', '%d.%m.%Y.')),
+    (16, 16, 40, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('11.12.2021.', '%d.%m.%Y.')),
+    (17, 17, 40, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('12.12.2021.', '%d.%m.%Y.')),
+    (18, 18, 44, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('16.12.2021.', '%d.%m.%Y.')),
+    (19, 19, 48, NULL, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('20.12.2021.', '%d.%m.%Y.')),
+    (20, 20, 46, NULL, STR_TO_DATE('06.01.2022.', '%d.%m.%Y.'), STR_TO_DATE('28.12.2021.', '%d.%m.%Y.')),
+    (21, 8, 44, NULL, STR_TO_DATE('10.02.2022.', '%d.%m.%Y.'), STR_TO_DATE('29.12.2021.', '%d.%m.%Y.')),
+    (22, 9, 50, NULL, STR_TO_DATE('22.03.2022.', '%d.%m.%Y.'), STR_TO_DATE('30.12.2021.', '%d.%m.%Y.')),
+    (23, 5, 41, NULL, STR_TO_DATE('14.04.2022.', '%d.%m.%Y.'), STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'));
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, uplaceno
 -- ako je datum_izvrsenja NULL, znači da je taj catering u budućnosti
