@@ -128,7 +128,6 @@ CREATE TABLE stavka_racun (
     cijena_hrk DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_racun) REFERENCES racun (id),
     FOREIGN KEY (id_meni) REFERENCES meni (id),
-    CHECK (kolicina > 0),
     UNIQUE (id_racun, id_meni)
 );
 
@@ -1226,7 +1225,7 @@ SELECT * FROM prisutni_radnici;
 */
 
 
--- procedura 10
+-- procedura 10 koja stornira zadani račun tako da stvori račun sa jednakim i negativnim stavkama
 
 DROP PROCEDURE IF EXISTS storno_racuna;
 DELIMITER //
@@ -1270,8 +1269,10 @@ END //
 DELIMITER ;
 
 
-CALL storno_racuna(13, 1);
-
+/* testiranje
+CALL storno_racuna(28, 7);
+SELECT * FROM stavka_racun
+Order by id_racuna*/
 
 -- 11. Procedura koja za određeni catering u privremenu tablicu sprema sve zaposlenike koji su zaduženi za taj catering
 
