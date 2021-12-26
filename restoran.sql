@@ -501,8 +501,63 @@ INSERT INTO racun (sifra, id_nacin_placanja, id_stol, id_djelatnik, vrijeme_izda
 */
 
 
+-- 3. Funkcija koja za uneseni datum i vrijeme vraća podatak o tome da li je određeni stol slobodan (nema rezervacije)
+
+DROP FUNCTION IF EXISTS stol_dostupan;
+
+DELIMITER //
+CREATE FUNCTION stol_dostupan (p_id_stol INTEGER, p_datum DATE, p_vrijeme_od TIME, p_vrijeme_do TIME) RETURNS CHAR(2)
+DETERMINISTIC
+BEGIN
+
+	IF (SELECT COUNT(*)
+			FROM rezervacija
+			WHERE zeljeni_datum = p_datum
+				AND (p_vrijeme_od BETWEEN vrijeme_od AND vrijeme_do
+				OR p_vrijeme_do BETWEEN vrijeme_od AND vrijeme_do)
+				AND id_stol = p_id_stol) > 0
+	THEN
+		RETURN "NE";
+	ELSE
+		RETURN "DA";
+	END IF;
+	
+END //
+DELIMITER ;
+
+/*
+SELECT * FROM rezervacija;
+SELECT stol_dostupan (1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "17:00", "19:00");
+SELECT stol_dostupan (1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "17:00", "17:30");
+*/
 
 
+-- 4. Funkcija koja vraća da li je kapacitet nekog stola dovoljan za određen broj osoba
+
+DROP FUNCTION IF EXISTS kapacitet_stola_dovoljan;
+
+DELIMITER //
+CREATE FUNCTION kapacitet_stola_dovoljan (p_id_stol INTEGER, p_broj_gostiju INTEGER) RETURNS CHAR(2)
+DETERMINISTIC
+BEGIN
+
+IF (SELECT COUNT(*)
+		FROM stol
+		WHERE p_broj_gostiju <= broj_gostiju_kapacitet
+		AND id = p_id_stol) = 1
+	THEN
+		RETURN "DA";
+	ELSE
+		RETURN "NE";
+	END IF;
+
+END //
+DELIMITER ;
+
+/*
+SELECT *, kapacitet_stola_dovoljan(id, 6)
+	FROM stol;
+*/
 
 
 
@@ -1352,6 +1407,66 @@ CALL postavi_datum_izvrsenja_catering(4, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.')
 SELECT @p_status FROM DUAL;
 */
 
+
+-- 13. Procedura za kreiranje rezervacije
+
+DROP PROCEDURE IF EXISTS kreiraj_rezervaciju;
+
+DELIMITER //
+CREATE PROCEDURE kreiraj_rezervaciju
+(p_id_stol INTEGER,
+p_id_osoba INTEGER,
+p_zeljeni_datum DATE,
+p_vrijeme_od TIME,
+p_vrijeme_do TIME,
+p_broj_gostiju INTEGER,
+OUT status_rezervacije VARCHAR(100))
+BEGIN
+
+DECLARE l_id_stol INTEGER DEFAULT NULL;
+DECLARE l_id_osoba INTEGER DEFAULT NULL;
+
+SELECT id INTO l_id_osoba
+	FROM osoba
+    WHERE id = p_id_osoba;
+    
+SELECT id INTO l_id_stol
+	FROM stol
+    WHERE id = p_id_stol;
+
+IF l_id_osoba IS NULL THEN
+	SET status_rezervacije = "Osoba sa navedenim id-em ne postoji!";
+ELSEIF l_id_stol IS NULL THEN
+	SET status_rezervacije = "Stol sa navedenim id-em ne postoji!";
+ELSEIF p_broj_gostiju <= 0 THEN
+	SET status_rezervacije = "Broj gostiju mora biti pozitivan broj!";
+ELSEIF p_zeljeni_datum < CURRENT_TIMESTAMP THEN
+	SET status_rezervacije = "Željeni datum mora biti u budućnosti!";
+ELSEIF p_vrijeme_od < "10:00" OR p_vrijeme_do > "23:00" THEN
+	SET status_rezervacije = "Željeno vrijeme nije unutar radnog vremena restorana!";
+ELSEIF kapacitet_stola_dovoljan(p_id_stol, p_broj_gostiju) = "NE" THEN
+	SET status_rezervacije = "Broj gostiju prevelik za odabrani stol!";
+ELSEIF (stol_dostupan (p_id_stol, p_zeljeni_datum, p_vrijeme_od, p_vrijeme_do)) = "NE" THEN
+	SET status_rezervacije = "Odabrani stol je zauzet u željenom vremenu!";
+ELSE
+	INSERT INTO rezervacija (id_stol, id_osoba, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju)
+		VALUES (l_id_stol, l_id_osoba, p_zeljeni_datum, p_vrijeme_od, p_vrijeme_do, p_broj_gostiju);
+	SET status_rezervacije = "Rezervacija kreirana!";
+END IF;
+
+END //
+DELIMITER ;
+
+/*
+SELECT * FROM rezervacija;
+
+INSERT INTO rezervacija (id_stol, id_osoba, zeljeni_datum, vrijeme_od, vrijeme_do, broj_gostiju) VALUES
+	(1, 1, STR_TO_DATE('01.04.2022.', '%d.%m.%Y.'), "18:00", "23:00", 4);
+    
+CALL kreiraj_rezervaciju(1, 35, STR_TO_DATE('01.04.2022.', '%d.%m.%Y.'), "17:00", "17:30", 10, @status_rezervacije);
+
+SELECT @status_rezervacije FROM DUAL;
+*/
 
 
 
