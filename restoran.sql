@@ -20,14 +20,16 @@ CREATE TABLE zanimanje (
 CREATE TABLE djelatnik (
 	id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_osoba INTEGER NOT NULL,
-    oib CHAR(11) NOT NULL UNIQUE,
+    oib CHAR(11) NOT NULL,
     datum_rodenja DATE NOT NULL,
-    datum_zaposlenja DATE NOT NULL,
+    datum_zaposlenja DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     id_zanimanje INTEGER NOT NULL,
-    zaposlen CHAR(1),
+    zaposlen CHAR(1) NOT NULL DEFAULT "D",
     CHECK (zaposlen IN("D", "N")),
     FOREIGN KEY (id_osoba) REFERENCES osoba (id),
-    FOREIGN KEY (id_zanimanje) REFERENCES zanimanje (id)
+    FOREIGN KEY (id_zanimanje) REFERENCES zanimanje (id),
+    CONSTRAINT id_osoba_unique UNIQUE (id_osoba),
+    CONSTRAINT oib_unique UNIQUE (oib)
 );
 
 CREATE TABLE adresa (
@@ -1470,7 +1472,74 @@ SELECT @status_rezervacije FROM DUAL;
 */
 
 
+-- 14. Procedura za dodavanje novog djelatnika
 
+DROP PROCEDURE IF EXISTS dodaj_djelatnika;
+
+DELIMITER //
+CREATE PROCEDURE dodaj_djelatnika
+(p_ime VARCHAR(50),
+p_prezime VARCHAR(50),
+p_broj_mob VARCHAR(10),
+p_email VARCHAR (30),
+p_oib CHAR(11),
+p_datum_rodenja DATE,
+p_id_zanimanje INTEGER,
+OUT status_transakcije VARCHAR(100))
+BEGIN
+
+DECLARE l_id_osoba INTEGER;
+
+DECLARE unique_ogranicenje_prekrseno CONDITION FOR 1062;
+DECLARE zanimanje_ne_postoji CONDITION FOR 1452;
+
+DECLARE EXIT HANDLER FOR unique_ogranicenje_prekrseno
+	BEGIN
+		ROLLBACK;
+			SET status_transakcije = CONCAT("Već postoji djelatnik sa oib-om: ", p_oib);
+    END;
+    
+DECLARE EXIT HANDLER FOR zanimanje_ne_postoji
+	BEGIN
+		ROLLBACK;
+		SET status_transakcije = "Zanimanje sa tim id-em ne postoji!";
+	END;
+
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;
+START TRANSACTION;
+
+INSERT INTO osoba (ime, prezime, broj_mob, email) VALUES
+	(p_ime, p_prezime, p_broj_mob, p_email);
+    
+SELECT MAX(id) INTO l_id_osoba
+	FROM osoba;
+
+INSERT INTO djelatnik (id_osoba, oib, datum_rodenja, id_zanimanje) VALUES
+	(l_id_osoba, p_oib, p_datum_rodenja, p_id_zanimanje);
+    
+SET status_transakcije = "Djelatnik dodan!";
+
+COMMIT;
+
+END //
+DELIMITER ;
+
+/*
+SELECT * FROM osoba;
+SELECT * FROM djelatnik;
+
+CALL dodaj_djelatnika
+	("Ime", "Prezime", "1234567", "a@a.com", "56214852651", STR_TO_DATE('22.11.1988.', '%d.%m.%Y.'), 1, @status_transakcije);
+SELECT @status_transakcije FROM DUAL; -- postojeći oib
+
+CALL dodaj_djelatnika
+	("Ime", "Prezime", "1234567", "a@a.com", "56214812345", STR_TO_DATE('22.11.1988.', '%d.%m.%Y.'), 555, @status_transakcije); 
+SELECT @status_transakcije FROM DUAL; -- nepostojeće zanimanje
+
+CALL dodaj_djelatnika
+	("Ime", "Prezime", "1234567", "a@a.com", "56214812345", STR_TO_DATE('22.11.1988.', '%d.%m.%Y.'), 1, @status_transakcije);
+SELECT @status_transakcije FROM DUAL; -- djelatnik dodan
+*/
 
 
 
