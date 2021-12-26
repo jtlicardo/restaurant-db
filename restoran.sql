@@ -423,6 +423,9 @@ END//
 DELIMITER ;
 
 
+
+
+
 -- /////////////////////////////////////////
 -- /////////      FUNKCIJE       ///////////
 -- /////////////////////////////////////////
@@ -478,6 +481,10 @@ BEGIN
 		FROM racun
 		ORDER BY id DESC
 		LIMIT 1;
+        
+	IF novi_id IS NULL THEN
+		SET novi_id = 1;
+	END IF;
         
 	RETURN kreiraj_sifru_racuna(novi_id);
 
