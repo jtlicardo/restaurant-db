@@ -208,7 +208,7 @@ CREATE TABLE nabava_stavka (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_nabava INTEGER NOT NULL,
     id_namirnica INTEGER NOT NULL,
-    kolicina INTEGER NOT NULL,
+    kolicina DECIMAL(10, 2) NOT NULL,
     cijena_hrk DECIMAL(10, 2) NOT NULL,
 	FOREIGN KEY (id_nabava) REFERENCES nabava (id),
 	FOREIGN KEY (id_namirnica) REFERENCES namirnica (id),
@@ -1957,7 +1957,7 @@ INSERT INTO kategorija_namirnica VALUES
 
 -- id, naziv, id_kategorija, kolicina_na_zalihi, mjerna_jedinica    
 INSERT INTO namirnica VALUES
-	(1, "Orada", 1, 30, "komad"),
+	(1, "Orada", 1, 60, "komad"),
     (2, "Biftek", 2, 50, "komad"),
     (3, "Jagoda", 3, 4, "kilogram"),
     (4, "Vino Teran", 5, 60, "litra"),
@@ -2560,7 +2560,7 @@ INSERT INTO djelatnici_catering VALUES
     (57, 19, 9),
     (58, 19, 11),
     (59, 20, 37),
-    (60, 0, 13),
+    (60, 20, 13),
     (61, 20, 11);
     
     
