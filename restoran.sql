@@ -166,7 +166,7 @@ CREATE TABLE catering (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     id_zahtjev INTEGER NOT NULL,
     cijena_hrk DECIMAL(10, 2) DEFAULT 0.00,
-    datum_izvrsenja TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    datum_izvrsenja TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uplaceno CHAR(1) NOT NULL,
     FOREIGN KEY (id_zahtjev) REFERENCES catering_zahtjev (id),
     CHECK (uplaceno IN ("D", "N"))
@@ -829,6 +829,28 @@ SELECT *
 
 -- SELECT * FROM aktivni_meni;
 -- CALL obrisi_jelo(3);
+
+
+-- 2. Pogled koji prikazuje sve cateringe u budućnosti (te za koje zahtjeve su vezani) zajedno sa brojem zaposlenika koji su
+-- zaduženi za taj catering
+
+CREATE VIEW nadolazeci_caterinzi AS
+SELECT c.id catering_id,
+		c.datum_izvrsenja,
+        c.uplaceno,
+        cz.id zahtjev_id,
+        cz.zeljeni_datum,
+        cz.datum_zahtjeva,
+        COUNT(dc.id) AS broj_zaposlenika
+	FROM catering c
+	INNER JOIN djelatnici_catering dc
+    ON c.id = dc.id_catering
+    INNER JOIN catering_zahtjev cz
+    ON c.id_zahtjev = cz.id
+    WHERE datum_izvrsenja IS NULL
+    GROUP BY c.id;
+
+SELECT * FROM nadolazeci_caterinzi;
 
 
 
@@ -2119,28 +2141,32 @@ INSERT INTO catering_zahtjev VALUES
   */
 
 -- id, id_zahtjev, cijena_hrk, datum_izvrsenja, uplaceno
+-- ako je datum_izvrsenja NULL, znači da je taj catering u budućnosti
 INSERT INTO catering (id, id_zahtjev, datum_izvrsenja, uplaceno) VALUES
 	(1, 1, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D"),
-    (2, 2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D");
+    (2, 2, STR_TO_DATE('01.01.2021.', '%d.%m.%Y.'), "D"),
+	(3, 2, NULL, "N"),
+    (4, 2, NULL, "N"),
+    (5, 2, NULL, "N");
     /*
-    (3, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), NULL, "N"),
-    (4, STR_TO_DATE('10.03.2021', '%d.%m.%Y.'), NULL, "D"),
-    (5, STR_TO_DATE('15.04.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (6, STR_TO_DATE('16.04.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (7, STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (8, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (9, STR_TO_DATE('23.06.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (10, STR_TO_DATE('28.06.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (11, STR_TO_DATE('14.08.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (12, STR_TO_DATE('17.10.2021.', '%d.%m.%Y.'), NULL, "N"),
-    (13, STR_TO_DATE('22.11.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (14, STR_TO_DATE('23.12.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (15, STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'), NULL, "D"),
-    (16, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "D"),
-    (17, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "D"),
-    (18, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "N"),
-    (19, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "N"),
-    (20, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), NULL, "D");
+    (3, STR_TO_DATE('01.02.2021.', '%d.%m.%Y.'), "N"),
+    (4, STR_TO_DATE('10.03.2021', '%d.%m.%Y.'), "D"),
+    (5, STR_TO_DATE('15.04.2021.', '%d.%m.%Y.'), "D"),
+    (6, STR_TO_DATE('16.04.2021.', '%d.%m.%Y.') "D"),
+    (7, STR_TO_DATE('17.04.2021.', '%d.%m.%Y.'), "D"),
+    (8, STR_TO_DATE('01.05.2021.', '%d.%m.%Y.'), "D"),
+    (9, STR_TO_DATE('23.06.2021.', '%d.%m.%Y.'), "D"),
+    (10, STR_TO_DATE('28.06.2021.', '%d.%m.%Y.'), "D"),
+    (11, STR_TO_DATE('14.08.2021.', '%d.%m.%Y.'), "D"),
+    (12, STR_TO_DATE('17.10.2021.', '%d.%m.%Y.'), "N"),
+    (13, STR_TO_DATE('22.11.2021.', '%d.%m.%Y.'), "D"),
+    (14, STR_TO_DATE('23.12.2021.', '%d.%m.%Y.'), "D"),
+    (15, STR_TO_DATE('31.12.2021.', '%d.%m.%Y.'), "D"),
+    (16, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "D"),
+    (17, STR_TO_DATE('01.01.2022.', '%d.%m.%Y.'), "D"),
+    (18, NULL, "N"),
+    (19, NULL,"N"),
+    (20, NULL, "N");
     */
     
 -- id, id_catering, id_meni, kolicina, cijena_hrk
@@ -2151,15 +2177,16 @@ INSERT INTO catering_stavka (id, id_catering, id_meni, kolicina) VALUES
     (4, 1, 7, 20),
     (5, 1, 10, 5),
     (6, 1, 15, 9),
-    (7, 1, 21, 10);
+    (7, 1, 21, 10),
+    (8, 2, 29, 11),
+    (9, 2, 24, 10),
+    (10, 2, 30, 1),
+    (11, 2, 32, 5),
+    (12, 2, 6, 7),
+    (13, 2, 16, 3);
     
     /*
-    (2, 29, 11),
-    (2, 24, 10),
-    (2, 30, 1),
-    (2, 32, 5),
-    (2, 6, 7),
-    (2, 16, 3),
+    
     (3, 20, 1),
     (3, 21, 1),
     (3, 22, 2),
@@ -2222,15 +2249,15 @@ INSERT INTO djelatnici_catering VALUES
 	(1, 1, 28),
     (2, 1, 9),
     (3, 1, 11),
-    (4, 1, 13);
+    (4, 1, 13),
+    (5, 2, 29),
+    (6, 2, 11),
+    (7, 2, 13),
+    (8, 3, 37),
+    (9, 3, 9),
+    (10, 3, 11);
     
     /*
-    (2, 29),
-    (2, 11),
-    (2, 13),
-    (3, 37),
-    (3, 9),
-    (3, 11),
     (4, 28),
     (4, 9),
     (4, 13),
