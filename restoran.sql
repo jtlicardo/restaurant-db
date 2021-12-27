@@ -909,6 +909,33 @@ SELECT c.id catering_id,
 -- SELECT * FROM nadolazeci_caterinzi;
 
 
+-- 3. Pogled koji prikazuje sve trenutne djelatnike
+
+CREATE VIEW trenutni_djelatnici AS
+	SELECT *
+		FROM djelatnik
+		WHERE zaposlen = "D";
+        
+-- SELECT * FROM trenutni_djelatnici;
+
+
+-- 4. Pogled koji prikazuje goste koji su napravili najveći broj rezervacija, te prikazuje da li je ta osoba ujedno i zaposlenik
+
+CREATE VIEW najveci_br_rezervacija AS
+SELECT osoba.*, COUNT(*) AS broj_rezervacija,
+		(CASE WHEN osoba.id IN (SELECT id_osoba FROM djelatnik)
+			THEN "Da"
+            ELSE "Ne" END) AS osoba_je_djelatnik
+	FROM rezervacija
+    INNER JOIN osoba
+    ON osoba.id = rezervacija.id_osoba
+    GROUP BY osoba.id
+    ORDER BY broj_rezervacija DESC
+    LIMIT 5;
+    
+-- SELECT * FROM najveci_br_rezervacija;
+    
+
 
 
 
