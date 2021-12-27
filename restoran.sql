@@ -1114,8 +1114,77 @@ CALL dodaj_jelo("Jadranska orada sa žara s gratiniranim povrćem", 95.00);
 CALL dodaj_jelo("Novo jelo", 125.99);
 */
 
+-- 6. Procedura koja modificira tablicu stavka_meni za određeno jelo (uređuje popis namirnica za to jelo)
+--    Ako je p_kolicina NULL, briše stavku
 
--- 6. Procedura koja stvara novi zahtjev za catering
+DROP PROCEDURE IF EXISTS uredi_stavka_meni;
+
+DELIMITER //
+CREATE PROCEDURE uredi_stavka_meni
+(p_naziv_jela VARCHAR(70),
+p_naziv_namirnice VARCHAR(50),
+p_kolicina DECIMAL(10, 2),
+OUT status_procedure VARCHAR(100))
+BEGIN
+
+DECLARE l_id_meni INTEGER DEFAULT NULL;
+DECLARE l_id_namirnica INTEGER DEFAULT NULL;
+
+SELECT id INTO l_id_meni
+	FROM meni
+	WHERE naziv_stavke = p_naziv_jela;
+    
+SELECT id INTO l_id_namirnica
+	FROM namirnica
+	WHERE naziv = p_naziv_namirnice;
+
+IF l_id_meni IS NULL THEN
+	SET status_procedure = "Jelo tog naziva ne postoji!";
+ELSEIF l_id_namirnica IS NULL THEN
+	SET status_procedure = "Namirnica tog naziva ne postoji!";
+ELSEIF p_kolicina IS NULL THEN
+	DELETE FROM stavka_meni
+		WHERE id_namirnica = l_id_namirnica AND id_meni = l_id_meni;
+	SET status_procedure = "Stavka obrisana!";
+ELSEIF p_kolicina <= 0 THEN
+	SET status_procedure = "Količina mora biti pozitivan broj!";
+ELSEIF (SELECT COUNT(*)
+		FROM stavka_meni
+		WHERE id_namirnica = l_id_namirnica
+			AND id_meni = l_id_meni) > 0
+THEN
+	SET status_procedure = "Već postoji unos za to jelo i namirnicu!";
+ELSE
+	INSERT INTO stavka_meni (id_namirnica, kolicina, id_meni) VALUES
+		(l_id_namirnica, p_kolicina, l_id_meni);
+	SET status_procedure = "Stavka dodana!";
+END IF;
+
+END //
+DELIMITER ;
+
+/*
+CALL dodaj_jelo("Novo jelo", 125.99);
+
+SELECT * FROM meni;
+
+SELECT *
+	FROM stavka_meni
+    WHERE id_meni = (SELECT MAX(id) FROM meni);
+
+-- Primjer za dodavanje stavki
+CALL uredi_stavka_meni ("Novo jelo", "Krumpir", 0.3, @status_procedure);
+SELECT @status_procedure FROM DUAL;
+CALL uredi_stavka_meni ("Novo jelo", "Rajčica", 0.2, @status_procedure);
+SELECT @status_procedure FROM DUAL;
+
+-- Primjer za uklanjanje stavke
+CALL uredi_stavka_meni ("Novo jelo", "Krumpir", NULL, @status_procedure);
+SELECT @status_procedure FROM DUAL;
+*/
+
+
+-- 7. Procedura koja stvara novi zahtjev za catering
 
 DROP PROCEDURE IF EXISTS stvori_catering_zahtjev;
 DELIMITER //
@@ -1162,7 +1231,7 @@ SELECT * FROM adresa;
 */
 
 
--- 7. / 8. Procedure koja stvaraju novi otpis
+-- 8. / 9. Procedure koja stvaraju novi otpis
 
 DROP PROCEDURE IF EXISTS dodaj_stavku_za_otpis;
 DELIMITER //
@@ -1248,7 +1317,7 @@ SELECT * FROM otpis_stavka;
 */
 
 
--- procedura 9 koja za upisani vrijeme i datum prikazuje djelatnike koji su bili na poslu
+-- 10. Procedura koja za upisani vrijeme i datum prikazuje djelatnike koji su bili na poslu
 
 DROP PROCEDURE IF EXISTS prisustvo_radnika;
 DELIMITER //
@@ -1280,7 +1349,7 @@ SELECT * FROM prisutni_radnici;
 */
 
 
--- procedura 10 koja stornira zadani račun tako da stvori račun sa jednakim i negativnim stavkama
+-- 11. Procedura koja stornira zadani račun tako da stvori račun sa jednakim i negativnim stavkama
 
 DROP PROCEDURE IF EXISTS storno_racuna;
 DELIMITER //
@@ -1329,7 +1398,8 @@ CALL storno_racuna(28, 7);
 SELECT * FROM stavka_racun
 Order by id_racuna*/
 
--- 11. Procedura koja za određeni catering u privremenu tablicu sprema sve zaposlenike koji su zaduženi za taj catering
+
+-- 12. Procedura koja za određeni catering u privremenu tablicu sprema sve zaposlenike koji su zaduženi za taj catering
 
 DROP PROCEDURE IF EXISTS prikazi_djelatnike_catering;
 
@@ -1363,7 +1433,7 @@ SELECT * FROM tmp_djelatnici_catering;
 */
 
 
--- 12. Procedura koja postavlja datum_izvrsenja za određeni catering na trenutni datum (ako kao parametar p_datum_izvrsenja primi NULL),
+-- 13. Procedura koja postavlja datum_izvrsenja za određeni catering na trenutni datum (ako kao parametar p_datum_izvrsenja primi NULL),
 -- a inače postavlja datum_izvrsenja na vrijednost tog parametra
 
 DROP PROCEDURE IF EXISTS postavi_datum_izvrsenja_catering;
@@ -1409,7 +1479,7 @@ SELECT @p_status FROM DUAL;
 */
 
 
--- 13. Procedura za kreiranje rezervacije
+-- 14. Procedura za kreiranje rezervacije
 
 DROP PROCEDURE IF EXISTS kreiraj_rezervaciju;
 
@@ -1470,7 +1540,7 @@ SELECT @status_rezervacije FROM DUAL;
 */
 
 
--- 14. Procedura za dodavanje novog djelatnika
+-- 15. Procedura za dodavanje novog djelatnika
 
 DROP PROCEDURE IF EXISTS dodaj_djelatnika;
 
