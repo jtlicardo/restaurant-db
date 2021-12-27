@@ -1164,19 +1164,17 @@ SELECT * FROM adresa;
 
 -- 7. / 8. Procedure koja stvaraju novi otpis
 
--- privremena tablica u koju se spremaju namirnice za otpis
-DROP TABLE IF EXISTS tmp_otpis_stavka;
-CREATE TEMPORARY TABLE tmp_otpis_stavka (
-	id_namirnica INTEGER NOT NULL,
-	kolicina DECIMAL(10, 2)
-);
-
 DROP PROCEDURE IF EXISTS dodaj_stavku_za_otpis;
 DELIMITER //
 CREATE PROCEDURE dodaj_stavku_za_otpis (p_naziv_namirnice VARCHAR(50), p_kolicina DECIMAL(10, 2))
 BEGIN
 
 	DECLARE l_id_namirnica INTEGER DEFAULT NULL;
+    
+	CREATE TEMPORARY TABLE IF NOT EXISTS tmp_otpis_stavka (
+		id_namirnica INTEGER NOT NULL,
+		kolicina DECIMAL(10, 2)
+	);
 
 	SELECT id INTO l_id_namirnica
 		FROM namirnica
@@ -1239,9 +1237,9 @@ DELIMITER ;
 /*
 Primjer izvođenja:
 
-CALL dodaj_stavke_za_otpis("Orada", 5.00);
-CALL dodaj_stavke_za_otpis("Krumpir", 6.90);
-CALL dodaj_stavke_za_otpis("Rajčica", 9.50);
+CALL dodaj_stavku_za_otpis("Orada", 5.00);
+CALL dodaj_stavku_za_otpis("Krumpir", 6.90);
+CALL dodaj_stavku_za_otpis("Rajčica", 9.50);
 SELECT * FROM tmp_otpis_stavka;
 SELECT * FROM namirnica;
 CALL stvori_otpis();
