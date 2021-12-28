@@ -1330,9 +1330,9 @@ BEGIN
 END //
 DELIMITER ;
 
-/*
-Primjer izvođenja:
 
+-- Primjer izvođenja:
+/*
 CALL dodaj_stavku_za_otpis("Orada", 5.00);
 CALL dodaj_stavku_za_otpis("Krumpir", 6.90);
 CALL dodaj_stavku_za_otpis("Rajčica", 9.50);
@@ -1636,9 +1636,106 @@ CALL dodaj_djelatnika
 SELECT @status_transakcije FROM DUAL; -- djelatnik dodan
 */
 
+-- Procedure 16/17 koje stvaraju stavku za nabavu
+DROP PROCEDURE IF EXISTS dodaj_stavku_za_nabavu;
+DELIMITER //
+CREATE PROCEDURE dodaj_stavku_za_nabavu (p_naziv_namirnice VARCHAR(50), p_kolicina DECIMAL(10, 2), p_cijena_hrk NUMERIC(10,2))
+BEGIN
+
+	DECLARE l_id_namirnica INTEGER DEFAULT NULL;
+    
+	
+    CREATE TEMPORARY TABLE IF NOT EXISTS tmp_nabava_stavka (
+		id_namirnica INTEGER NOT NULL,
+		kolicina DECIMAL(10, 2),
+        cijena_hrk NUMERIC(10,2)
+	);
+
+	SELECT id INTO l_id_namirnica
+		FROM namirnica
+		WHERE naziv = p_naziv_namirnice;
+
+	IF l_id_namirnica IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Namirnica sa tog naziva ne postoji!';
+	ELSEIF p_kolicina <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Količina mora biti pozitivan broj!';
+	ELSEIF p_cijena_hrk = 0 THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cijena ne može biti negativna!';
+	ELSE
+		INSERT INTO tmp_nabava_stavka VALUES (l_id_namirnica, p_kolicina, p_cijena_hrk);
+	END IF;
+
+END //
+DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS stvori_nabavu;
+DELIMITER //
+CREATE PROCEDURE stvori_nabavu (p_dobavljac INTEGER, p_opis VARCHAR(300), p_podmireno CHAR(1), p_datum DATE)
+BEGIN
 
+	DECLARE l_id_nabava INTEGER;
+    DECLARE l_id_namirnica INTEGER;
+    DECLARE l_kolicina DECIMAL(10, 2);
+    DECLARE l_cijena NUMERIC(10, 2);
+    
+	DECLARE cur CURSOR FOR
+		SELECT id_namirnica, kolicina, cijena_hrk
+			FROM tmp_nabava_stavka;
+            
+	DECLARE EXIT HANDLER FOR NOT FOUND
+		BEGIN
+			DELETE FROM tmp_nabava_stavka;
+		END;
+	IF p_dobavljac IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Obavezan je upis dobavljaca!';
+	ELSEIF p_podmireno NOT IN('D', 'N') THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'status podmireno more biti "D" ili "N"!';
+	ELSEIF p_datum IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Obavezan je upis datuma!';
+	ELSE
+		
+		
+		INSERT  INTO  nabava (id_dobavljac, opis, podmireno, datum)
+		VALUES (p_dobavljac, p_opis, p_podmireno, p_datum);
+    
+		-- dohvaća id zadnje unesene nabave
+		SELECT id INTO l_id_nabava
+			FROM nabava
+			ORDER BY id DESC
+			LIMIT 1;
+    
+		OPEN cur;
+    
+		unesi_stavke: LOOP
+			FETCH cur INTO l_id_namirnica, l_kolicina, l_cijena;
+			INSERT INTO nabava_stavka (id_nabava, id_namirnica, kolicina, cijena_hrk)
+				VALUES (l_id_nabava, l_id_namirnica, l_kolicina, l_cijena);
+		END LOOP unesi_stavke;
+    
+		CLOSE cur;
+	END IF;
+
+END //
+DELIMITER ;
+
+-- Primjer izvođenja:
+/*
+CALL dodaj_stavku_za_nabavu("fuži", 50, 400.00);
+CALL dodaj_stavku_za_nabavu("paprika", 10, 50);
+SELECT * FROM tmp_nabava_stavka;
+SELECT * FROM namirnica;
+CALL stvori_nabavu(10, "nabava fuža i paprika", "D", STR_TO_DATE('22.11.2021.' , '%d.%m.%Y.'));
+SELECT * FROM nabava;
+SELECT * FROM nabava_stavka;
+*/
+-- stvori nabavu provjerava unose, ali se tablica tmp_nabava_stavka prazni neovisno o prolasku, što bi moglo biti irritantno za koristiti, ali smanjuje šansu duplih unosa
 
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
