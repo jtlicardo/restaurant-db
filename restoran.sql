@@ -1737,7 +1737,7 @@ SELECT * FROM nabava_stavka;
 */
 -- stvori nabavu provjerava unose, ali se tablica tmp_nabava_stavka prazni neovisno o prolasku, što bi moglo biti irritantno za koristiti, ali smanjuje šansu duplih unosa
 
--- 18. Upiti koji stavlja zadanu nabavu u status podmireno
+-- 18. procedura koji stavlja zadanu nabavu u status podmireno
 
 DROP PROCEDURE IF EXISTS podmiri_nabavu;
 DELIMITER //
@@ -1770,6 +1770,38 @@ CALL podmiri_nabavu(6);
 SELECT * FROM nabava;
 */
 
+-- 19. procedura koji stavlja zadanu reziju u status podmireno
+
+DROP PROCEDURE IF EXISTS podmiri_reziju;
+DELIMITER //
+CREATE PROCEDURE podmiri_reziju (p_id INTEGER)
+BEGIN
+
+DECLARE l_placeno CHAR(1);
+
+SELECT placeno INTO l_placeno
+FROM rezije
+WHERE p_id=id;
+IF l_placeno='D'THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'režija je već u statusu podmireno!'; 
+ELSEIF l_placeno IS NULL THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'ne postoji režija sa zadani ID-om!';
+ELSE
+	UPDATE rezije
+    SET placeno='D'
+    WHERE id=p_id;
+END IF;
+END //
+DELIMITER ;
+
+-- primjer izvođenja
+/*
+SELECT * FROM rezije;
+CALL podmiri_reziju(34);
+SELECT * FROM rezije;
+*/
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
 -- /////////////////////////////////////////
@@ -2794,7 +2826,7 @@ INSERT INTO djelatnici_catering VALUES
 INSERT INTO nabava (id, id_dobavljac, opis, podmireno, datum) VALUES
 	(1, 13, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.')),
     (2, 13, NULL, "D", STR_TO_DATE('15.02.2021.', '%d.%m.%Y.')),
-	(3, 10, "Nabavka 10 kila teletine", "N", STR_TO_DATE('29.02.2021.', '%d.%m.%Y.'));
+	(3, 10, "Nabavka 10 kila teletine", "N", STR_TO_DATE('28.02.2021.', '%d.%m.%Y.'));
 -- id, id_nabava, id_namirnica, kolicina, cijena_hrk
 INSERT INTO nabava_stavka VALUES
 	(1, 1, 1, 10, 250.00),
@@ -2858,7 +2890,7 @@ INSERT INTO rezije VALUES
     (31, 5800.00, STR_TO_DATE('02.12.2021.', '%d.%m.%Y.'), 1, "D"),
     (32, 500.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 2, "D"),
 	(33, 340.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 4, "D"),
-    (34, 160.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 6, "D");
+    (34, 160.00, STR_TO_DATE('04.12.2021.', '%d.%m.%Y.'), 6, "N");
 
 -- id, naziv, pocetak_radnog_vremena, kraj_radnog_vremena
 INSERT INTO smjena VALUES
