@@ -1737,6 +1737,39 @@ SELECT * FROM nabava_stavka;
 */
 -- stvori nabavu provjerava unose, ali se tablica tmp_nabava_stavka prazni neovisno o prolasku, što bi moglo biti irritantno za koristiti, ali smanjuje šansu duplih unosa
 
+-- 18. Upiti koji stavlja zadanu nabavu u status podmireno
+
+DROP PROCEDURE IF EXISTS podmiri_nabavu;
+DELIMITER //
+CREATE PROCEDURE podmiri_nabavu (p_id INTEGER)
+BEGIN
+
+DECLARE l_podmireno CHAR(1);
+
+SELECT podmireno INTO l_podmireno
+FROM nabava
+WHERE p_id=id;
+IF l_podmireno='D'THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'nabava je već u statusu podmireno!'; 
+ELSEIF l_podmireno IS NULL THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'ne postoji nabava sa zadani ID-om!';
+ELSE
+	UPDATE nabava
+    SET podmireno='D'
+    WHERE id=p_id;
+END IF;
+END //
+DELIMITER ;
+
+-- primjer izvođenja. 
+/*
+SELECT * FROM nabava;
+CALL podmiri_nabavu(6);
+SELECT * FROM nabava;
+*/
+
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
 -- /////////////////////////////////////////
@@ -2760,13 +2793,14 @@ INSERT INTO djelatnici_catering VALUES
 -- id, id_dobavljac, opis, iznos_hrk, podmireno, datum
 INSERT INTO nabava (id, id_dobavljac, opis, podmireno, datum) VALUES
 	(1, 13, "Nabavka 10 orada", "D", STR_TO_DATE('01.01.2021.', '%d.%m.%Y.')),
-    (2, 13, NULL, "D", STR_TO_DATE('15.02.2021.', '%d.%m.%Y.'));
-
+    (2, 13, NULL, "D", STR_TO_DATE('15.02.2021.', '%d.%m.%Y.')),
+	(3, 10, "Nabavka 10 kila teletine", "N", STR_TO_DATE('29.02.2021.', '%d.%m.%Y.'));
 -- id, id_nabava, id_namirnica, kolicina, cijena_hrk
 INSERT INTO nabava_stavka VALUES
 	(1, 1, 1, 10, 250.00),
     (2, 2, 1, 15, 350.00),
-    (3, 2, 21, 10, 950.00);
+    (3, 2, 21, 10, 950.00),
+    (4, 3, 15, 10, 500.00);
 
 -- id, datum, opis
 INSERT INTO otpis VALUES
