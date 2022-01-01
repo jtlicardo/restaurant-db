@@ -426,7 +426,6 @@ DELIMITER ;
 
 
 
-
 -- /////////////////////////////////////////
 -- /////////      FUNKCIJE       ///////////
 -- /////////////////////////////////////////
@@ -935,6 +934,64 @@ SELECT osoba.*, COUNT(*) AS broj_rezervacija,
     
 -- SELECT * FROM najveci_br_rezervacija;
     
+
+-- 5. Pogled koji prikazuje na koje adrese se najčešće vrši dostava
+
+CREATE VIEW najcesce_adrese_dostave AS
+SELECT adresa.*
+	FROM dostava
+    INNER JOIN adresa ON adresa.id = dostava.id_adresa
+    GROUP BY adresa.id
+    ORDER BY COUNT(*) DESC
+    LIMIT 3;
+    
+-- SELECT * FROM najcesce_adrese_dostave;
+
+
+-- 6. Pogled koji prikazuje prosječan iznos računa po mjesecu tijekom prošle godine
+
+CREATE VIEW prosjecan_iznos_racuna AS
+SELECT CONCAT(MONTH(vrijeme_izdavanja), "/", YEAR(vrijeme_izdavanja)) AS mjesec,
+		ROUND(AVG(iznos_hrk), 2) AS prosjecan_iznos
+	FROM racun
+    WHERE YEAR(vrijeme_izdavanja) = YEAR(CURRENT_TIMESTAMP) - 1
+    GROUP BY MONTH(vrijeme_izdavanja);
+
+-- SELECT * FROM prosjecan_iznos_racuna;
+
+
+-- 7. Pogled koji prikazuje namirnice čija je količina na zalihi niska u odnosu na količinu u kojoj se koriste u jelima
+-- (tj. prikazuje namirnice koje bi trebalo nabaviti) - uzimaju se podaci jela izdanih na računima u periodu od zadnjih godinu dana
+
+CREATE VIEW namirnice_za_nabavu AS
+SELECT namirnica.naziv,
+		namirnica.kolicina_na_zalihi,
+        (kolicina * SUM(br_narucenih_jela)) AS utroseno_zadnjih_god_dana,
+        (namirnica.kolicina_na_zalihi / (kolicina * SUM(br_narucenih_jela))) AS omjer
+	FROM stavka_meni
+    INNER JOIN (SELECT id_meni, SUM(kolicina) AS br_narucenih_jela
+					FROM stavka_racun
+					INNER JOIN racun ON racun.id = stavka_racun.id_racun
+					WHERE vrijeme_izdavanja >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+					GROUP BY id_meni) AS br_narucenih_jela
+	ON stavka_meni.id_meni = br_narucenih_jela.id_meni
+    INNER JOIN namirnica ON namirnica.id = id_namirnica
+    GROUP BY id_namirnica
+    ORDER BY omjer ASC
+    LIMIT 10;
+
+-- SELECT * FROM namirnice_za_nabavu;
+
+/*
+-- ako gledamo samo kolicinu_na_zalihi bez obzira na to koliko se troši:
+SELECT *
+	FROM namirnica
+    ORDER BY kolicina_na_zalihi ASC
+    LIMIT 10;
+*/
+
+
+
 
 
 
@@ -1802,6 +1859,15 @@ SELECT * FROM rezije;
 CALL podmiri_reziju(34);
 SELECT * FROM rezije;
 */
+
+
+
+
+
+
+
+
+
 -- /////////////////////////////////////////
 -- //////////      INSERTOVI       /////////
 -- /////////////////////////////////////////
