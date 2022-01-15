@@ -4,10 +4,10 @@
         $odan=mysqli_fetch_assoc($razlika);
         echo "<h2>Dan: '$odan[pdan]'</h2>";
         $vrijeme="09:30";
-        echo "<h3>Jutarnja smjena</h3>";
+        echo "<h3 style='color:#FFF;'>Jutarnja smjena</h3>";
         include 'smjenaotprije.php';
         $vrijeme="18:00";
-        echo "<h3>Večernja smjena</h3>";
+        echo "<h3 style='color:#FFF;'>Večernja smjena</h3>";
         include 'smjenaotprije.php'; 
     ?>
 </section>

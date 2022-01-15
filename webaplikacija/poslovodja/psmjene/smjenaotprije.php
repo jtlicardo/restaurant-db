@@ -1,6 +1,6 @@
 <?php
         echo "<section style='overflow-y:scroll; height:160px;'>
-        <table>
+        <table class='table table-dark table-striped'>
         <tbody>";
         $sql_jt = "SELECT osoba.ime, osoba.prezime, zanimanje.naziv FROM djelatnik
 		JOIN osoba 

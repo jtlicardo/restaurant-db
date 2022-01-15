@@ -48,8 +48,8 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
                 }
             }
     echo "<td>$alergen</td>
-        <td><a href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=1'>+</a>
-            <a href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=2'>-</a></td>
+        <td><a class='btn btn-info' href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=1'>+</a>
+            <a class='btn btn-info' href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=2'>-</a></td>
         </tr>";
     }
     echo "
@@ -78,23 +78,23 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
     echo "
     </tbody>
     </table>
-    <a href='p_ispunicatering.php'> </a>";
-    echo "<section style='width:360px; float:left;'><h3>Djelatnici</h3>
+    <a class='btn btn-info' href='p_ispunicatering.php'> </a>";
+    echo "<section style='width:360px; float:left;'><h3 style='color:#FFF;'>Djelatnici</h3>
     <section style='overflow-y:scroll; height:160px;'>
-    <table>
+    <table class='table table-dark table-striped'>
     <tbody>";
     $djelatnici = mysqli_query($con, "SELECT djelatnik.id,osoba.ime,osoba.prezime,zanimanje.naziv FROM djelatnik JOIN osoba ON djelatnik.id_osoba=osoba.id JOIN zanimanje ON zanimanje.id=djelatnik.id_zanimanje;");
         while ($djelatnik = mysqli_fetch_assoc($djelatnici)) {
             echo "<tr>
                 <td>".$djelatnik['ime']."<br>".$djelatnik['prezime']."</td>
                 <td>".$djelatnik['naziv']."</td>
-                <td><a href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>dodaj</a>
-                <br><a href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>makni</a></td></tr>";
+                <td><a class='btn btn-info' href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>dodaj</a>
+                <br><a class='btn btn-info' href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>makni</a></td></tr>";
         }
     echo "</tbody></table></section>
-    <section style='width:360px; float:left;'><h3>Catering tim</h3>
+    <section style='width:360px; float:left;'><h3 style='color:#FFF;'>Catering tim</h3>
     <section style='overflow-y:scroll; height:160px;'>
-        <table>
+        <table class='table table-dark table-striped'>
         <tbody>";
             if (isset($_GET['update'])) {
                 $c_djelatnici = mysqli_query($con, "SELECT * FROM tablicadjelatnika");
@@ -108,5 +108,5 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
         </tbody>
         </table></section></section>";
     echo "</tbody></table></section></section>
-        <a href='p_ispunicatering.php'>Ispuni catering</a>";
+        <a class='btn btn-info' href='p_ispunicatering.php'>Ispuni catering</a>";
 ?>

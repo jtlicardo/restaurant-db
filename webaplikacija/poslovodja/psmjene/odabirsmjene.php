@@ -1,7 +1,7 @@
 <?php
-    echo "<section style='width:360px; float:left;'><h3>Djelatnici</h3>
+    echo "<section style='width:360px; float:left;'><h3 style='color:#FFF;'>Djelatnici</h3>
     <section style='overflow-y:scroll; height:160px;'>
-    <table>
+    <table class='table table-dark table-striped'>
     <tbody>";
         $tablicajutro = "CREATE TABLE IF NOT EXISTS tablicajutro
         (
@@ -25,10 +25,10 @@
                 <td>".$djelatnik['ime']."<br>".$djelatnik['prezime']."</td>
                 <td>".$djelatnik['naziv']."</td>";
             if ($djelatnik['naziv']=='poslovodja' || $djelatnik['naziv']=='kuhar' || $djelatnik['naziv']=='pomoćni kuhar' || $djelatnik['naziv']=='operater na suđu') {
-                echo "<td><a href='p_smjenadodaj.php?did=".$djelatnik['id']."&operacija=1'>dodaj ujutro</a><br>
-                    <a href='p_smjenadodaj.php?did=".$djelatnik['id']."&operacija=2'>dodaj večernjoj</a></td></tr>";
+                echo "<td><a class='btn btn-info' href='p_smjenadodaj.php?did=".$djelatnik['id']."&operacija=1'>dodaj ujutro</a><br>
+                    <a class='btn btn-info' href='p_smjenadodaj.php?did=".$djelatnik['id']."&operacija=2'>dodaj večernjoj</a></td></tr>";
             } else {
-                echo "<td><a href='p_smjenadodaj.php?did=".$djelatnik['id']."&operacija=3'>dodaj u smjenu</a></td></tr>";
+                echo "<td><a class='btn btn-info' href='p_smjenadodaj.php?did=".$djelatnik['id']."&operacija=3'>dodaj u smjenu</a></td></tr>";
             }
         }
         echo "
@@ -37,9 +37,9 @@
         </section>
 </section>";
         echo "<section style='width:300px; display:inline-block;'>
-            <h3>Jutarnja smjena</h3>
+            <h3 style='color:#FFF;'>Jutarnja smjena</h3>
             <section style='overflow-y:scroll; height:160px;'>
-            <table>
+            <table class='table table-dark table-striped'>
             <tbody>";
         if (isset($_GET['update'])) {
             $smjutro = mysqli_query($con, "SELECT * FROM tablicajutro");
@@ -48,7 +48,7 @@
                     <td>".$jutarnjiradnik['ime']."</td>
                     <td>".$jutarnjiradnik['prezime']."</td>
                     <td>".$jutarnjiradnik['naziv']."</td>";
-                    echo "<td><a href='p_smjenaoduzmi.php?did=".$jutarnjiradnik['id']."&operacija=1'>makni</a></td></tr>";
+                    echo "<td><a class='btn btn-info' href='p_smjenaoduzmi.php?did=".$jutarnjiradnik['id']."&operacija=1'>makni</a></td></tr>";
             }
         }
         echo "
@@ -57,9 +57,9 @@
             </section>
             </section>
             <section style='width:300px; display:inline-block;'>
-            <h3>Večernja smjena</h3>
+            <h3 style='color:#FFF;'>Večernja smjena</h3>
             <section style='overflow-y:scroll; height:160px;'>
-            <table>
+            <table class='table table-dark table-striped'>
             <tbody>";
         if (isset($_GET['update'])) {
             $smvecer = mysqli_query($con, "SELECT * FROM tablicavecer");
@@ -68,7 +68,7 @@
                         <td>".$vecernjiradnik['ime']."</td>
                         <td>".$vecernjiradnik['prezime']."</td>
                         <td>".$vecernjiradnik['naziv']."</td>";
-                echo "<td><a href='p_smjenaoduzmi.php?did=".$vecernjiradnik['id']."&operacija=2'>makni</a></td></tr>";
+                echo "<td><a class='btn btn-info' href='p_smjenaoduzmi.php?did=".$vecernjiradnik['id']."&operacija=2'>makni</a></td></tr>";
             }
         }
             echo "

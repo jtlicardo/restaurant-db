@@ -10,5 +10,4 @@ if (mysqli_connect_errno())
 {
 	echo "Neuspješno spajanje na bazu podataka:" . mysqli_connect_error();
 }
-mysqli_autocommit($con, true);
 ?>

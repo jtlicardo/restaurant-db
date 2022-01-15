@@ -2,15 +2,16 @@
     include_once 'gost_konekcija.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html><head><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script></head>
 
-<body>
+<body class='text-light bg-dark'>
     <form action="gost_info.php" method="POST">
         <input type="text" name="ime" placeholder="ime">
         <input type="text" name="prezime" placeholder="prezime">
         <input type="text" name="mob" placeholder="mobitel">
         <input type="text" name="email" placeholder="email">
-        <button type="submit" name="sp_osoba">Pošalji zahtjev</button>
+        <button class='btn btn-success'type="submit" name="sp_osoba">Pošalji zahtjev</button>
     </form>
     <p>
         <?php
@@ -30,7 +31,7 @@
         <input type="time" name="vrijemeod" placeholder="vrijeme od">
         <input type="time" name="vrijemedo" placeholder="vrijeme od">
         <input type="number" name="brojgostiju" placeholder="broj ljudi">
-        <button type="submit" name="sp_stol">Rezerviraj stol</button>
+        <button class='btn btn-success'type="submit" name="sp_stol">Rezerviraj stol</button>
     </form>
     <p>
         <?php
@@ -56,7 +57,7 @@
     cijena decimal(10,2) not null
 );";
 mysqli_query($con,$tablicadostave);
-        echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><table><thead>
+        echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><table class='table table-dark table-striped'><thead>
         <tr>
             <td>Naziv jela</td>
             <td>Cijena</td>
@@ -78,15 +79,15 @@ mysqli_query($con,$tablicadostave);
                         }
                     }
             echo "<td>$alergen</td>
-                <td><a href='gn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=1'>+</a>
-                    <a href='gn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=2'>-</a></td>
+                <td><a class='btn btn-info' href='gn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=1'>+</a>
+                    <a class='btn btn-info' href='gn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=2'>-</a></td>
                 </tr>";
             }
             echo "
             </tbody>
             </table> </section>
             <section style='width:50%; float:left;'>
-            <h3>Vaša dostava</h3><table><thead>
+            <h3 style='color:#FFF;'>Vaša dostava</h3><table class='table table-dark table-striped'><thead>
             <tr>
                 <td>Naziv jela</td>
                 <td>količina</td>
@@ -113,7 +114,7 @@ mysqli_query($con,$tablicadostave);
         <input type="text" name="grad" placeholder="grad">
         <input type="text" name="ulica" placeholder="ulica">
         <input type="text" name="postanski" placeholder="poštanski broj">
-        <button type="submit" name="sp_adresa">Pošalji zahtjev</button>
+        <button class='btn btn-success'type="submit" name="sp_adresa">Pošalji zahtjev</button>
     </form>
     <p>
         <?php
@@ -124,7 +125,7 @@ mysqli_query($con,$tablicadostave);
             "<br>Grad: ".$_SESSION['s_grad'].
             "<br>Ulica: ".$_SESSION['s_ulica'].
             "<br>Postanski: ".$_SESSION['s_postanski']."</p>
-            <br><a href='izvrsidostavu.php'>
+            <br><a class='btn btn-info' href='izvrsidostavu.php'>
             Naruči dostavu</a></section>";
         }
 		
@@ -133,7 +134,7 @@ mysqli_query($con,$tablicadostave);
         <input type="text" name="oib" placeholder="oib">
         <textarea name="opis" rows="10" cols="50"></textarea>
         <input type="date" name="zdatum" placeholder="zdatum">
-        <button type="submit" name="sp_cateringzahtjev">Pošalji zahtjev</button>
+        <button class='btn btn-success'type="submit" name="sp_cateringzahtjev">Pošalji zahtjev</button>
     </form>
 </body>
 

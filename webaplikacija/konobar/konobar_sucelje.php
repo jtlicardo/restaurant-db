@@ -4,10 +4,18 @@
 <!DOCTYPE html>
 <html>
 
-<body>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
+</head>
+
+<body class='text-light bg-dark'>
     <form action="konobar_info.php" method="POST">
         <input type="text" name="idkonobar" placeholder="šifra konobara">
-        <button type="submit" name="sp_konobar">Odaberi šifru</button>
+        <button class='btn btn-success'type="submit" name="sp_konobar">Odaberi šifru</button>
     </form>
     <p>
         <?php
@@ -19,7 +27,7 @@
             ?>
     </p>
     <?php
-    echo "<h3>Stol</h3>";
+    echo "<h3 style='color:#FFF;'>Stol</h3>";
     $tablicaracuna = "CREATE TABLE IF NOT EXISTS konobar_racun
 (
 id integer not null,
@@ -34,7 +42,7 @@ cijena decimal(10,2) not null
         while ($stol = mysqli_fetch_assoc($stolovi)){
             $konobarnastolu = mysqli_query($con, "SELECT id_konobar FROM konobar_racun WHERE id_stol='$stol[id]'");
             if (!mysqli_num_rows($konobarnastolu) || mysqli_fetch_assoc($konobarnastolu)['id_konobar']==$_SESSION['idkonobar']) {
-                echo "<a href='konobar_odaberistol.php?ostol=".$stol['id']."'>'$stol[id]'</a>";
+                echo "<a class='btn btn-info' href='konobar_odaberistol.php?ostol=".$stol['id']."'>'$stol[id]'</a>";
             }
         }
     }
@@ -67,19 +75,19 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
                 }
             }
     echo "<td>$alergen</td>
-        <td><a href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=1'>+</a>
-            <a href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=2'>-</a></td>
+        <td><a class='btn btn-info' href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=1'>+</a>
+            <a class='btn btn-info' href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=2'>-</a></td>
         </tr>";
     }
     echo "
     </tbody>
     </table> </section>
     <section style='width:50%; float:left;'>
-    <h3>Račun</h3>";
+    <h3 style='color:#FFF;'>Račun</h3>";
     if (!isset($_SESSION['trenutnistol'])) {
         echo "odaberi stol";
     } else {
-        echo "<table><thead>
+        echo "<table class='table table-dark table-striped'><thead>
     <tr>
         <td>Naziv jela</td>
         <td>količina</td>
@@ -106,7 +114,7 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
         <option value='2'>Kartica</option>
         <option value='3'>Kripto</option>
     </select>
-    <button type='submit' name='sp_racun'>Unesi račun</button>
+    <button class='btn btn-success'type='submit' name='sp_racun'>Unesi račun</button>
     </form>";
 ?>
 </body>
