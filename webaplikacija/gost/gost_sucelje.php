@@ -78,7 +78,7 @@
 );";
 mysqli_query($con,$tablicadostave);
 //prikazuje stavke iz aktivnog menija
-        echo "<h3>Odabir artikla za dostavu</h3><section style='width:40%; float:left; overflow-y:scroll; overflow-x:hidden;  height:240px;'><table class='table table-dark table-striped'><thead>
+        echo "<h3>Odabir artikla za dostavu</h3><section style='width:50%; float:left; overflow-y:scroll; overflow-x:hidden;  height:240px;'><table class='table table-dark table-striped'><thead>
         <tr>
             <td>Naziv jela</td>
             <td>Cijena</td>
