@@ -62,7 +62,7 @@ cijena decimal(10,2) not null
     //prikaz menija, isto kao kod gosta
 $meni = mysqli_query($con,"SELECT * FROM aktivni_meni");
 mysqli_query($con,$tablicaracuna);
-echo "<h3>Meni</h3><section class='mx-5' style='width:40%; float:left; overflow-y:scroll; overflow-x:hidden;  height:240px;'><table class='table table-dark table-striped'><thead>
+echo "<h3>Meni</h3><section style='width:50%; float:left; overflow-y:scroll; overflow-x:hidden;  height:240px;'><table class='table table-dark table-striped'><thead>
 <tr>
     <td>Naziv jela</td>
     <td>Cijena</td>
