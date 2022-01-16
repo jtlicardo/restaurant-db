@@ -30,9 +30,6 @@
     include 'neispunjenicaterinzi.php';
 //evidentiranjeuplatenacatering
     include 'p_cateringad.php';
-//caterinzi iz budućnosti
-    echo"<h3 style='color:#FFF;'>Nadolazeći caterinzi</h3>";
-    include 'p_nadolazecicaterinzi.php';
     ?>
 </body>
 
