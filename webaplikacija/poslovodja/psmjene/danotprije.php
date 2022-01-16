@@ -1,4 +1,4 @@
- <section class='m-2' style='width:300px; display:inline-block;'>
+ <section class='m-1' style='width:200px; display:inline-block;'>
      <?php
         //prikazuje datum ispod kojeg se povlače smjene koje su bile
         $razlika = mysqli_query($con,"SELECT subdate('$_SESSION[s_datumsmjena]', $dan) AS pdan;");
