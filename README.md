@@ -26,3 +26,6 @@ Projekt iz kolegija [**Baze podataka 2**](https://fipu.unipu.hr/fipu/predmet/baz
     * Izrada sheme baze podataka
     * Popunjava tablice sa zapisima
     * Izrada upita, pogleda, funkcija, procedura, okidača
+
+[Sveučilište Jurja Dobrile u Puli](https://www.unipu.hr/)
+[Fakultet informatike u Puli](https://fipu.unipu.hr/)
