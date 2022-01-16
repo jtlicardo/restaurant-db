@@ -17,7 +17,7 @@ echo "
         ON ds.id_djelatnik = d.id
         LEFT JOIN smjena s
         ON ds.id_smjena = s.id
-        WHERE (YEAR(ds.datum) = 2021 AND MONTH(ds.datum) = 12) OR (ds.datum) IS NULL
+        WHERE (YEAR(ds.datum) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND MONTH(ds.datum) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) OR (ds.datum) IS NULL
         GROUP BY (d.id);");
             while ($red = mysqli_fetch_assoc($upit)) {
                 echo "<tr>
