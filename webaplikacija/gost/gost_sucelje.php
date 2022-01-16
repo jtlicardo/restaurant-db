@@ -13,6 +13,9 @@
 </head>
 
 <body class='text-light bg-dark'>
+    <section style=''>
+        <a class='my-2 mx-2 btn btn-success' href='../index.php'>&#8962;</a>
+    </section>
     <section class='container-fluid my-5'>
         <h3>Informacije o gostu</h3>
         <form action="gost_info.php" method="POST">

@@ -13,6 +13,9 @@
 </head>
 
 <body class='text-light bg-dark'>
+    <section style=''>
+        <a class='my-2 mx-2 btn btn-success' href='../index.php'>&#8962;</a>
+    </section>
     <form action="konobar_info.php" method="POST">
         <input type="text" name="id_konobar" placeholder="šifra konobara">
         <button class='my-2 btn btn-success' type="submit" name="sp_konobar">Odaberi šifru</button>

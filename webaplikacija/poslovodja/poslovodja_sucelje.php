@@ -13,6 +13,9 @@
 </head>
 
 <body class='text-light bg-dark'>
+    <section style=''>
+        <a class='my-2 mx-2 btn btn-success' href='../index.php'>&#8962;</a>
+    </section>
     <section>
         <form action="poslovodja_info.php" method="POST">
             <input type="text" name="idposlovodja" placeholder="šifra ovlaštene osobe">

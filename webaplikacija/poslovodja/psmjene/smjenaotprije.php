@@ -1,5 +1,5 @@
 <?php
-        echo " <section class='m-2' style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
+        echo " <section class='m-2' style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
         <table class='table table-dark table-striped'>
         <tbody>";
         //ovo je bio upit od kolega koji je prilagođen za veće zadovoljstvo

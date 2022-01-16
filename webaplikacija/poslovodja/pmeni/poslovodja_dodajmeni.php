@@ -14,6 +14,16 @@
 </head>
 
 <body class='text-light bg-dark'>
+    <section style=''>
+        <a class='my-2 mx-2 btn btn-success' href='../../index.php'>&#8962;</a>
+        <a class='my-2 mx-2 btn btn-info' href='../psmjene/poslovodja_smjene.php'>Smjene</a>
+        <a class='my-2 mx-2 btn btn-info' href='../djelatnik/poslovodja_djelatnici.php'>Djelatnici</a>
+        <a class='my-2 mx-2 btn btn-info' href='../pnabava/poslovodja_skladiste.php'>Skladište</a>
+        <a class='my-2 mx-2 btn btn-info' href='../pcatering/poslovodja_catering.php'>Catering</a>
+        <a class='my-2 mx-2 btn btn-info' href='poslovodja_meniad.php'>Meni</a>
+        <a class='my-2 mx-2 btn btn-info' href='../panaliza/poslovodja_analiza.php'>Analiza</a>
+        <h1>Dodaj u meni</h1>
+    </section>
     <?php 
     if (isset($_SESSION['id_poslovodja'])) {
         $tablicanamirnice = "CREATE TABLE IF NOT EXISTS namirnicenoves

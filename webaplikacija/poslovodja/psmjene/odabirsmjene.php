@@ -1,6 +1,6 @@
 <?php
     echo " <section  style='width:360px; float:left;'><h3 style='color:#FFF;'>Djelatnici</h3>
-     <section  style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
+     <section  style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
     <table class='table table-dark table-striped'>
     <tbody>";
         $tablicajutro = "CREATE TABLE IF NOT EXISTS tablicajutro
@@ -40,7 +40,7 @@
 </section>";
         echo " <section  style='width:300px; display:inline-block;'>
             <h3 style='color:#FFF;'>Jutarnja smjena</h3>
-             <section  style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
+             <section  style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
             <table class='table table-dark table-striped'>
             <tbody>";
 //prikazuje jutarnju smjenu koju odabiremo
@@ -61,7 +61,7 @@
             </section>
              <section  style='width:300px; display:inline-block;'>
             <h3 style='color:#FFF;'>Večernja smjena</h3>
-             <section  style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
+             <section  style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
             <table class='table table-dark table-striped'>
             <tbody>";
 //prikazuje vecernju smjenu koju odabiremo
