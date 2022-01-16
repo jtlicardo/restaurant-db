@@ -14,8 +14,9 @@
     </script>
 </head>
 
-<body class='text-light bg-dark'>
-    <h3></h3>
+<body class='p-5 text-light bg-dark'>
+    <h1>Restoran</h1>
+    <p>...uđi kao...</p>
     <a class='my-2 btn btn-info' href="gost/gost_sucelje.php">gost</a>
     <a class='my-2 btn btn-info' href="konobar/konobar_sucelje.php">konobar</a>
     <a class='my-2 btn btn-info' href="poslovodja/poslovodja_sucelje.php">poslovođa</a>
