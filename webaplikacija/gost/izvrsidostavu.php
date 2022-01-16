@@ -9,5 +9,6 @@
         $dodajstavkudostave = "INSERT INTO dostava_stavka (id_dostava,id_meni,kolicina,cijena_hrk) VALUES ('$rezultat','$stavka[id]','$stavka[kolicina]','$stavka[cijena]')";
 		mysqli_query($con,$dodajstavkudostave);
     }
+    //otpuštanje tablice za dostavu
     mysqli_query($con, "DROP TABLE gost_dostava");
     header("Location: gost_sucelje.php?update=2");

@@ -1,9 +1,9 @@
 <?php 
 echo "
-        <section style='width:320px;float:left;'>
+         <section  style='width:320px;float:left;'>
         <h3 style='color:#FFF;'>Stanje namirnica</h3>
         <p>naziv |kolicina |mjerna jedinica</p>
-        <section style='overflow-y:scroll; height:240px;'>
+         <section  style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
         <table class='table table-dark table-striped'>
         <tbody>";
         $namirnice = mysqli_query($con,"SELECT * FROM namirnica;");

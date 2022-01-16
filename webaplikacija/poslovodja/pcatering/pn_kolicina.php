@@ -1,5 +1,5 @@
 <?php 
-    include_once '../gost_konekcija.php';
+    include_once '../poslovodja_konekcija.php';
     if (isset($_GET['did']) && isset($_SESSION['s_idcatering'])) {
         $id=mysqli_real_escape_string($con,$_GET['did']);
         $provjeritablicu="SELECT * FROM trenutni_catering WHERE id_meni='$id';";

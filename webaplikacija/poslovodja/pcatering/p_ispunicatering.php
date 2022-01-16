@@ -1,5 +1,5 @@
 <?php 
-    include_once '../gost_konekcija.php';
+    include_once '../poslovodja_konekcija.php';
     if (isset($_SESSION['id_poslovodja'])) {
         mysqli_query($con, "INSERT INTO catering (id_zahtjev,uplaceno) VALUES ('$_SESSION[s_idcatering]','N');");
         $upit = mysqli_query($con, "SELECT * FROM trenutni_catering");

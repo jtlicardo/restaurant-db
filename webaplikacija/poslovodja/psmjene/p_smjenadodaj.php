@@ -1,5 +1,7 @@
 <?php
-    include_once '../gost_konekcija.php';
+//dodaje tablicama operacija 1-jutro 2-vecer 3-smjena koja je samo jedna
+    include_once '../poslovodja_konekcija.php';
+//hardcodiran ulaz u smjene, potreban update ukoliko stavimo da poslovođa stvori nove vrste smjena
     if (isset($_SESSION['id_poslovodja'])){
         $op = mysqli_real_escape_string($con,$_GET['operacija']);
         $djelatnikid = mysqli_real_escape_string($con,$_GET['did']);

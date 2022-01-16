@@ -1,5 +1,5 @@
 <?php
-    include_once '../gost_konekcija.php';
+    include_once '../poslovodja_konekcija.php';
     if (isset($_POST['sp_kol'])) {
         $idnamirnice = mysqli_real_escape_string($con,$_POST['id']);
         $kolicinanamirnice = mysqli_real_escape_string($con,$_POST['kolicina']);

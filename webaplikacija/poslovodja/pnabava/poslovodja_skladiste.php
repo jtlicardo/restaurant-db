@@ -1,6 +1,5 @@
 <?php
-  include_once '../gost_konekcija.php';
-  mysqli_autocommit($con, false);
+  include_once '../poslovodja_konekcija.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,26 +14,34 @@
 
 <body class='text-light bg-dark'>
     <?php
+//realno stanje namirnica
     include 'stanje_namirnica.php';
+//namirnice koje bi mogli nabaviti
     include 'namirnicenabava.php';
+//izvrsavanje otpisa stavke
     echo "<h3 style='color:#FFF;'>Izvrši otpis nad stavkom</h3>
         <form action='dodajnaotpis.php' method='POST'>
             <input type='text' name='naziv' placeholder='naziv'>
             <input type='number' name='kolicina' placeholder='količina'>
-            <button class='btn btn-success' type='submit' name='sp_otpis'>Izvrši otpis</button>
+            <button class='my-2 btn btn-success' type='submit' name='sp_otpis'>Izvrši otpis</button>
         </form>";
+        if (isset($_GET['otpis'])){
+            if ($_GET['otpis']==1) {
+                echo "Uspješno ste otpisali stavku!";
+            }
+        }
+//nabava
     include 'nabavastavkaform.php';
     include 'nabavaform.php';
-    $val= mysqli_num_rows(mysqli_query($con,"SHOW TABLES LIKE 'tmp_nabava_stavka';"));
-    if ($val > 0){
-      echo "
-        <section style='width:320px;float:left;'>
-        <h3 style='color:#FFF;'>Namirnice za nabavu</h3>
-        <p>naziv |kolicina |promet prošle godine |omjer</p>
-        <section style='overflow-y:scroll; height:240px;'>
+    echo "
+         <section  style='width:320px;float:left;'>
+        <h3 style='color:#FFF;'>Unos nabave</h3>
+        <p>naziv |kolicina |cijena</p>
+         <section  style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
         <table class='table table-dark table-striped'>
         <tbody>";
-        $upit = mysqli_query($con,"SELECT * FROM tmp_nabava_stavka;");
+    if (isset($_GET['update'])) {
+            $upit = mysqli_query($con, "SELECT * FROM tmp_nabava_stavka;");
             while ($red = mysqli_fetch_assoc($upit)) {
                 $mark = mysqli_fetch_assoc(mysqli_query($con, "SELECT naziv FROM namirnica WHERE namirnica.id='$red[id_namirnica]'"));
                 echo "<tr>
@@ -43,11 +50,11 @@
                     <td>".$red['cijena_hrk']."</td>
                     </tr>";
             }
-            echo "
-            </tbody>
-            </table>
-            </section></section>";
-    }
+        }
+        echo "
+        </tbody>
+        </table>
+        </section></section>";
     ?>
 </body>
 

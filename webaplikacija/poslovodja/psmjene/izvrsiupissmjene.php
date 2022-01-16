@@ -1,5 +1,6 @@
 <?php
-    include_once '../gost_konekcija.php';
+    include_once '../poslovodja_konekcija.php';
+    //hardcodiran ulaz u smjene, potreban update ukoliko stavimo da poslovođa stvori nove vrste smjena
     if (isset($_SESSION['id_poslovodja']) && mysqli_num_rows(mysqli_query($con,"SELECT * FROM tablicajutro"))>0 && mysqli_num_rows(mysqli_query($con,"SELECT * FROM tablicavecer"))>0) {
         $jutarci = mysqli_query($con,"SELECT * FROM tablicajutro");
         while ($radnik = mysqli_fetch_assoc($jutarci)){

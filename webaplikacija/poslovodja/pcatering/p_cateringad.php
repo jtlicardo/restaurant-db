@@ -1,8 +1,8 @@
 <?php
         $cat = mysqli_query($con,"SELECT * FROM catering WHERE uplaceno='N';");
-        echo "<section style='width:50%; float:left;'>
+        echo " <section  style='width:50%; float:left;'>
         <h3 style='color:#FFF;'>Neisplaćeni caterinzi</h3>
-        <section style='overflow-y:scroll; height:240px;'>
+         <section  style='overflow-y:scroll; overflow-x:hidden;  height:240px;'>
         <table class='table table-dark table-striped'><thead>
         <tr>
             <td>Naručitelj</td>
@@ -20,7 +20,7 @@
                     <td>".$osoba['broj_mob']."<br>".$osoba['email']."</td>
                     <td>".$catz['opis']."</td>
                     <td>".$redakcat['uplaceno']."</td>
-                <td><a class='btn btn-info' href='p_uplacencat.php?did=".$redakcat['id']."'>potvrdi uplatu</a></td>
+                <td><a class='my-2 btn btn-info' href='p_uplacencat.php?did=".$redakcat['id']."'>potvrdi uplatu</a></td>
                 </tr>";
             }
             echo "

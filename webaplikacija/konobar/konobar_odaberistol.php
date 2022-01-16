@@ -1,5 +1,5 @@
 <?php
-    include_once 'gost_konekcija.php';
+    include_once 'konobar_konekcija.php';
     if (isset($_SESSION['idkonobar'])) {
         $stol=mysqli_real_escape_string($con,$_GET['ostol']);
         $konobarnastolu = mysqli_query($con, "SELECT id_konobar FROM konobar_racun WHERE id_stol='$stol'");

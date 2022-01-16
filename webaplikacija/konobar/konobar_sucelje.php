@@ -1,5 +1,5 @@
 <?php
-    include_once 'gost_konekcija.php';
+    include_once 'konobar_konekcija.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -14,15 +14,16 @@
 
 <body class='text-light bg-dark'>
     <form action="konobar_info.php" method="POST">
-        <input type="text" name="idkonobar" placeholder="šifra konobara">
-        <button class='btn btn-success'type="submit" name="sp_konobar">Odaberi šifru</button>
+        <input type="text" name="id_konobar" placeholder="šifra konobara">
+        <button class='my-2 btn btn-success' type="submit" name="sp_konobar">Odaberi šifru</button>
     </form>
     <p>
         <?php
+        //provjerava je li konobar unio podatke
         if (!isset($_SESSION['idkonobar'])) {
             echo "<p>Molimo unesite svoju šifru.</p>";
             } else {
-				echo "Ćao mali".$_SESSION['idkonobar'];
+				echo $_SESSION['idkonobar'];
 			}
             ?>
     </p>
@@ -37,23 +38,28 @@ naziv_stavke varchar(70) not null,
 kolicina integer not null,
 cijena decimal(10,2) not null
 );";
+    //ukoliko je konobar postavljen, prikazuje odabir stolova
     if (isset($_SESSION['idkonobar'])){
         $stolovi = mysqli_query($con, "SELECT id FROM stol");
+        echo "<section style='display:block; overflow-y:scroll; overflow-x:hidden; scroll; width: 400px; height:200px;'>";
         while ($stol = mysqli_fetch_assoc($stolovi)){
+            //miče stolove koji su zauzeti, prikazuje samo dostupne
             $konobarnastolu = mysqli_query($con, "SELECT id_konobar FROM konobar_racun WHERE id_stol='$stol[id]'");
             if (!mysqli_num_rows($konobarnastolu) || mysqli_fetch_assoc($konobarnastolu)['id_konobar']==$_SESSION['idkonobar']) {
-                echo "<a class='btn btn-info' href='konobar_odaberistol.php?ostol=".$stol['id']."'>'$stol[id]'</a>";
+                echo "<a style='display:inline-block;' class='m-2 btn btn-info' href='konobar_odaberistol.php?ostol=".$stol['id']."'>'$stol[id]'</a>";
             }
         }
+        echo "</section>";
     }
     if (isset($_SESSION['trenutnistol'])){
-        echo "Vaš stol je".$_SESSION['trenutnistol'];
+        echo "<br><h3>Vaš stol je pod brojem ".$_SESSION['trenutnistol'].".</h3>";
     }
 ?>
     <?php
+    //prikaz menija, isto kao kod gosta
 $meni = mysqli_query($con,"SELECT * FROM aktivni_meni");
 mysqli_query($con,$tablicaracuna);
-echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><table style=''><thead>
+echo "<h3>Meni</h3><section class='mx-5' style='width:40%; float:left; overflow-y:scroll; overflow-x:hidden;  height:240px;'><table class='table table-dark table-striped'><thead>
 <tr>
     <td>Naziv jela</td>
     <td>Cijena</td>
@@ -75,25 +81,28 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
                 }
             }
     echo "<td>$alergen</td>
-        <td><a class='btn btn-info' href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=1'>+</a>
-            <a class='btn btn-info' href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=2'>-</a></td>
+        <td><a class='my-2 btn btn-info' href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=1'>+</a></td>
+        <td><a class='my-2 btn btn-info' href='kn_kolicina.php?dnaziv=".$redakmenija['naziv_stavke']."&operacija=2'>-</a></td>
         </tr>";
     }
     echo "
     </tbody>
     </table> </section>
-    <section style='width:50%; float:left;'>
+     <section  style='width:50%; float:left;'>
     <h3 style='color:#FFF;'>Račun</h3>";
     if (!isset($_SESSION['trenutnistol'])) {
         echo "odaberi stol";
     } else {
+        //prikaz računa
         echo "<table class='table table-dark table-striped'><thead>
     <tr>
         <td>Naziv jela</td>
-        <td>količina</td>
+        <td>Količina</td>
+        <td>Cijena</td>
     </tr>
     </thead>
     <tbody>";
+    $total=0;
         if (isset($_GET['update'])) {
             $podacioracunu = mysqli_query($con, "SELECT * FROM konobar_racun WHERE id_konobar='$_SESSION[idkonobar]' AND id_stol='$_SESSION[trenutnistol]'");
             while ($redakracuna = mysqli_fetch_assoc($podacioracunu)) {
@@ -101,8 +110,12 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
         <tr>
             <td>".$redakracuna['naziv_stavke']."</td>
             <td>".$redakracuna['kolicina']."</td>
+            <td>".$redakracuna['kolicina']*$redakracuna['cijena']." hrk</td>
             </tr>";
+            $total+=$redakracuna['kolicina']*$redakracuna['cijena'];
             }
+            echo "<tr><td>TOTAL:</td><td></td>
+            <td>".$total." hrk</td></tr>";
         }
     }
     echo "
@@ -114,7 +127,7 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
         <option value='2'>Kartica</option>
         <option value='3'>Kripto</option>
     </select>
-    <button class='btn btn-success'type='submit' name='sp_racun'>Unesi račun</button>
+    <button class='my-2 btn btn-success'type='submit' name='sp_racun'>Unesi račun</button>
     </form>";
 ?>
 </body>

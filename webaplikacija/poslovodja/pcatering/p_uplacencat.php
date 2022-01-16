@@ -1,5 +1,5 @@
 <?php
-    include_once '../gost_konekcija.php';
+    include_once '../poslovodja_konekcija.php';
     if (isset($_SESSION['id_poslovodja'])){
         $idcat = mysqli_real_escape_string($con,$_GET['did']);
         mysqli_query($con, "UPDATE catering SET uplaceno='D' WHERE id='$idcat'");

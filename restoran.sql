@@ -3154,7 +3154,81 @@ INSERT INTO dostava_stavka (id, id_dostava, id_meni, kolicina) VALUES
     (31, 16, 23, 5),
     (32, 17, 10, 5);
 
+DROP USER IF EXISTS gost;
+CREATE USER gost IDENTIFIED BY 'password';
+GRANT SELECT, INSERT ON restoran.osoba TO gost;
+GRANT SELECT, INSERT ON restoran.adresa TO gost;
+GRANT SELECT, INSERT ON restoran.rezervacija TO gost;
+GRANT SELECT, INSERT ON restoran.catering_zahtjev TO gost;
+GRANT SELECT ON restoran.aktivni_meni TO gost;
+GRANT SELECT ON restoran.meni TO gost;
+GRANT SELECT ON restoran.alergen TO gost;
+GRANT SELECT ON restoran.kategorija_namirnica TO gost;
+GRANT SELECT ON restoran.stavka_meni TO gost;
+GRANT REFERENCES ON restoran.* TO gost;
+GRANT EXECUTE ON PROCEDURE restoran.kreiraj_rezervaciju TO gost;
+GRANT ALL PRIVILEGES ON restoran.gost_dostava TO gost;
+GRANT SELECT ON restoran.sadrzi_alergen TO gost;
+GRANT SELECT, INSERT ON restoran.dostava TO gost;
+GRANT SELECT, INSERT ON restoran.dostava_stavka TO gost;
+GRANT SELECT, INSERT ON restoran.catering_narucitelj TO gost;
 
+DROP USER IF EXISTS konobar;
+CREATE USER konobar IDENTIFIED BY 'password';
+GRANT SELECT ON restoran.meni TO konobar;
+GRANT SELECT ON restoran.aktivni_meni TO konobar;
+GRANT ALL PRIVILEGES ON restoran.konobar_racun TO konobar;
+GRANT SELECT ON restoran.sadrzi_alergen TO konobar;
+GRANT SELECT ON restoran.alergen TO konobar;
+GRANT SELECT, INSERT ON restoran.osoba TO konobar;
+GRANT SELECT, INSERT ON restoran.djelatnik TO konobar;
+GRANT SELECT ON restoran.stol TO konobar;
+GRANT REFERENCES ON restoran.* TO konobar;
+GRANT SELECT, INSERT ON restoran.racun TO konobar;
+GRANT SELECT, INSERT ON restoran.stavka_racun TO konobar;
+GRANT EXECUTE ON FUNCTION restoran.kreiraj_sifru_racuna_autoincrement TO konobar;
+
+DROP USER IF EXISTS poslovodja;
+CREATE USER poslovodja IDENTIFIED BY 'password';
+GRANT SELECT, INSERT, UPDATE ON restoran.djelatnik TO poslovodja;
+GRANT SELECT, INSERT ON restoran.osoba TO poslovodja;
+GRANT REFERENCES ON restoran.* TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.tablicajutro TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.tablicavecer TO poslovodja;
+GRANT SELECT ON restoran.zanimanje TO poslovodja;
+GRANT SELECT, INSERT, UPDATE ON restoran.djelatnik_smjena TO poslovodja;
+GRANT SELECT ON restoran.smjena TO poslovodja;
+GRANT SELECT, INSERT, UPDATE ON restoran.namirnica TO poslovodja;
+GRANT SELECT, INSERT, UPDATE ON restoran.meni TO poslovodja;
+GRANT SELECT ON namirnice_za_nabavu TO poslovodja;
+GRANT EXECUTE ON PROCEDURE restoran.dodaj_stavku_za_otpis TO poslovodja;
+GRANT EXECUTE ON PROCEDURE restoran.stvori_otpis TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.tmp_nabava_stavka TO poslovodja;
+GRANT EXECUTE ON PROCEDURE restoran.stvori_nabavu TO poslovodja;
+GRANT SELECT ON restoran.catering_zahtjev TO poslovodja;
+GRANT SELECT, INSERT, UPDATE ON restoran.catering TO poslovodja;
+GRANT SELECT ON restoran.adresa TO poslovodja;
+GRANT SELECT ON restoran.catering_narucitelj TO poslovodja;
+GRANT SELECT ON restoran.nadolazeci_caterinzi TO poslovodja;
+GRANT SELECT ON restoran.aktivni_meni TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.trenutni_catering TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.tablicadjelatnika TO poslovodja;
+GRANT SELECT, INSERT ON restoran.sadrzi_alergen TO poslovodja;
+GRANT SELECT, INSERT ON restoran.alergen TO poslovodja;
+GRANT SELECT, INSERT ON restoran.catering_stavka TO poslovodja;
+GRANT SELECT, INSERT, UPDATE ON restoran.catering TO poslovodja;
+GRANT SELECT, INSERT ON djelatnici_catering TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.namirnicenoves TO poslovodja;
+GRANT ALL PRIVILEGES ON restoran.tablicaalergeni TO poslovodja;
+GRANT SELECT,INSERT ON restoran.stavka_meni TO poslovodja;
+GRANT SELECT ON restoran.racun TO poslovodja;
+GRANT SELECT ON restoran.dostava TO poslovodja;
+GRANT SELECT ON restoran.rezije TO poslovodja;
+GRANT SELECT ON restoran.nabava TO poslovodja;
+GRANT SELECT ON restoran.prosjecan_iznos_racuna TO poslovodja;
+GRANT SELECT ON restoran.najveci_br_rezervacija TO poslovodja;
+GRANT SELECT ON restoran.najcesce_adrese_dostave TO poslovodja;
+GRANT EXECUTE ON PROCEDURE restoran.dodaj_djelatnika TO poslovodja;
 
 
     

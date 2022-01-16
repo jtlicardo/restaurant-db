@@ -1,4 +1,5 @@
-<?php 
+<?php
+session_start();
 $server="127.0.0.1";
 $korisnik="konobar";
 $password="password";

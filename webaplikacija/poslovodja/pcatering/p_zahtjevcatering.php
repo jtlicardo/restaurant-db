@@ -1,5 +1,20 @@
 <?php
-    include_once '../gost_konekcija.php';
+    include_once '../poslovodja_konekcija.php';
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
+
+</head>
+
+<body class='text-light bg-dark'><?php
+    include_once '../poslovodja_konekcija.php';
     if (isset($_GET['did'])) {
         $_SESSION['s_idcatering']=mysqli_real_escape_string($con, $_GET['did']);
     }
@@ -26,7 +41,7 @@ zanimanje varchar(50)
 $meni = mysqli_query($con,"SELECT * FROM aktivni_meni");
 mysqli_query($con,$tablicaracuna);
 mysqli_query($con,$tablicadjelatnika);
-echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><table style=''><thead>
+echo " <section  style='width:50%; float:left; overflow-y:scroll; overflow-x:hidden;  height:240px;'><table class='table table-dark table-striped'><thead>
 <tr>
     <td>Naziv jela</td>
     <td>Cijena</td>
@@ -48,21 +63,22 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
                 }
             }
     echo "<td>$alergen</td>
-        <td><a class='btn btn-info' href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=1'>+</a>
-            <a class='btn btn-info' href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=2'>-</a></td>
+        <td><a class='my-2 btn btn-info' href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=1'>+</a>
+            <a class='my-2 btn btn-info' href='pn_kolicina.php?did=".$redakmenija['id']."&operacija=2'>-</a></td>
         </tr>";
     }
     echo "
     </tbody>
     </table> </section>
-    <table style='height:240px;'><thead>
+    <section style='display:inline-block;'>
+    <table class='table table-dark table-striped'><thead>
     <tr>
         <td>Naziv stavke</td>
         <td>količina</td>
         <td>Cijena</td>
     </tr>
     </thead>
-    <tbody>";
+    <tbody style='overflow-y:scroll; overflow-x:hidden'>";
         if (isset($_GET['update'])) {
             $total=0;
             $podacioracunu = mysqli_query($con, "SELECT * FROM trenutni_catering");
@@ -71,16 +87,18 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
                 echo "<tr>
             <td>".$redakracuna['naziv_stavkec']."</td>
             <td>".$redakracuna['kolicina']."</td>
-            <td>".$total."</td>
+            <td>".$redakracuna['kolicina']*$redakracuna['cijena_hrk']." hrk</td>
             </tr>";
+            $total+=$redakracuna['kolicina']*$redakracuna['cijena_hrk'];
             }
+            echo "<tr><td>TOTAL:</td><td></td>
+            <td>".$total." hrk</td></tr>";
         }
     echo "
     </tbody>
-    </table>
-    <a class='btn btn-info' href='p_ispunicatering.php'> </a>";
-    echo "<section style='width:360px; float:left;'><h3 style='color:#FFF;'>Djelatnici</h3>
-    <section style='overflow-y:scroll; height:160px;'>
+    </table></section>";
+    echo " <section  style='width:360px; display:block;'><h3 style='color:#FFF;'>Djelatnici</h3>
+     <section  style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
     <table class='table table-dark table-striped'>
     <tbody>";
     $djelatnici = mysqli_query($con, "SELECT djelatnik.id,osoba.ime,osoba.prezime,zanimanje.naziv FROM djelatnik JOIN osoba ON djelatnik.id_osoba=osoba.id JOIN zanimanje ON zanimanje.id=djelatnik.id_zanimanje;");
@@ -88,12 +106,12 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
             echo "<tr>
                 <td>".$djelatnik['ime']."<br>".$djelatnik['prezime']."</td>
                 <td>".$djelatnik['naziv']."</td>
-                <td><a class='btn btn-info' href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>dodaj</a>
-                <br><a class='btn btn-info' href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>makni</a></td></tr>";
+                <td><a class='my-2 btn btn-info' href='p_dodajc.php?did=".$djelatnik['id']."&operacija=1'>dodaj</a>
+                <br><a class='my-2 btn btn-info' href='p_dodajc.php?did=".$djelatnik['id']."&operacija=2'>makni</a></td></tr>";
         }
     echo "</tbody></table></section>
-    <section style='width:360px; float:left;'><h3 style='color:#FFF;'>Catering tim</h3>
-    <section style='overflow-y:scroll; height:160px;'>
+     <section  style='width:360px; display:block;'><h3 style='color:#FFF;'>Catering tim</h3>
+     <section  style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
         <table class='table table-dark table-striped'>
         <tbody>";
             if (isset($_GET['update'])) {
@@ -107,6 +125,9 @@ echo "<section style='width:50%; float:left; overflow-y:scroll; height:240px;'><
         echo "
         </tbody>
         </table></section></section>";
-    echo "</tbody></table></section></section>
-        <a class='btn btn-info' href='p_ispunicatering.php'>Ispuni catering</a>";
+echo "</tbody></table></section></section><a class='my-2 btn btn-info' href='p_ispunicatering.php'>Ispuni catering</a>";
 ?>
+
+</body>
+
+</html>

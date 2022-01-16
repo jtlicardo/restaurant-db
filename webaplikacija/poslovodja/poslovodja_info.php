@@ -1,5 +1,5 @@
 <?php
-    include_once 'gost_konekcija.php';
+    include_once 'poslovodja_konekcija.php';
     if (isset($_POST['sp_poslovodja'])) {
         $osobniidposlovodja=mysqli_real_escape_string($con, $_POST['idposlovodja']);
         $upit_provjera="SELECT id FROM djelatnik WHERE id='$osobniidposlovodja' AND id_zanimanje='8' AND zaposlen='D';";

@@ -3,5 +3,5 @@
     <input type='text' name='naziv' placeholder='naziv'>
     <input type='number' name='kolicina' placeholder='količina'>
     <input type='number' name='cijena' placeholder='cijena'>
-    <button class='btn btn-success' type='submit' name='sp_nabavastavka'>Dodaj stavku</button>
+    <button class='my-2 btn btn-success' type='submit' name='sp_nabavastavka'>Dodaj stavku</button>
 </form>

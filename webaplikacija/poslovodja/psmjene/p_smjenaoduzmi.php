@@ -1,5 +1,6 @@
 <?php
-    include_once '../gost_konekcija.php';    
+//miče iz tablice operacija 1 jutro 2 vecer
+    include_once '../poslovodja_konekcija.php'; 
     if (isset($_SESSION['id_poslovodja'])){
         $op = mysqli_real_escape_string($con,$_GET['operacija']);
         $djelatnikid = mysqli_real_escape_string($con,$_GET['did']);

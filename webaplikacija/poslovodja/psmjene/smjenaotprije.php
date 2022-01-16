@@ -1,7 +1,8 @@
 <?php
-        echo "<section style='overflow-y:scroll; height:160px;'>
+        echo " <section class='m-2' style='overflow-y:scroll; overflow-x:hidden;  height:160px;'>
         <table class='table table-dark table-striped'>
         <tbody>";
+        //ovo je bio upit od kolega koji je prilagođen za veće zadovoljstvo
         $sql_jt = "SELECT osoba.ime, osoba.prezime, zanimanje.naziv FROM djelatnik
 		JOIN osoba 
 		ON djelatnik.id_osoba=osoba.id
